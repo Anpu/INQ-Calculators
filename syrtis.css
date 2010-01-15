@@ -1,0 +1,151 @@
+/* CSS Document */
+html {
+	margin: 0;
+	padding: 0;
+	}
+	
+body { 
+	font: 85% georgia, sans-serif;
+	line-height: 2.2;
+	background-color: #000000;
+	color: #efc325; 
+	cursor: url("normal.cur"), default;
+	}
+
+p {  
+	text-align: center;
+	}
+	
+h3 {
+	text-align: justify;
+	}
+
+a:link { 
+	text-decoration: none; 
+	color: #efc325;
+	cursor: url("links.cur"), default;
+	}
+	
+a:visited {  
+	text-decoration: none; 
+	color: #efc325;
+	cursor: url("links.cur"), default;
+	}
+	
+a:hover, a:active { 
+	text-decoration: none; 
+	color: #ffffff;
+	cursor: url("links.cur"), default;
+	}
+	
+/* setting up divs */
+#container {
+	margin-top: 150px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 0px;
+	position: relative;
+	width: 70%;
+	}
+#background { 
+	/* TO DO: main.jpg picture */
+	background: url(main.jpg) no-repeat top center;  
+	}
+
+#image {
+	margin-top: 30px;
+	margin-left: 90px;
+	width: 825px;
+	height: 510px;
+	background: transparent url(char.png) no-repeat top right;
+	}
+	
+#header {
+	background: transparent url(header.png) no-repeat top left; 
+	margin-top: 25px; 
+	margin-left: 270px;	
+	width: 170px;
+	height: 170px;
+	}
+	
+#content {
+	margin-top: 20px; 
+	margin-left: 0px;
+	}
+
+#menu {
+	background: transparent url(menu.png) no-repeat top center; 
+	margin-bottom: 0px;
+	width: 700px;
+	height: 40px;
+	}
+
+#menuText {
+	margin-left: 30px;
+	margin-top: 10px;
+	width: 640px;
+	/*letter-spacing: -2px;*/
+	}
+	
+#levelUp {
+	display: none;
+	background-color: #000000;
+	margin-top: 0px; 
+	margin-left: 20px;
+	width: 660px; 
+	height: 300px;
+	}
+	
+#grindArea {
+	display: none;
+	background-color: #000000;
+	margin-top: 0px; 
+	margin-left: 20px;
+	width: 660px; 
+	height: 300px;
+	}
+	
+#mobSearch {
+	display: none;
+	background-color: #000000;
+	margin-top: 0px; 
+	margin-left: 20px;
+	width: 660px; 
+	height: 300px;
+	}
+
+#findPet {
+	display: none;
+	background-color: #000000;
+	margin-top: 0px; 
+	margin-left: 20px;
+	width: 660px; 
+	height: 300px;
+	}
+
+#npc {
+	display: none;
+	background-color: #000000;
+	margin-top: 0px; 
+	margin-left: 20px;
+	width: 660px; 
+	height: 300px;
+	}
+
+#armorPoints {
+	display: none;
+	background-color: #000000;
+	margin-top: 0px; 
+	margin-left: 20px;
+	width: 660px; 
+	height: 300px;
+	}
+
+#credits {
+	display: none;
+	background-color: #000000;
+	margin-top: 0px; 
+	margin-left: 20px;
+	width: 660px; 
+	height: 300px;
+	}
