@@ -1,151 +1,71 @@
-/* CSS Document */
 html {
-	margin: 0;
-	padding: 0;
-	}
-	
-body { 
-	font: 85% georgia, sans-serif;
-	line-height: 2.2;
-	background-color: #000000;
-	color: #efc325; 
-	cursor: url("normal.cur"), default;
-	}
+  margin: 0;
+  padding: 0;
+}
 
-p {  
-	text-align: center;
-	}
-	
-h3 {
-	text-align: justify;
-	}
+body {
+  font: 85% Georgia, serif;
+  line-height: 2.2em;
+  background-color: #000000;
+  color: #EFC235;
+  cursor: url("normal.cur"), default;
+}
 
 a:link { 
-	text-decoration: none; 
-	color: #efc325;
-	cursor: url("links.cur"), default;
-	}
-	
+  text-decoration: none; 
+  color: #EFC325;
+  cursor: url("links.cur"), default;
+}
+
 a:visited {  
-	text-decoration: none; 
-	color: #efc325;
-	cursor: url("links.cur"), default;
-	}
-	
+  text-decoration: none; 
+  color: #EFC325;
+  cursor: url("links.cur"), default;
+}
+
 a:hover, a:active { 
-	text-decoration: none; 
-	color: #ffffff;
-	cursor: url("links.cur"), default;
-	}
-	
-/* setting up divs */
-#container {
-	margin-top: 150px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 0px;
-	position: relative;
-	width: 70%;
-	}
-#background { 
-	/* TO DO: main.jpg picture */
-	background: url(main.jpg) no-repeat top center;  
-	}
+  text-decoration: underline; 
+  color: #FFFFFF;
+  cursor: url("links.cur"), default;
+}
 
-#image {
-	margin-top: 30px;
-	margin-left: 90px;
-	width: 825px;
-	height: 510px;
-	background: transparent url(char.png) no-repeat top right;
-	}
-	
-#header {
-	background: transparent url(header.png) no-repeat top left; 
-	margin-top: 25px; 
-	margin-left: 270px;	
-	width: 170px;
-	height: 170px;
-	}
-	
-#content {
-	margin-top: 20px; 
-	margin-left: 0px;
-	}
+#navbar {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+}
 
-#menu {
-	background: transparent url(menu.png) no-repeat top center; 
-	margin-bottom: 0px;
-	width: 700px;
-	height: 40px;
-	}
+ul.navigation {
+  float: left;
+  position: relative;
+  left: 50%;
+  text-align: left;
+  list-style: none;
+  list-style-type: none;
+  padding: 0;
+  margin: 0 auto;
+}
 
-#menuText {
-	margin-left: 30px;
-	margin-top: 10px;
-	width: 640px;
-	/*letter-spacing: -2px;*/
-	}
-	
-#levelUp {
-	display: none;
-	background-color: #000000;
-	margin-top: 0px; 
-	margin-left: 20px;
-	width: 660px; 
-	height: 300px;
-	}
-	
-#grindArea {
-	display: none;
-	background-color: #000000;
-	margin-top: 0px; 
-	margin-left: 20px;
-	width: 660px; 
-	height: 300px;
-	}
-	
-#mobSearch {
-	display: none;
-	background-color: #000000;
-	margin-top: 0px; 
-	margin-left: 20px;
-	width: 660px; 
-	height: 300px;
-	}
+ul.navigation li {
+  float: left;
+  position: relative;
+  left: -50%;
+  font-weight: bold;
+  padding: 0.2em 1em;
+  margin: 0;
+  height: 40px;
+  background: url('menu-gradient.png') repeat-x;
+}
 
-#findPet {
-	display: none;
-	background-color: #000000;
-	margin-top: 0px; 
-	margin-left: 20px;
-	width: 660px; 
-	height: 300px;
-	}
+ul.navigation li:first-child {
+  padding-left: 38px;
+  background: url('menu-left.png') no-repeat;
+}
 
-#npc {
-	display: none;
-	background-color: #000000;
-	margin-top: 0px; 
-	margin-left: 20px;
-	width: 660px; 
-	height: 300px;
-	}
+ul.navigation li:last-child {
+  padding-right: 38px;
+  background: url('menu-right.png') no-repeat;
+  background-position: top right;
+}
 
-#armorPoints {
-	display: none;
-	background-color: #000000;
-	margin-top: 0px; 
-	margin-left: 20px;
-	width: 660px; 
-	height: 300px;
-	}
-
-#credits {
-	display: none;
-	background-color: #000000;
-	margin-top: 0px; 
-	margin-left: 20px;
-	width: 660px; 
-	height: 300px;
-	}
