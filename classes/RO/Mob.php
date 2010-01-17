@@ -36,7 +36,7 @@ class RO_Mob {
     {
         if (!is_null($this->record)) return;
         $dbh = Database::get();
-        $stmt = $dbh->prepare("SELECT * FROM mob WHERE mob_id = ?");
+        $stmt = $dbh->prepare("SELECT * FROM mobs WHERE mob_id = ?");
         $stmt->bindValue(1,$this->ID(), PDO::PARAM_INT);
         $a = $stmt->execute();
         $this->record = $stmt->fetchObject();
@@ -67,30 +67,20 @@ class RO_Mob {
     }
 
     /**
-     * Find a mob based on a set of criteria
+     * Find tameable mobs for a hunter
      *
-     * @param array $filter An array of property filters
+     * @param int $player_level     The level of the player
+     * @param int $lesser_power     The power level of the Tame Lesser spell
+     * @param int $beast_power      The power level of the Tame Beast spell
+     * @param int $monster_power    The power level of the Control Monster spell
      *
      * @return Iterator the found Mobs
-     *
-     * @todo Build filtering code and auto joining based on filters
      */
-    public static function find(array $filter)
+    public static function findTameable($player_level = 1, $lesser_power = 1,
+                $beast_power = 1, $monster_power = 1)
     {
-        $sql = "SELECT DISTINCT M.mob_id id FROM mob M";
-        $where = array();
-        $params = array();
-        foreach ($filter as $_k=>$_v) {
-            //$where[] = '(A.name = ? AND DA.value = ?)';
-            //$params[] = $_k;
-            //$params[] = $_v;
-        }
-        $dbh = Database::get();
-        if (!empty($where)) {
-            $sql .= " WHERE ".implode(" AND ",$where);
-        }
-        $stmt = $dbh->prepare($sql);
-        $stmt->execute($params);
+        $sql = "CALL GetTameableMobs(?, ?, ?, ?)";
+        $stmt = Database::query($sql, $player_level, $lesser_power, $beast_power, $monster_power);
         $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $stmt->closeCursor();
         return new ResultIterator($ret, __CLASS__);
