@@ -29,7 +29,7 @@ a:hover, a:active {
   cursor: url("links.cur"), default;
 }
 
-#navbar {
+#main {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -69,3 +69,12 @@ ul.navigation li:last-child {
   background-position: top right;
 }
 
+.ui-tabs .ui-tabs-hide {
+  display: none;
+}
+
+.content {
+  clear: left;
+  width: 50%;
+  margin: 0 auto;
+}
