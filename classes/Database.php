@@ -43,6 +43,11 @@ class Database {
     {
         if (empty(self::$dbh)) {
             self::$dbh = new PDO(self::$dsn, self::$user, self::$pass);
+            $driver = self::$dbh->getAttribute(PDO::ATTR_DRIVER_NAME);
+            if ($driver == 'mysql') {
+                // Set UTF-8 Locale
+                self::$dbh->exec("SET NAMES 'utf8'");
+            }
         }
         return self::$dbh;
     }
