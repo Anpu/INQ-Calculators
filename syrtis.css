@@ -29,6 +29,10 @@ a:hover, a:active {
   cursor: url("links.cur"), default;
 }
 
+#header {
+  text-align: center;
+}
+
 #main {
   width: 100%;
   margin-left: auto;
