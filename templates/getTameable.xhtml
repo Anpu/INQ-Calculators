@@ -1,3 +1,16 @@
-<div tal:repeat="mob mobs">
-    <span tal:content="mob/name">Mob Name</span>
-</div>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Class Level</th>
+            <th>Power Level</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr tal:repeat="mob limit: limit mobs">
+            <td>${mob/name}</td>
+            <td>${mob/level}</td>
+            <td>${mob/tameable}</td>
+        </tr>
+    </tbody>
+</table>

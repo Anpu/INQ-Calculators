@@ -10,16 +10,20 @@ $(function() {
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
     $('#pets_go').click(function () {
-        var args = {
-           player_level:    $('#pets_player_level').val(),
-           lesser_power:    $('#pets_lesser_power').val(),
-           beast_power:     $('#pets_beast_power').val(),
-           monster_power:   $('#pets_monster_power').val()
-        };
-        console.log(args);
-        $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
+        getTameableMobs($('#pets_player_level').val() || 1);
     });
 });
+
+function getTameableMobs(player_level, tame_powers) {
+    tame_powers = tame_powers || {};
+    var args = {
+        player_level: player_level,
+        lesser_power: tame_powers.lesser || 5,
+        beast_power: tame_powers.beast || 5,
+        monster_power: tame_powers.monster || 5
+    };
+    $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
+}
 
 function loadTameableMobs(json, textStatus) {
     $('#pets_results').html(json.data);

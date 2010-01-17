@@ -76,8 +76,8 @@ class RO_Mob {
      *
      * @return Iterator the found Mobs
      */
-    public static function findTameable($player_level = 1, $lesser_power = 1,
-                $beast_power = 1, $monster_power = 1)
+    public static function findTameable($player_level = 1, $lesser_power = 5,
+                $beast_power = 5, $monster_power = 5)
     {
         $sql = "CALL GetTameableMobs(?, ?, ?, ?)";
         $stmt = Database::query($sql, $player_level, $lesser_power, $beast_power, $monster_power);
