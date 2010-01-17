@@ -2,7 +2,8 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Class Level</th>
+            <th>Mob Level</th>
+            <th>Class</th>
             <th>Power Level</th>
         </tr>
     </thead>
@@ -10,6 +11,7 @@
         <tr tal:repeat="mob limit: limit mobs">
             <td>${mob/name}</td>
             <td>${mob/level}</td>
+            <td>${mob/mob_class}</td>
             <td>${mob/tameable}</td>
         </tr>
     </tbody>
