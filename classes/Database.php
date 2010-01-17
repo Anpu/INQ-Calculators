@@ -43,6 +43,7 @@ class Database {
     {
         if (empty(self::$dbh)) {
             self::$dbh = new PDO(self::$dsn, self::$user, self::$pass);
+            self::$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $driver = self::$dbh->getAttribute(PDO::ATTR_DRIVER_NAME);
             if ($driver == 'mysql') {
                 // Set UTF-8 Locale
@@ -50,6 +51,22 @@ class Database {
             }
         }
         return self::$dbh;
+    }
+
+    /**
+     * Quick Prepare and execute a query
+     *
+     * @param string $sql   The query to execute
+     * @param mixed ...     The paramters to place in the query
+     */
+    public static function query($sql/* ...*/)
+    {
+        $stmt = self::get()->prepare($sql);
+        $args = func_get_args();
+        // Throw away the first argument (our query)
+        array_shift($args);
+        $stmt->execute($args);
+        return $stmt;
     }
 }
 ?>
