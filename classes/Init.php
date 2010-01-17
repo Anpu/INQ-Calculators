@@ -12,7 +12,7 @@ function AutoLoad($class) {
 }
 spl_autoload_register('AutoLoad');
 
-if (defined('DEBUG')) {
+if (DEBUG) {
     include 'FirePHPCore/fb.php';
 }
 ?>
