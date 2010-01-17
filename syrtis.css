@@ -41,6 +41,7 @@ a:hover, a:active {
 }
 
 ul.navigation {
+  min-width: 750px;
   float: left;
   position: relative;
   left: 50%;
