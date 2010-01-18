@@ -31,7 +31,7 @@ if (empty($_SERVER['PATH_INFO'])) {
             // Process Ajax request
             require_once(__DIR__.'/ajax/'.$path_info[1].'.php');
             $class = 'ajax_'.$path_info[1];
-            $data = $class::request(array_slice($path_info,2));
+            $data = call_user_func(array($class,'request'), array_slice($path_info,2));
 
             echo json_encode(array(
                 'response'=>'success',
