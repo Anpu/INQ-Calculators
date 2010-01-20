@@ -2,15 +2,14 @@
 <html>
   <head>
     <title>Inquisition Clan Database</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
     <link rel="stylesheet" type="text/css" href="syrtis.css" />
     <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
-    <script type="text/javascript"><!--
-      $(function() {
-          $("#main").tabs({fx: {opacity: 'toggle'}});
-          });
-      //--></script>
+    <script type="text/javascript" src="js/inqtools.js"></script>
+    <script type="text/javascript">
+        var ajaxRoot = <tal:block tal:content="structure js/ajaxRoot"/>;
+    </script>
 </head>
 
 <body>
@@ -60,7 +59,21 @@
     </div>
     <div id="pets" class="content">
       <h2><a name="pets">Pets</a></h2>
-      Coming soon
+      <p>
+          Let me find the best pet for you.  Enter you level, and power levels of your tame spells.
+      </p>
+      <p>
+          <select id="pets_player_level">
+              <option value=""> -- Character Level --</option>
+              <option tal:repeat="level levels" value="${level}">${level}</option>
+          </select>
+      </p>
+      <p>
+          <button id="pets_go">Find Pets</button>
+      </p>
+      <div id="pets_results">
+
+      </div>
     </div>
     <div id="npcs" class="content">
       <h2><a name="npcs">NPCs</a></h2>

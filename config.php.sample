@@ -1,0 +1,15 @@
+<?php
+/**
+ * Configuation File.  (DB configuration)
+ */
+return (object)array(
+    // Enable to turn on debuging (right now simply includes FirePHP classes)
+    'debug'=>false,
+    // Database connection parameters
+    'db'=>(object)array(
+        'dsn'=>"mysql:host=localhost;dbname=databasename;unix_socket=/var/lib/mysql/mysql.sock",
+        'user'=>'username',
+        'password'=>'password',
+    ),
+);
+?>
