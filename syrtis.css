@@ -40,8 +40,18 @@ a:hover, a:active {
   overflow: hidden;
 }
 
+h2 {
+  text-align: center;
+}
+
+ul {
+  list-style: url("gem.png");
+  color: #EFC235;
+  position: absolute;
+}
+
 ul.navigation {
-  min-width: 750px;
+  min-width: 740px;
   float: left;
   position: relative;
   left: 50%;
