@@ -8,94 +8,91 @@
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="js/inqtools.js"></script>
     <script type="text/javascript">
-        var ajaxRoot = <tal:block tal:content="structure js/ajaxRoot"/>;
+      var ajaxRoot = <tal:block tal:content="structure js/ajaxRoot"/>;
     </script>
-</head>
+  </head>
 
-<body>
-  <div id="header">
-    <img src="header.png" />
-    <h1>Inquisition Clan Database</h1>
-  </div>
-  <div id="main">
-    <ul class="navigation">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#levels">Levels</a></li>
-      <li><a href="#mobs">Mobs</a></li>
-      <li><a href="#areas">Areas</a></li>
-      <li><a href="#pets">Pets</a></li>
-      <li><a href="#npcs">NPCs</a></li>
-      <li><a href="#shops">Shops</a></li>
-      <li><a href="#armor">Armor</a></li>
-      <li><a href="#trainer">Trainer</a></li>
-      <li><a href="#credits">Credits</a></li>
-    </ul>
-    <div id="home" class="content">
-      <h2><a name="home">Welcome to the Inquisition Clan Database!</a></h2>
-      Here you can find some useful tools to help you in Regnum Online.<br />
-      List of the tools:<br />
-      <ul>
-	<li><b>Levels:</b> calculate the number of mob kills till you level up.</li>
-	<li><b>Mobs:</b> search for the mobs by name.</li>
-	<li><b>Areas:</b> find the best area for a grind.</li>
-	<li><b>Pets:</b> find the pet for your hunter.</li>
-	<li><b>NPCs:</b> search for the quest NPCs.</li>
-	<li><b>Shops:</b> find out which merchants sell stuff for your class.</li>
-	<li><b>Armor:</b> calculate armor points per damage type of your armor set.</li>
-	<li><b>Trainer:</b> build the setup for your character.</li>
-	<li><b>Credits:</b> list who provided you all this.</li>
-</ul>
+  <body>
+    <div id="header">
+      <img src="header.png" />
+      <h1>Inquisition Clan Database</h1>
     </div>
-    <div id="levels" class="content">
-      <h2><a name="levels">Levels</a></h2>
-      Coming soon
-    </div>
-    <div id="mobs" class="content">
-      <h2><a name="mobs">Mobs</a></h2>
-      Coming soon
-    </div>
-    <div id="areas" class="content">
-      <h2><a name="areas">Areas</a></h2>
-      Coming soon
-    </div>
-    <div id="pets" class="content">
-      <h2><a name="pets">Pets</a></h2>
-      <p>
-          Let me find the best pet for you.  Enter you level, and power levels of your tame spells.
-      </p>
-      <p>
-          <select id="pets_player_level">
-              <option value=""> -- Character Level --</option>
-              <option tal:repeat="level levels" value="${level}">${level}</option>
-          </select>
-      </p>
-      <p>
-          <button id="pets_go">Find Pets</button>
-      </p>
-      <div id="pets_results">
-
+    <div id="main">
+      <ul class="navigation">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#levels">Levels</a></li>
+        <li><a href="#mobs">Mobs</a></li>
+        <li><a href="#areas">Areas</a></li>
+        <li><a href="#pets">Pets</a></li>
+        <li><a href="#npcs">NPCs</a></li>
+        <li><a href="#shops">Shops</a></li>
+        <li><a href="#armor">Armor</a></li>
+        <li><a href="#trainer">Trainer</a></li>
+        <li><a href="#credits">Credits</a></li>
+      </ul>
+      <div id="home" class="content">
+        <h2><a name="home">Welcome to the Inquisition Clan Database!</a></h2>
+        Here you can find some useful tools to help you in Regnum Online.<br />
+        List of the tools:<br />
+        <ul>
+          <li><b>Levels:</b> calculate the number of mob kills till you level up.</li>
+          <li><b>Mobs:</b> search for the mobs by name.</li>
+          <li><b>Areas:</b> find the best area for a grind.</li>
+          <li><b>Pets:</b> find the pet for your hunter.</li>
+          <li><b>NPCs:</b> search for the quest NPCs.</li>
+          <li><b>Shops:</b> find out which merchants sell stuff for your class.</li>
+          <li><b>Armor:</b> calculate armor points per damage type of your armor set.</li>
+          <li><b>Trainer:</b> build the setup for your character.</li>
+          <li><b>Credits:</b> list who provided you all this.</li>
+        </ul>
+      </div>
+      <div id="levels" class="content">
+        <h2><a name="levels">Levels</a></h2>
+        Coming soon
+      </div>
+      <div id="mobs" class="content">
+        <h2><a name="mobs">Mobs</a></h2>
+        Coming soon
+      </div>
+      <div id="areas" class="content">
+        <h2><a name="areas">Areas</a></h2>
+        Coming soon
+      </div>
+      <div id="pets" class="content">
+        <h2><a name="pets">Pets</a></h2>
+        <p>Let me find the best pet for you.  Enter your level, and power levels of your tame spells.</p>
+        <p>
+        <select id="pets_player_level">
+          <option value="">-- Character Level --</option>
+          <option tal:repeat="level levels" value="${level}">${level}</option>
+        </select>
+        </p>
+        <p>
+        <button id="pets_go">Find Pets</button>
+        </p>
+        <div id="pets_results">
+        </div>
+      </div>
+      <div id="npcs" class="content">
+        <h2><a name="npcs">NPCs</a></h2>
+        Coming soon
+      </div>
+      <div id="shops" class="content">
+        <h2><a name="shops">Shops</a></h2>
+        Coming soon
+      </div>
+      <div id="armor" class="content">
+        <h2><a name="armor">Armor Points</a></h2>
+        Coming soon
+      </div>
+      <div id="trainer" class="content">
+        <h2><a name="trainer">Trainer</a></h2>
+        Coming soon
+      </div>
+      <div id="credits" class="content">
+        <h2><a name="credits">Credits</a></h2>
+        Coming soon
       </div>
     </div>
-    <div id="npcs" class="content">
-      <h2><a name="npcs">NPCs</a></h2>
-      Coming soon
-    </div>
-    <div id="shops" class="content">
-      <h2><a name="shops">Shops</a></h2>
-      Coming soon
-    </div>
-    <div id="armor" class="content">
-      <h2><a name="armor">Armor Points</a></h2>
-      Coming soon
-    </div>
-    <div id="trainer" class="content">
-      <h2><a name="trainer">Trainer</a></h2>
-      Coming soon
-    </div>
-    <div id="credits" class="content">
-      <h2><a name="credits">Credits</a></h2>
-      Coming soon
-    </div>
-  </div>
-</body>
+  </body>
 </html>
