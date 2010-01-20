@@ -8,25 +8,25 @@ body {
   line-height: 2.2em;
   background-color: #000000;
   color: #EFC235;
-  cursor: url("normal.cur"), default;
+  cursor: url("images/normal.cur"), default;
 }
 
 a:link { 
   text-decoration: none; 
   color: #EFC325;
-  cursor: url("links.cur"), default;
+  cursor: url("images/links.cur"), default;
 }
 
 a:visited {  
   text-decoration: none; 
   color: #EFC325;
-  cursor: url("links.cur"), default;
+  cursor: url("images/links.cur"), default;
 }
 
 a:hover, a:active { 
   text-decoration: underline; 
   color: #FFFFFF;
-  cursor: url("links.cur"), default;
+  cursor: url("images/links.cur"), default;
 }
 
 #header {
@@ -45,7 +45,7 @@ h2 {
 }
 
 ul {
-  list-style: url("gem.png");
+  list-style: url("images/gem.png");
   color: #EFC235;
 }
 
@@ -68,17 +68,17 @@ ul.navigation li {
   padding: 0.2em 1em;
   margin: 0;
   height: 40px;
-  background: url('menu-gradient.png') repeat-x;
+  background: url('images/menu-gradient.png') repeat-x;
 }
 
 ul.navigation li:first-child {
   padding-left: 38px;
-  background: url('menu-left.png') no-repeat;
+  background: url('images/menu-left.png') no-repeat;
 }
 
 ul.navigation li:last-child {
   padding-right: 38px;
-  background: url('menu-right.png') no-repeat;
+  background: url('images/menu-right.png') no-repeat;
   background-position: top right;
 }
 
