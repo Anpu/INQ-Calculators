@@ -47,11 +47,9 @@ h2 {
 ul {
   list-style: url("gem.png");
   color: #EFC235;
-  position: absolute;
 }
 
 ul.navigation {
-  min-width: 740px;
   float: left;
   position: relative;
   left: 50%;
