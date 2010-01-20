@@ -56,5 +56,22 @@ class Util {
             return $default;
         }
     }
+
+    /**
+     *
+     * @param string $var
+     * @param string $default
+     * @return string
+     *
+     * @todo Add in some kind of validation?
+     */
+    public static function GetString($var, $default ='')
+    {
+        if (array_key_exists($var, $_GET)) {
+            return (string)$_GET[$var];
+        } else {
+            return $default;
+        }
+    }
 }
 ?>
