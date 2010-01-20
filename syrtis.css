@@ -11,22 +11,18 @@ body {
   cursor: url("images/normal.cur"), default;
 }
 
-a:link { 
-  text-decoration: none; 
-  color: #EFC325;
+a {
   cursor: url("images/links.cur"), default;
 }
 
-a:visited {  
+a:link, a:visited { 
   text-decoration: none; 
   color: #EFC325;
-  cursor: url("images/links.cur"), default;
 }
 
 a:hover, a:active { 
   text-decoration: underline; 
   color: #FFFFFF;
-  cursor: url("images/links.cur"), default;
 }
 
 #header {
