@@ -4,13 +4,13 @@
     <title>Inquisition Clan Database</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
     <link rel="stylesheet" type="text/css" href="../syrtis.css"
-          tal:attributes="href string:syrtis.css"/>
+    tal:attributes="href string:syrtis.css"/>
     <script type="text/javascript" src="../js/jquery-1.3.2.min.js"
-            tal:attributes="src string:js/jquery-1.3.2.min.js"></script>
+      tal:attributes="src string:js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="../js/jquery-ui-1.7.2.custom.min.js"
-            tal:attributes="src string:js/jquery-ui-1.7.2.custom.min.js"></script>
+      tal:attributes="src string:js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="../js/inqtools.js"
-            tal:attributes="src string:js/inqtools.js"></script>
+      tal:attributes="src string:js/inqtools.js"></script>
     <script type="text/javascript">
       <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
     </script>
@@ -64,18 +64,32 @@
       </div>
       <div id="pets" class="content">
         <h2><a name="pets">Pets</a></h2>
-        <p>Let me find the best pet for you.  Enter your level, and power levels of your tame spells.</p>
+        <p>
+        Let me find the best pet for you.  Enter you level, and power levels of your tame spells.
+        </p>
         <p>
         <select id="pets_player_level">
-          <option value="">-- Character Level --</option>
+          <option value=""> -- Character Level --</option>
           <option tal:repeat="level levels" value="${level}">${level}</option>
+        </select>
+        </p>
+        <p>
+        <select id="pets_player_realm">
+          <option value=""> -- Character Realm --</option>
+          <option tal:repeat="realm realms" value="${realm}">${realm}</option>
+        </select>
+        </p>
+        <p>
+        <select id="pets_regions" multiple="multiple">
+          <option selected="selected">Initiation Zone</option>
+          <option selected="selected">Inner Realm</option>
+          <option selected="selected">War Zone</option>
         </select>
         </p>
         <p>
         <button id="pets_go">Find Pets</button>
         </p>
-        <div id="pets_results">
-        </div>
+        <div id="pets_results"></div>
       </div>
       <div id="npcs" class="content">
         <h2><a name="npcs">NPCs</a></h2>
