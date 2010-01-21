@@ -4,7 +4,7 @@
  *
  * @author Edward Rudd <urkle at outoforder.cc>
  */
-class ResultIterator implements Iterator,ArrayAccess,Countable {
+class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator {
     private $results;
     private $classname;
 
@@ -85,6 +85,16 @@ class ResultIterator implements Iterator,ArrayAccess,Countable {
 
     public function offsetUnset($offset) {
         throw new BadFunctionCallException("This Array is Read Only");
+    }
+
+    /*** Seekable Iterator Methods **/
+    public function seek($position)
+    {
+        if ($position >=0 && $position < $this->count()) {
+            $this->position = $position;
+        } else {
+            throw new RangeException("Tried to non existant record");
+        }
     }
 }
 ?>
