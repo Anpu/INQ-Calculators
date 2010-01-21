@@ -74,6 +74,19 @@
           </select>
       </p>
       <p>
+          <select id="pets_player_realm">
+              <option value=""> -- Character Realm --</option>
+              <option tal:repeat="realm realms" value="${realm}">${realm}</option>
+          </select>
+      </p>
+      <p>
+          <select id="pets_regions" multiple="multiple">
+              <option selected="selected">Initiation Zone</option>
+              <option selected="selected">Inner Realm</option>
+              <option selected="selected">War Zone</option>
+          </select>
+      </p>
+      <p>
           <button id="pets_go">Find Pets</button>
       </p>
       <div id="pets_results">

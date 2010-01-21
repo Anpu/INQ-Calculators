@@ -76,11 +76,12 @@ class RO_Mob {
      *
      * @return Iterator the found Mobs
      */
-    public static function findTameable($player_level = 1, $lesser_power = 5,
-                $beast_power = 5, $monster_power = 5)
+    public static function findTameable($player_level = 1, $player_realm = 'Syrtis', $regions = '',
+                $lesser_power = 5, $beast_power = 5, $monster_power = 5)
     {
-        $sql = "CALL GetTameableMobs(?, ?, ?, ?)";
-        $stmt = Database::query($sql, $player_level, $lesser_power, $beast_power, $monster_power);
+        $sql = "CALL GetTameableMobs(?, ?, ?, ?, ?, ?)";
+        $stmt = Database::query($sql, $player_level, $player_realm, $regions,
+                    $lesser_power, $beast_power, $monster_power);
         $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $stmt->closeCursor();
         return new ResultIterator($ret, __CLASS__);
