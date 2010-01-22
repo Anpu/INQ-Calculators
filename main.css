@@ -52,19 +52,26 @@ ul.navigation {
   background-image: none;
   border: none;
   float: left;
+  position: relative;
   left: 50%;
+  list-style: none;
+  list-style-type: none;
   text-align: left;
   padding: 0 !important;
   margin: 0 auto;
 }
 
 ul.navigation li {
+  float: left;
+  position: relative;
   left: -50%;
+  font-weight: bold;
+  padding: 0.2em 1em;
+  padding-bottom: 0 !important;
   background-image: url('images/menu-gradient.png') !important;
   background-repeat: repeat-x;
   background-position: 0 0 !important;
   margin: 0 !important;
-  padding-bottom: 0 !important;
 }
 
 ul.navigation li:first-child {
@@ -78,6 +85,10 @@ ul.navigation li:last-child {
   background-image: url('images/menu-right.png') !important;
   background-repeat: no-repeat;
   background-position: top right !important;
+}
+
+.ui-tabs .ui-tabs-hide {
+  display: none;
 }
 
 ul.navigation li.ui-state-default, ul.navigation li.ui-state-active {
