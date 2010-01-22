@@ -64,6 +64,7 @@ ul.navigation li {
   background-repeat: repeat-x;
   background-position: 0 0 !important;
   margin: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 ul.navigation li:first-child {
