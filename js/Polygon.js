@@ -13,6 +13,9 @@ function Point(x, y)
 $.extend(Point.prototype, {
     toString: function() {
         return '[x='+this.x+',y='+this.y+']';
+    },
+    css: function() {
+        return this.x+'px '+this.y+'px';
     }
 });
 
@@ -51,13 +54,17 @@ $.extend(Polygon.prototype, {
     setPoints: function(points)
     {
         if (!points || !points.length) return;
-        var p = new Point(points[0][0], points[0][1]);
+        var p = points[0] instanceof Point
+                    ? points[0]
+                    : new Point(points[0][0], points[0][1]);
         this.points = [p];
 
         var l=p.x, t=p.y, r=p.x, b=p.y;
 
         for (var i=1, len=points.length; i<len; i++) {
-            p = new Point(points[i][0], points[i][1]);
+            p = points[i] instanceof Point
+                    ? points[i]
+                    : new Point(points[i][0], points[i][1]);
             l = Math.min(l,p.x);
             r = Math.max(r,p.x);
             t = Math.min(t,p.y);
@@ -77,6 +84,10 @@ $.extend(Polygon.prototype, {
     getPoint: function(index)
     {
         return this.points[index];
+    },
+    clone: function()
+    {
+        return new Polygon(this.points);
     },
     /**
      * point is a 2 member array of X and Y positions

@@ -1,0 +1,51 @@
+div.mapWidget {
+    overflow: auto;
+    position: relative;
+}
+
+div.mapWidget-overlay {
+    position: absolute;
+}
+
+div.mapWidget-editing {
+    outline: 2px red solid;
+}
+
+div.mapWidget-editmap {
+    position: relative;
+}
+
+div.mapWidget-editmap .mapWidget-editmap-add {
+    right: 0.3em;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+}
+
+div.mapWidget-editregion {
+    position: relative;
+}
+
+div.mapWidget-editregion .mapWidget-editregion-indent {
+    left: 0.5em;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+}
+
+div.mapWidget-editregion .mapWidget-editregion-remove {
+    right: 0.3em;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+}
+
+div.mapWidget-editregion .mapWidget-editregion-edit {
+    display: block;
+    font-size: 1em;
+    padding: 0 .5em 0 2.2em;
+    cursor: pointer;
+}
