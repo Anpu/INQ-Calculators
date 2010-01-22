@@ -41,6 +41,11 @@ if (empty($_SERVER['PATH_INFO'])) {
         } else {
             throw new Exception("Invalid Request");
         }
+    } catch(PDOException $ex) {
+	echo json_encode(array(
+	    'response'=>'error',
+	    'error'=>"Database Error: SQLSTATE:".$ex->getCode(),
+	));
     } catch(Exception $ex) {
         echo json_encode(array(
             'response'=>'error',
