@@ -10,10 +10,15 @@ $(function() {
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
     $('#pets_go').click(function () {
+        var selected_regions = [];
+        $('input[name="pets_regions"]:checked').each(
+          function() {
+            selected_regions.push($(this).val());
+          });
         getTameableMobs(
             $('#pets_player_level').val(),
             $('#pets_player_realm').val(),
-            $('#pets_regions').val()
+            selected_regions
         );
     });
 });
