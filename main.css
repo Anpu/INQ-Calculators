@@ -119,3 +119,90 @@ div.content.ui-widget-content {
 div.content.ui-widget-content a {
   color: #EFC235;
 }
+/** Regnum Interactive Map Widget */
+.ROMap {
+    width: 199px;
+    height: 186px;
+}
+.ROMapImage {
+    background-image: url(images/ro_map-200.png);
+}
+
+.ROMapImage.map {
+    left: 0px;
+    top: 0px;
+    width: 199px;
+    height: 186px;
+}
+/* Syrtis */
+.ROMapImage.syrtis-iz {
+    background-position: -268px -17px;
+    height: 25px;
+    left: 17px;
+    top: 151px;
+    width: 46px;
+}
+
+.ROMapImage.syrtis-ir {
+    background-position: -255px -67px;
+    height: 58px;
+    left: 34px;
+    top: 109px;
+    width: 69px;
+}
+
+.ROMapImage.syrtis-wz {
+    background-position: -253px -156px;
+    height: 65px;
+    left: 51px;
+    top: 86px;
+    width: 75px;
+}
+/* Ignus */
+.ROMapImage.ignis-iz {
+    background-position: -6px -300px;
+    height: 57px;
+    left: 133px;
+    top: 11px;
+    width: 50px;
+}
+
+.ROMapImage.ignis-ir {
+    background-position: -83px -296px;
+    height: 64px;
+    left: 113px;
+    top: 26px;
+    width: 59px;
+}
+
+.ROMapImage.ignis-wz {
+    background-position: -164px -287px;
+    height: 83px;
+    left: 94px;
+    top: 41px;
+    width: 56px;
+}
+/* Alsius */
+.ROMapImage.alsius-iz {
+    background-position:-9px -222px;
+    height:34px;
+    left:16px;
+    top:12px;
+    width:42px;
+}
+
+.ROMapImage.alsius-ir {
+    background-position:-65px -210px;
+    height:61px;
+    left:17px;
+    top:28px;
+    width:59px;
+}
+
+.ROMapImage.alsius-wz {
+    background-position:-141px -210px;
+    height:59px;
+    left:46px;
+    top:34px;
+    width:58px;
+}
