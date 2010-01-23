@@ -32,18 +32,13 @@ class RO_Mob extends RO_Base {
      *
      * @param int $player_level     The level of the player
      * @param array $regions       List of regions to search in
-     * @param int $lesser_power     The power level of the Tame Lesser spell
-     * @param int $beast_power      The power level of the Tame Beast spell
-     * @param int $monster_power    The power level of the Control Monster spell
      *
      * @return Iterator the found Mobs
      */
-    public static function findTameable($player_level = 1, $regions = array(),
-                $lesser_power = 5, $beast_power = 5, $monster_power = 5)
+    public static function findTameable($player_level = 1, $regions = array())
     {
-        $sql = "CALL GetTameableMobs(?, ?, ?, ?, ?)";
-        $stmt = Database::query($sql, $player_level, implode(',',$regions),
-                    $lesser_power, $beast_power, $monster_power);
+        $sql = "CALL GetTameableMobs(?, ?)";
+        $stmt = Database::query($sql, $player_level, implode(',',$regions));
         $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $stmt->closeCursor();
         return new ResultIterator($ret, __CLASS__,array('regions'=>$regions));
