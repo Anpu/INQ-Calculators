@@ -35,17 +35,16 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                     left:c.position.x,
                     top:c.position.y});
             }
-            if (c.hidden) {
-                this._maps[m].hide();
-            }
             if (c['default']) {
                 this._value[m] = c['default'];
-            } else {
+            } else if (maps[m].areas) {
                 this._value[m] = false;
+                this._maps[m].hide();
             }
 
             this._maps[m].appendTo(this.element);
         }
+        this._trigger('init',0);
     },
 
     _MWmouseMove: function(e) {
@@ -82,21 +81,36 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
             var ret = this._trigger('validate', e, hit);
 
             if ((ret !== false) && hit.map) {
-                var r = this._getData('maps')[hit.map].areas[hit.region];
-                if (r.offset) {
-                    // set the background position
-                    this._maps[hit.map].css('backgroundPosition',r.offset.css());
-                    this._value[hit.map] = hit.region;
-                } else if (r.toggle) {
-                    //toggle visibility
-                    this._maps[hit.map].toggle();
-
-                    this._value[hit.map] = this._maps[hit.map].is(':hidden')
-                                ? false
-                                : hit.region;
+                if (this._getData('maps')[hit.map].areas[hit.region].toggle) {
+                    var hidden = this._maps[hit.map].is(':hidden');
+                    this.setValue(hit.map, hidden ? hit.region : false);
+                } else {
+                    this.setValue(hit.map, hit.region);
                 }
                 this._trigger('click', e, hit);
             }
+        }
+    },
+
+    setValue: function(aMap, aRegion) {
+        if (aRegion) {
+            if (aRegion === true) {
+                // Anyone have a better way of getting the first key in an object?
+                for (var a in this._getData('maps')[aMap].areas) {
+                    aRegion = a;
+                    break;
+                }
+            }
+            var r = this._getData('maps')[aMap].areas[aRegion];
+            this._maps[aMap].show();
+            if (r.offset) {
+                // set the background position
+                this._maps[aMap].css('backgroundPosition',r.offset.css());
+            }
+            this._value[aMap] = aRegion;
+        } else {
+            this._maps[aMap].hide();
+            this._value[aMap] = false;
         }
     },
 
@@ -249,6 +263,9 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
 
     value: function() {
         return this._value;
+    },
+    setMapValue: function(aMap, aValue) {
+        // if false make it hidden
     },
     destroy: function() {
         this._mouseDestroy();

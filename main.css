@@ -206,3 +206,12 @@ div.content.ui-widget-content a {
     top:34px;
     width:58px;
 }
+/** Pet Checkboxes */
+#pets_regions {
+    position: relative;
+}
+#pets_region_checks {
+    position: absolute;
+    top: 0px;
+    left: 230px;
+}
