@@ -17,7 +17,12 @@ class RO_Mob extends RO_Base {
 
     protected function zones()
     {
-        $stmt = Database::query("CALL GetMobAreas(?)",$this->ID());
+        if (empty($this->extra_filter->regions)) {
+            $regions = '';
+        } else {
+            $regions = implode(',',$this->extra_filter->regions);
+        }
+        $stmt = Database::query("CALL GetMobAreas(?,?)",$this->ID(),$regions);
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return new ResultIterator($rows,'RO_Zone');
     }
@@ -41,7 +46,7 @@ class RO_Mob extends RO_Base {
                     $lesser_power, $beast_power, $monster_power);
         $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $stmt->closeCursor();
-        return new ResultIterator($ret, __CLASS__);
+        return new ResultIterator($ret, __CLASS__,array('regions'=>$regions));
     }
 }
 ?>

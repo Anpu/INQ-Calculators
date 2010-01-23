@@ -7,6 +7,7 @@
 abstract class RO_Base {
     private $id;
     private $record;
+    protected $extra_filter;
     static private $cache = array();
 
     public function  __construct($id)
@@ -61,6 +62,12 @@ abstract class RO_Base {
         } else {
             $this->record = $cache;
         }
+    }
+
+
+    final public function setExtraFilter($filter)
+    {
+        $this->extra_filter = $filter;
     }
 
     /*** Object access methods **/

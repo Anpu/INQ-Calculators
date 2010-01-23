@@ -7,6 +7,7 @@
 class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator {
     private $results;
     private $classname;
+    private $extra_filter;
 
     private $position;
     private $object;
@@ -17,10 +18,14 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
      *
      * @param array $results A list of object IDs
      * @param string $classname  The cass name to instantiate
+     * @param array $extra_filter  Extra filter arguments to pass along to created objects
      */
-    public function __construct(array $results, $classname) {
+    public function __construct(array $results, $classname, $extra_filter = array()) {
         $this->results = $results;
         $this->classname = $classname;
+        if (!empty($extra_filter)) {
+            $this->extra_filter = is_array($extra_filter) ? (object)$extra_filter : $extra_filter;
+        }
         $this->object = null;
     }
 
@@ -34,6 +39,9 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
     {
         if (is_null($this->object) || $this->object_id != $id) {
             $this->object = new $this->classname($id);
+            if (!empty($this->extra_filter) && method_exists($this->object, 'setExtraFilter')) {
+                $this->object->setExtraFilter($this->extra_filter);
+            }
             $this->object_id = $id;
         }
         return $this->object;
