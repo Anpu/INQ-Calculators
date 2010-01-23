@@ -6,58 +6,96 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         this._mouseInit();
         this._maps = {};
         this._editing = false;
-        this._setup(true);
-        this._editbox = null;
-        this._editmaps = null;
-        this._editregion = null;
-    },
+        this._editmode = {
+            box:null,
+            maps: null,
+            region: null,
+            points: null
+        };
+        this._value = {};
 
-    _setup: function(init) {
+        // setup UI
         var self = this;
-
-        if (init) {
-            this.element.addClass('mapWidget '+this._getData('class'));
-            var maps = this._getData('maps');
-            for (var m in maps) {
-                this._maps[m] = $('<div/>')
-                            .addClass('mapWidget-overlay '+maps[m].image);
-                if (maps[m].bgoffset) {
-                    this._maps[m].css('backgroundPosition',maps[m].bgoffset.css());
-                }
-                if (maps[m].position) {
-                    this._maps[m].css({
-                        left:maps[m].position.x,
-                        right:maps[m].position.y});
-                } else {
-                    this._maps[m].css({left:0,right:0});
-                }
-                this._maps[m].appendTo(this.element);
+        this._MWmouseMoveDelegate = function(event) {
+			return self._MWmouseMove(event);
+		};
+        this.element
+            .addClass('mapWidget '+this._getData('class'))
+            .bind('mousemove.mapWidget',this._MWmouseMoveDelegate);
+        var maps = this._getData('maps');
+        for (var m in maps) {
+            var c = maps[m].config;
+            this._maps[m] = $('<div/>')
+                        .addClass('mapWidget-overlay '+c.image);
+            if (c.bgoffset) {
+                this._maps[m].css('backgroundPosition',c.bgoffset.css());
             }
+            if (c.position) {
+                this._maps[m].css({
+                    left:c.position.x,
+                    top:c.position.y});
+            }
+            if (c.hidden) {
+                this._maps[m].hide();
+            }
+            if (c['default']) {
+                this._value[m] = c['default'];
+            } else {
+                this._value[m] = false;
+            }
+
+            this._maps[m].appendTo(this.element);
         }
     },
 
-    _mouseStop: function(e) {
+    _MWmouseMove: function(e) {
         var offset = this.element.offset();
         var p = new Point(e.pageX-offset.left,e.pageY-offset.top);
-        if (this._editing) {
-            console.log('Found Point: ',p);
-        } else {
-            var regs = this._getData('regions');
-            var hit = {map:null,region:null};
-            for (var map in regs) {
-                for (var region in regs[map]) {
-                    var poly = regs[map][region].map;
+        var hit = this._hitFromPoint(p);
+        this.element.toggleClass('mapWidget-point', !!hit.map);
+    },
+
+    _hitFromPoint: function(p) {
+        var hit = {map:null,region:null};
+        var maps = this._getData('maps');
+        for (var m in maps) {
+            if (maps[m].areas) {
+                for (var region in maps[m].areas) {
+                    var poly = maps[m].areas[region].map;
                     if (poly.containsPoint(p)) {
-                        hit.map = map;
+                        hit.map = m;
                         hit.region = region;
                         break;
                     }
                 }
             }
-            var ret = this._trigger('click', e, hit);
+        }
+        return hit;
+    },
+    _mouseStop: function(e) {
+        var offset = this.element.offset();
+        var p = new Point(e.pageX-offset.left,e.pageY-offset.top);
+        if (this._editing) {
+            this._editmode_addpoint(p);
+        } else {
+            var hit = this._hitFromPoint(p);
+            var ret = this._trigger('validate', e, hit);
+
             if ((ret !== false) && hit.map) {
-                // set the background position
-                this._maps[hit.map].css('backgroundPosition',regs[hit.map][hit.region].offset.css());
+                var r = this._getData('maps')[hit.map].areas[hit.region];
+                if (r.offset) {
+                    // set the background position
+                    this._maps[hit.map].css('backgroundPosition',r.offset.css());
+                    this._value[hit.map] = hit.region;
+                } else if (r.toggle) {
+                    //toggle visibility
+                    this._maps[hit.map].toggle();
+
+                    this._value[hit.map] = this._maps[hit.map].is(':hidden')
+                                ? false
+                                : hit.region;
+                }
+                this._trigger('click', e, hit);
             }
         }
     },
@@ -67,15 +105,19 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         this._editing = !!v;
         if (this._editing) {
             this.element.addClass('mapWidget-editing');
-            this._editbox = $('<div/>').appendTo('body');
-            this.editmode_populate();
+            this._editmode.box = $('<div/>').appendTo('body');
+            this._editmode_populate();
             var self = this;
-            this._editbox.dialog({
+            this._editmode.box.dialog({
                     title:"Editing Map Widget",
                     autoOpen: true,
                     buttons: {
                         "Generate":function () {
-                            alert('this would generate the map');
+                            var m = self._editmode.region;
+                            if (m) {
+                                var s = JSON.stringify(m.toArray(1));
+                                console.log(s);
+                            }
                         },
                         "Dismiss":function () {
                             $(this).dialog('close');
@@ -87,84 +129,101 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                 });
         } else {
             this.element.removeClass('mapWidget-editing');
-            this._editbox.dialog('destroy');
-            this._editbox.remove();
-            this._editmaps = null;
-            this._editregion = null;
-            this._editbox = null;
+            this._editmode.box.dialog('destroy');
+            this._editmode.box.remove();
+            this._editmode.maps = null;
+            this._editmode.region = null;
+            this._editmode.box = null;
+            this._editmode_clearpoints();
+            this._editmode.points = null;
         }
     },
 
-    editmode_funcs: {
-        hoverin: function() {
-            $(this).addClass('ui-state-hover');
-        },
-        hoverout: function() {
-            $(this).removeClass('ui-state-hover');
-        },
-        focusin: function() {
-            $(this).addClass('ui-state-focus');
-        },
-        focusout: function() {
-            $(this).removeClass('ui-state-focus');
+    _editmode_hoverin: function() {
+        $(this).addClass('ui-state-hover');
+    },
+    _editmode_hoverout: function() {
+        $(this).removeClass('ui-state-hover');
+    },
+
+    _editmode_add:function(aMap) {
+        var i =0;
+        while (this._editmode.maps[aMap]['new_'+i] !== undefined) {
+            ++i;
+        }
+        console.log('Start Polygon ','new_'+i);
+        this._editmode_clearpoints();
+    },
+
+    _editmode_edit:function(aMap, aRegion){
+        var map = this._editmode.maps[aMap][aRegion].map;
+        this._editmode_clearpoints();
+        for (var i=0,l=map.getPointCount(); i<l; i++) {
+            this._editmode_addpoint(map.getPoint(i));
         }
     },
-
-    editmode_add:function(aMap){
+    _editmode_remove:function(aMap, aRegion){
 
     },
-    editmode_edit:function(aMap, aRegion){
-        this._editregion = this._editmaps[aMap][aRegion].map.clone();
-        for (var i=0,l=this._editregion.getPointCount(); i<l; i++) {
-            console.log(this._editregion.getPoint(i));
+    _editmode_addpoint: function(aPoint) {
+        this._editmode.region.addPoint(aPoint);
+        this._editmode.points.push($('<span/>')
+            .addClass('mapWidget-dot')
+            .css({left:aPoint.x, top:aPoint.y})
+            .appendTo(this.element));
+    },
+
+    _editmode_clearpoints: function() {
+        if (this._editmode.points) {
+            while (this._editmode.points.length) {
+                this._editmode.points.shift().remove();
+            }
         }
+        this._editmode.points = [];
+        this._editmode.region = new Polygon();
     },
-    editmode_remove:function(aMap, aRegion){
-
-    },
-    editmode_populate: function() {
+    _editmode_populate: function() {
         // add maps to dialog
         var self = this;
-        this._editmaps = {};
+        this._editmode.maps = {};
         var addfunc = function() {
-            self.editmode_add($(this).attr('map'));
+            self._editmode_add($(this).attr('map'));
             return false;
         };
         var editfunc = function() {
-            self.editmode_edit($(this).attr('map'),$(this).attr('region'));
+            self._editmode_edit($(this).attr('map'),$(this).attr('region'));
             return false;
         };
         var removefunc = function() {
-            self.editmode_remove($(this).attr('map'),$(this).attr('region'));
+            self._editmode_remove($(this).attr('map'),$(this).attr('region'));
             return false;
         };
         var maps = this._getData('maps');
-        var regs = this._getData('regions');
         for (var m in maps) {
-            this._editmaps[m] = {};
+            this._editmode.maps[m] = {};
             var mWMapHeader = $('<div/>')
                 .text(m)
                 .addClass('mapWidget-editmap')
-                .appendTo(this._editbox);
+                .appendTo(this._editmode.box);
             var mWMapHeaderAdd = $('<a href="#"/>')
                 .addClass('mapWidget-editmap-add ui-corner-all')
                 .attr({role:'button',map:m})
-                .hover(this.editmode_funcs.hoverin, this.editmode_funcs.hoverout)
+                .hover(this._editmode_hoverin, this._editmode_hoverout)
                 .click(addfunc)
                 .appendTo(mWMapHeader);
             $('<span/>')
                 .addClass("ui-icon ui-icon-plusthick")
                 .appendTo(mWMapHeaderAdd);
 
-            if (regs[m]) {
-                for (var region in regs[m]) {
-                    this._editmaps[m][region] = {
-                        offset: regs[m][region].offset,
-                        map: regs[m][region].map
+            if (maps[m].areas) {
+                for (var region in maps[m].areas) {
+                    this._editmode.maps[m][region] = {
+                        offset: maps[m].areas[region].offset,
+                        map: maps[m].areas[region].map
                     };
                     var mWRegionHeader = $('<div/>')
                         .addClass('mapWidget-editregion')
-                        .appendTo(this._editbox);
+                        .appendTo(this._editmode.box);
                     $('<span/>')
                         .addClass('mapWidget-editregion-indent ui-icon ui-icon-triangle-1-e')
                         .appendTo(mWRegionHeader);
@@ -177,7 +236,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                     var mWRegionHeaderMinus = $('<a href="#"/>')
                         .addClass('mapWidget-editregion-remove ui-corner-all')
                         .attr({role:'button',map:m, region:region})
-                        .hover(this.editmode_funcs.hoverin, this.editmode_funcs.hoverout)
+                        .hover(this._editmode_hoverin, this._editmode_hoverout)
                         .click(removefunc)
                         .appendTo(mWRegionHeader);
                     $('<span/>')
@@ -188,9 +247,14 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         }
     },
 
+    value: function() {
+        return this._value;
+    },
     destroy: function() {
         this._mouseDestroy();
-        
+        this.editmode(false);
+
+        this.element.unbind('mousemove.mapWidget',this._MWmouseMoveDelegate);
         this.element.find('div.mapWidget-overlay').remove();
         this.element.removeClass('mapWidget mapWidget-editing '+this._getData('class'));
 
@@ -200,10 +264,10 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
 
 $.extend($.ui.mapWidget, {
     version: "0.0.1",
+    getter: "value",
     defaults: $.extend({}, $.ui.mouse.defaults, {
-        regions: {},
         'class': '',
-        maps: [],
+        maps: {},
         width: 100,
         height: 100
     })

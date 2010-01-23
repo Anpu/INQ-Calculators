@@ -30,6 +30,13 @@ function Rect(l,t,r,b)
 }
 
 $.extend(Rect.prototype, {
+    extendByPoint: function(point)
+    {
+        this.l = Math.min(this.l,point.x);
+        this.r = Math.max(this.r,point.x);
+        this.t = Math.min(this.t,point.y);
+        this.b = Math.max(this.b,point.y);
+    },
     containsPoint: function(point)
     {
         return (point.x >= this.l && point.x <= this.r
@@ -53,25 +60,28 @@ $.extend(Polygon.prototype, {
      */
     setPoints: function(points)
     {
-        if (!points || !points.length) return;
-        var p = points[0] instanceof Point
-                    ? points[0]
-                    : new Point(points[0][0], points[0][1]);
-        this.points = [p];
-
-        var l=p.x, t=p.y, r=p.x, b=p.y;
+        this.points = [];
+        this.bounds = null;
+        if (!points || !points.length) {
+            return;
+        }
+        this.addPoint(points[0]);
 
         for (var i=1, len=points.length; i<len; i++) {
-            p = points[i] instanceof Point
-                    ? points[i]
-                    : new Point(points[i][0], points[i][1]);
-            l = Math.min(l,p.x);
-            r = Math.max(r,p.x);
-            t = Math.min(t,p.y);
-            b = Math.max(b,p.y);
-            this.points.push(p);
+            this.addPoint(points[i]);
         }
-        this.bounds = new Rect(l,t,r,b);
+    },
+    addPoint: function(point)
+    {
+        var p = point instanceof Point
+                    ? point
+                    : new Point(point[0], point[1]);
+        this.points.push(p);
+        if (this.points.length == 1) {
+            this.bounds = new Rect(p.x,p.y,p.x,p.y);
+        } else {
+            this.bounds.extendByPoint(p);
+        }
     },
     getBounds: function()
     {
@@ -84,6 +94,19 @@ $.extend(Polygon.prototype, {
     getPoint: function(index)
     {
         return this.points[index];
+    },
+    toArray: function(round)
+    {
+        var ret = [];
+        for (var i=0,l=this.getPointCount(); i<l; i++) {
+            var p = this.getPoint(i);
+            if (round===undefined) {
+                ret.push([p.x,p.y]);
+            } else {
+                ret.push([parseFloat(p.x.toFixed(round)),parseFloat(p.y.toFixed(round))]);
+            }
+        }
+        return ret;
     },
     clone: function()
     {

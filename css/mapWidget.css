@@ -1,5 +1,5 @@
 div.mapWidget {
-    overflow: auto;
+    overflow: hidden;
     position: relative;
 }
 
@@ -47,5 +47,21 @@ div.mapWidget-editregion .mapWidget-editregion-edit {
     display: block;
     font-size: 1em;
     padding: 0 .5em 0 2.2em;
+    cursor: pointer;
+}
+
+.mapWidget-dot {
+    position: absolute;
+    display: block;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    margin-left: -3px;
+    background-color: blue;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.mapWidget-point {
     cursor: pointer;
 }
