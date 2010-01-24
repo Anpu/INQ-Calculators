@@ -1,0 +1,19 @@
+<?php
+/**
+ * Configuation File.  (DB configuration)
+ */
+return (object)array(
+    // Enable to turn on debuging
+    'debug'=>true,
+    // Database connection parameters
+    'db'=>(object)array(
+        'dsn'=>"mysql:host=hostname;dbname=dbname",
+        'user'=>'',
+        'password'=>'',
+    ),
+    'tables'=>(object)array(
+	'zones'=>'inqtools.zones',
+	'points'=>'test.zone_positions',
+    ),
+);
+?>
