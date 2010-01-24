@@ -98,10 +98,10 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
     /*** Seekable Iterator Methods **/
     public function seek($position)
     {
-        if ($position >=0 && $position < $this->count()) {
+        if (($position >=0 && $position < $this->count()) || $position==0) {
             $this->position = $position;
         } else {
-            throw new RangeException("Tried to non existant record");
+            throw new RangeException("Tried to seek to non existant record ".$position);
         }
     }
 }
