@@ -108,7 +108,6 @@ $(function() {
 });
 
 function getTameableMobs(player_level, regions) {
-    tame_powers = tame_powers || {};
     var args = {
         player_level: player_level || 1,
         regions: regions.join(',')
