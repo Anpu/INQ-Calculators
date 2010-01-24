@@ -3,6 +3,15 @@ div.mapWidget {
     position: relative;
 }
 
+div.mapWidget-hint {
+    position: absolute;
+    background-color: #efc235;
+    border: 1px solid #4c4c4c;
+    -moz-border-radius: 5%;
+    color: #2c2c2c;
+    padding: 0 0.5em;
+}
+
 div.mapWidget-overlay {
     position: absolute;
 }

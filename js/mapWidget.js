@@ -13,6 +13,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
             points: null
         };
         this._value = {};
+        this._hintbox = null;
 
         // setup UI
         var self = this;
@@ -52,6 +53,52 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         var p = new Point(e.pageX-offset.left,e.pageY-offset.top);
         var hit = this._hitFromPoint(p);
         this.element.toggleClass('mapWidget-point', !!hit.map);
+        if (hit.map) {
+            var map = this._getData('maps')[hit.map];
+            var region = map.areas[hit.region];
+            this._setHint(region.hint || map.config.hint || null, region.map.getBounds());
+        } else {
+            this._setHint(); // Unset the hint
+        }
+    },
+
+    _getHintBox: function(create) {
+        if (!this._hintbox && create) {
+            this._hintbox = {
+                text:'',
+                control:$('<div/>')
+                    .addClass(this._getData('hintclass'))
+                    .hide()
+                    .appendTo(document.body)
+            }
+        }
+        return this._hintbox;
+    },
+    _setHint: function(hint, bounds) {
+        var _hb;
+        if (hint) {
+            _hb = this._getHintBox(true);
+            if (_hb.text==hint) return;
+            var off = this.element.offset();
+            _hb.text = hint;
+            _hb.control
+                .stop(true,true)
+                .hide()
+                .text(hint)
+                .css({
+                    left: bounds.r+off.left,
+                    top: bounds.b+off.top
+                })
+                .show()
+                .delay(3000)
+                .hide('fast');
+        } else {
+            _hb = this._getHintBox(false);
+            if (_hb) {
+                _hb.text = '';
+                _hb.control.stop(true,true).hide();
+            }
+        }
     },
 
     _hitFromPoint: function(p) {
@@ -284,6 +331,7 @@ $.extend($.ui.mapWidget, {
     getter: "value",
     defaults: $.extend({}, $.ui.mouse.defaults, {
         'class': '',
+        'hintclass':'mapWidget-hint',
         maps: {},
         width: 100,
         height: 100
