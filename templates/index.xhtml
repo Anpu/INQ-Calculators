@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:tal="http://xml.zope.org/namespaces/tal">
   <head>
     <title>Inquisition Clan Database</title>
@@ -20,7 +21,7 @@
 
   <body>
     <div id="header">
-      <img src="images/header.png" />
+      <img src="images/header.png" alt="Inquisition Clan Database" />
       <h1>Inquisition Clan Database</h1>
     </div>
     <div id="main">
@@ -69,19 +70,14 @@
         <p>
         Let me find the best pet for you.  Enter you level, and power levels of your tame spells.
         </p>
-        <p>
         <select id="pets_player_level">
           <option value=""> -- Character Level --</option>
           <option tal:repeat="level levels" value="${level}">${level}</option>
         </select>
-        </p>
-        <p>
         <select id="pets_player_realm">
           <option value=""> -- Character Realm --</option>
           <option tal:repeat="realm realms" value="${realm}">${realm}</option>
         </select>
-        </p>
-        <p>
         <div id="pets_regions">
           <input type="checkbox" id="pets_regions_1" name="pets_regions" value="Initiation Zone" checked="checked" />
           <label for="pets_regions_1">Initiation Zone</label>
@@ -91,7 +87,6 @@
           <label for="pets_regions_3">War Zone</label>
         </div>
         <button id="pets_go">Find Pets</button>
-        </p>
         <div id="pets_results"></div>
       </div>
       <div id="npcs" class="content">
