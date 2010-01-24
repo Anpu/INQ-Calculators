@@ -17,9 +17,6 @@ if (empty($_SERVER['PATH_INFO'])) {
         $tpl->js = array(
             'ajaxRoot'=>json_encode(Util::AjaxBaseURI())
         );
-        $tpl->levels = new RangeIterator(1, 50);
-        $tpl->realms = array('Syrtis','Ignis','Alsius');
-        $tpl->powers = new RangeIterator(1, 5);
         $tpl->echoExecute();
     } catch (Exception $ex) {
         die ((string)$ex);
