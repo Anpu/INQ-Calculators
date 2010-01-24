@@ -19,11 +19,17 @@ $(function() {
             }
         }
         getTameableMobs(
-            $('#pets_player_level').val(),
+            $('#pets_level').digitPicker('value'),
             selected_regions
         );
     });
 
+    /** Level Chooser */
+    $('#pets_level').digitPicker({
+        'min':1,
+        'max':50,
+        'defaultValue':1
+    });
     /** Pet Region Map Magic */
     $('input[name="pets_regions"]')
         .change(function () {
