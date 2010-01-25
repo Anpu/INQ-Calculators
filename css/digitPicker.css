@@ -1,0 +1,25 @@
+.digitPicker {
+    font-size: 2em;
+    color: white;
+    cursor: pointer;
+}
+
+.digitPicker-popup {
+    position:absolute;
+}
+
+.digitPicker-row {
+    position:relative;
+}
+
+.digitPicker-cell {
+    background-color: blue;
+    cursor: pointer;
+    color: white;
+    border: 2px gray outset;
+    font-size: 2em;
+}
+.digitPicker-cell-active {
+    background-color: yellow;
+    color: black;
+}

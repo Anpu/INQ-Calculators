@@ -8,12 +8,25 @@
       tal:attributes="href string:main.css"/>
     <link rel="stylesheet" type="text/css" href="../css/themes/inquisition/jquery-ui-1.7.2.custom.css"
       tal:attributes="href string:css/themes/inquisition/jquery-ui-1.7.2.custom.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/mapWidget.css"
+      tal:attributes="href string:css/mapWidget.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/digitPicker.css"
+      tal:attributes="href string:css/digitPicker.css"/>
     <script type="text/javascript" src="../js/jquery-1.3.2.min.js"
       tal:attributes="src string:js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="../js/jquery-ui-1.7.2.custom.min.js"
       tal:attributes="src string:js/jquery-ui-1.7.2.custom.min.js"></script>
+    <!-- Remove this if we every upgrade to jQuery 1.4 as it's built in now -->
+    <script type="text/javascript" src="../js/jquery.delay.min.js"
+      tal:attributes="src string:js/jquery.delay.min.js"></script>
     <script type="text/javascript" src="../js/inqtools.js"
       tal:attributes="src string:js/inqtools.js"></script>
+    <script type="text/javascript" src="../js/mapWidget.js"
+      tal:attributes="src string:js/mapWidget.js"></script>
+    <script type="text/javascript" src="../js/Polygon.js"
+      tal:attributes="src string:js/Polygon.js"></script>
+    <script type="text/javascript" src="../js/digitPicker.js"
+      tal:attributes="src string:js/digitPicker.js"></script>
     <script type="text/javascript">
       <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
     </script>
@@ -78,13 +91,40 @@
           <option value=""> -- Character Realm --</option>
           <option tal:repeat="realm realms" value="${realm}">${realm}</option>
         </select>
+        <p>
+            Level: <span id="pets_level"/>
+        </p>
         <div id="pets_regions">
-          <input type="checkbox" id="pets_regions_1" name="pets_regions" value="Initiation Zone" checked="checked" />
-          <label for="pets_regions_1">Initiation Zone</label>
-          <input type="checkbox" id="pets_regions_2" name="pets_regions" value="Inner Realm" checked="checked" />
-          <label for="pets_regions_2">Inner Realm</label>
-          <input type="checkbox" id="pets_regions_3" name="pets_regions" value="War Zone" checked="checked" />
-          <label for="pets_regions_3">War Zone</label>
+            <div id="pets_region_map"/>
+            <div id="pets_region_checks">
+              <div>
+                  Alsius:<br/>
+                  <input type="checkbox" id="pets_regions_1" name="pets_regions" value="alsius-iz"/>
+                  <label for="pets_regions_1">Initiation Zone</label>
+                  <input type="checkbox" id="pets_regions_2" name="pets_regions" value="alsius-ir"/>
+                  <label for="pets_regions_2">Inner Realm</label>
+                  <input type="checkbox" id="pets_regions_3" name="pets_regions" value="alsius-wz"/>
+                  <label for="pets_regions_3">War Zone</label>
+              </div>
+              <div>
+                  Ignis:<br/>
+                  <input type="checkbox" id="pets_regions_4" name="pets_regions" value="ignis-iz"/>
+                  <label for="pets_regions_4">Initiation Zone</label>
+                  <input type="checkbox" id="pets_regions_5" name="pets_regions" value="ignis-ir"/>
+                  <label for="pets_regions_5">Inner Realm</label>
+                  <input type="checkbox" id="pets_regions_6" name="pets_regions" value="ignis-wz"/>
+                  <label for="pets_regions_6">War Zone</label>
+              </div>
+              <div>
+                  Syrtis:<br/>
+                  <input type="checkbox" id="pets_regions_7" name="pets_regions" value="syrtis-iz"/>
+                  <label for="pets_regions_7">Initiation Zone</label>
+                  <input type="checkbox" id="pets_regions_8" name="pets_regions" value="syrtis-ir"/>
+                  <label for="pets_regions_8">Inner Realm</label>
+                  <input type="checkbox" id="pets_regions_9" name="pets_regions" value="syrtis-wz"/>
+                  <label for="pets_regions_9">War Zone</label>
+              </div>
+            </div>
         </div>
         <button id="pets_go">Find Pets</button>
         <div id="pets_results"></div>

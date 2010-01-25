@@ -17,9 +17,6 @@ if (empty($_SERVER['PATH_INFO'])) {
         $tpl->js = array(
             'ajaxRoot'=>json_encode(Util::AjaxBaseURI())
         );
-        $tpl->levels = new RangeIterator(1, 50);
-        $tpl->realms = array('Syrtis','Ignis','Alsius');
-        $tpl->powers = new RangeIterator(1, 5);
         $tpl->echoExecute();
     } catch (Exception $ex) {
         die ((string)$ex);
@@ -42,10 +39,10 @@ if (empty($_SERVER['PATH_INFO'])) {
             throw new Exception("Invalid Request");
         }
     } catch(PDOException $ex) {
-	echo json_encode(array(
-	    'response'=>'error',
-	    'error'=>"Database Error: SQLSTATE:".$ex->getCode(),
-	));
+      echo json_encode(array(
+          'response'=>'error',
+          'error'=>"Database Error: SQLSTATE:".$ex->getCode(),
+      ));
     } catch(Exception $ex) {
         echo json_encode(array(
             'response'=>'error',

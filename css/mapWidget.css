@@ -1,0 +1,76 @@
+div.mapWidget {
+    overflow: hidden;
+    position: relative;
+}
+
+div.mapWidget-hint {
+    position: absolute;
+    background-color: #efc235;
+    border: 1px solid #4c4c4c;
+    -moz-border-radius: 5%;
+    color: #2c2c2c;
+    padding: 0 0.5em;
+}
+
+div.mapWidget-overlay {
+    position: absolute;
+}
+
+div.mapWidget-editing {
+    outline: 2px red solid;
+}
+
+div.mapWidget-editmap {
+    position: relative;
+}
+
+div.mapWidget-editmap .mapWidget-editmap-add {
+    right: 0.3em;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+}
+
+div.mapWidget-editregion {
+    position: relative;
+}
+
+div.mapWidget-editregion .mapWidget-editregion-indent {
+    left: 0.5em;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+}
+
+div.mapWidget-editregion .mapWidget-editregion-remove {
+    right: 0.3em;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+}
+
+div.mapWidget-editregion .mapWidget-editregion-edit {
+    display: block;
+    font-size: 1em;
+    padding: 0 .5em 0 2.2em;
+    cursor: pointer;
+}
+
+.mapWidget-dot {
+    position: absolute;
+    display: block;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    margin-left: -3px;
+    background-color: blue;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.mapWidget-point {
+    cursor: pointer;
+}

@@ -17,7 +17,12 @@ class RO_Mob extends RO_Base {
 
     protected function zones()
     {
-        $stmt = Database::query("CALL GetMobAreas(?)",$this->ID());
+        if (empty($this->extra_filter->regions)) {
+            $regions = '';
+        } else {
+            $regions = implode(',',$this->extra_filter->regions);
+        }
+        $stmt = Database::query("CALL GetMobAreas(?,?)",$this->ID(),$regions);
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return new ResultIterator($rows,'RO_Zone');
     }
@@ -26,21 +31,17 @@ class RO_Mob extends RO_Base {
      * Find tameable mobs for a hunter
      *
      * @param int $player_level     The level of the player
-     * @param int $lesser_power     The power level of the Tame Lesser spell
-     * @param int $beast_power      The power level of the Tame Beast spell
-     * @param int $monster_power    The power level of the Control Monster spell
+     * @param array $regions       List of regions to search in
      *
      * @return Iterator the found Mobs
      */
-    public static function findTameable($player_level = 1, $player_realm = 'Syrtis', $regions = '',
-                $lesser_power = 5, $beast_power = 5, $monster_power = 5)
+    public static function findTameable($player_level = 1, $regions = array())
     {
-        $sql = "CALL GetTameableMobs(?, ?, ?, ?, ?, ?)";
-        $stmt = Database::query($sql, $player_level, $player_realm, $regions,
-                    $lesser_power, $beast_power, $monster_power);
+        $sql = "CALL GetTameableMobs(?, ?)";
+        $stmt = Database::query($sql, $player_level, implode(',',$regions));
         $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $stmt->closeCursor();
-        return new ResultIterator($ret, __CLASS__);
+        return new ResultIterator($ret, __CLASS__,array('regions'=>$regions));
     }
 }
 ?>
