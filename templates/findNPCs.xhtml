@@ -1,0 +1,20 @@
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Profession</th>
+            <th>Realm</th>
+            <th>Area</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+    <tbody tal:repeat="npc limit: limit npcs">
+        <tr>
+            <td>${npc/name}</td>
+            <td>${npc/profession}</td>
+            <td>${npc/zone/realm}</td>
+            <td>${npc/zone/name}</td>
+            <td>${npc/x}, ${npc/z}</td>
+        </tr>
+    </tbody>
+</table>

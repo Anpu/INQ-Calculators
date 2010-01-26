@@ -24,7 +24,7 @@ $(function() {
         );
     });
 
-    /** Level Chooser */
+    /** Pet Character Level Chooser */
     $('#pets_level').digitPicker({
         'min':1,
         'max':50,
@@ -111,16 +111,41 @@ $(function() {
             }
         }
     });
+
+    /** NPC Search */
+    $('#npcs_name').keypress(function(e) {
+        // Handle Enter to auto search
+        if (e.keyCode==13) {
+            $('#npcs_go').click();
+        }
+    });
+    $('#npcs_go').click(function() {
+        findNPCs($('#npcs_name').val());
+    });
 });
 
 function getTameableMobs(player_level, regions) {
     var args = {
         player_level: player_level || 1,
-        regions: regions.join(',')
+        regions: regions instanceof Array ? regions.join(',') : regions || ''
     };
     $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
 }
 
+function findNPCs(name, behavior, profession, realm) {
+    var args = {
+        name: name || '',
+        behavior: behavior || '',
+        profession: profession || '',
+        realm: realm || ''
+    };
+    $.getJSON(ajaxRoot + 'findNPCs',args, loadNPCs);
+}
+
 function loadTameableMobs(json, textStatus) {
     $('#pets_results').html(json.data);
+}
+
+function loadNPCs(json, textStatus) {
+    $('#npcs_results').html(json.data);
 }
