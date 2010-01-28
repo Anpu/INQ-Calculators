@@ -89,9 +89,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                     left: bounds.r+off.left,
                     top: bounds.b+off.top
                 })
-                .show()
-                .delay(3000)
-                .hide('fast');
+                .show();
         } else {
             _hb = this._getHintBox(false);
             if (_hb) {
