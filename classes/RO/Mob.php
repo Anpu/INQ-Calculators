@@ -44,5 +44,22 @@ class RO_Mob extends RO_Base {
         $stmt->closeCursor();
         return new ResultIterator($ret, __CLASS__,array('regions'=>$regions));
     }
+
+    /**
+     * Find Mob by name
+     *
+     * @param string $name         The name of the Mob
+     * @param array $regions       List of regions to search in
+     *
+     * @return Iterator the found Mobs
+     */
+    public static function findByName($name = '', $regions = array())
+    {
+        $sql = "CALL FindMobs(?, ?)";
+        $stmt = Database::query($sql, $name, implode(',',$regions));
+        $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $stmt->closeCursor();
+        return new ResultIterator($ret, __CLASS__, array('regions'=>$regions));
+    }
 }
 ?>

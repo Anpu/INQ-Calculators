@@ -153,6 +153,17 @@ $(function() {
     $('#npcs_go').click(function() {
         findNPCs($('#npcs_name').val());
     });
+
+    /** Mob Search */
+    $('#mobs_name').keypress(function(e) {
+        // Handle Enter to auto search
+        if (e.keyCode==13) {
+            $('#mobs_go').click();
+        }
+    });
+    $('#mobs_go').click(function() {
+        findMobs($('#mobs_name').val());
+    });
 });
 
 function getTameableMobs(player_level, maxpower, regions, offset) {
@@ -176,10 +187,23 @@ function findNPCs(name, behavior, profession, realm, offset) {
     $.getJSON(ajaxRoot + 'findNPCs',args, loadNPCs);
 }
 
+function findMobs(name, realm, offset) {
+    var args = {
+        name: name || '',
+        realm: realm || '',
+        offset: offset || 0
+    };
+    $.getJSON(ajaxRoot + 'findMobs',args, loadMobs);
+}
+
 function loadTameableMobs(json, textStatus) {
     $('#pets_results').html(json.data);
 }
 
 function loadNPCs(json, textStatus) {
     $('#npcs_results').html(json.data);
+}
+
+function loadMobs(json, textStatus) {
+    $('#mobs_results').html(json.data);
 }

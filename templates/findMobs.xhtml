@@ -1,0 +1,21 @@
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Mob Level</th>
+            <th>Class</th>
+            <th>Power Level</th>
+        </tr>
+    </thead>
+    <tbody tal:repeat="mob limit: offset limit mobs">
+        <tr>
+            <td>${mob/name}</td>
+            <td>${mob/level}</td>
+            <td>${mob/class}</td>
+            <td>${mob/tameable}</td>
+        </tr>
+        <tr tal:repeat="zone mob/zones">
+            <td colspan="4">${zone/name} in the ${zone/realm} ${zone/region}</td>
+        </tr>
+    </tbody>
+</table>
