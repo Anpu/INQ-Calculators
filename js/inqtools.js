@@ -1,11 +1,11 @@
 $(function() {
     $("#main").tabs().bind('tabsshow',function (event, ui) {
         if (ui.tab.hash.length > 0) {
-            location.hash = ui.tab.hash;
+            location.hash = '/'+ui.tab.hash.substr(1);
         }
     });
-    if (location.hash.length > 0 && $(location.hash)) {
-        $('#main').tabs('select',location.hash);
+    if (location.hash.length > 0 && $(location.hash.substr(2))) {
+        $('#main').tabs('select',location.hash.substr(2));
     }
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
