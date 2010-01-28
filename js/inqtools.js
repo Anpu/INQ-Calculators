@@ -155,21 +155,23 @@ $(function() {
     });
 });
 
-function getTameableMobs(player_level, maxpower, regions) {
+function getTameableMobs(player_level, maxpower, regions, offset) {
     var args = {
         player_level: player_level || 1,
         max_power: maxpower || 5,
-        regions: regions instanceof Array ? regions.join(',') : regions || ''
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
+        offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
 }
 
-function findNPCs(name, behavior, profession, realm) {
+function findNPCs(name, behavior, profession, realm, offset) {
     var args = {
         name: name || '',
         behavior: behavior || '',
         profession: profession || '',
-        realm: realm || ''
+        realm: realm || '',
+        offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'findNPCs',args, loadNPCs);
 }

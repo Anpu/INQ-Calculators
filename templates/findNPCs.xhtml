@@ -8,7 +8,7 @@
             <th>Location</th>
         </tr>
     </thead>
-    <tbody tal:repeat="npc limit: limit npcs">
+    <tbody tal:repeat="npc limit: offset limit npcs">
         <tr>
             <td>${npc/name}</td>
             <td>${npc/profession}</td>

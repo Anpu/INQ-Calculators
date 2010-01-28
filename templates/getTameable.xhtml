@@ -7,7 +7,7 @@
             <th>Power Level</th>
         </tr>
     </thead>
-    <tbody tal:repeat="mob limit: limit mobs">
+    <tbody tal:repeat="mob limit: offset limit mobs">
         <tr>
             <td>${mob/name}</td>
             <td>${mob/level}</td>

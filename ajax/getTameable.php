@@ -10,6 +10,7 @@ class ajax_getTameable implements AjaxRequest {
         $regions = explode(',',Util::GetString('regions',''));
 
         $tpl->limit = 10;
+        $tpl->offset = Util::GetInt('offset',0);
         $tpl->mobs = RO_Mob::findTameable(
                 Util::GetInt('player_level',1),
                 Util::GetInt('max_power',5),
