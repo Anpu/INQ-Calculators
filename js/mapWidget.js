@@ -37,10 +37,10 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                     top:c.position.y});
             }
             if (c['default']) {
-                this._value[m] = c['default'];
+                //this._value[m] = c['default'];
+                this.setValue(m,c['default']);
             } else if (maps[m].areas) {
-                this._value[m] = false;
-                this._maps[m].hide();
+                this.setValue(m,false);
             }
 
             this._maps[m].appendTo(this.element);

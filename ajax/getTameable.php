@@ -12,6 +12,7 @@ class ajax_getTameable implements AjaxRequest {
         $tpl->limit = 10;
         $tpl->mobs = RO_Mob::findTameable(
                 Util::GetInt('player_level',1),
+                Util::GetInt('max_power',5),
                 array_map(array('RO_Realm','mapRegions'),$regions)
             );
         return $tpl->execute();
