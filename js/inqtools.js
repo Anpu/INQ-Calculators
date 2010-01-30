@@ -1,17 +1,16 @@
 $(function() {
     $("#main").tabs().bind('tabsshow',function (event, ui) {
         if (ui.tab.hash.length > 0) {
-            location.hash = ui.tab.hash;
+            location.hash = '/'+ui.tab.hash.substr(1);
         }
     });
-    if (location.hash.length > 0 && $(location.hash)) {
-        $('#main').tabs('select',location.hash);
+    if (location.hash.length > 0 && $(location.hash.substr(2))) {
+        $('#main').tabs('select',location.hash.substr(2));
     }
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
     $('#pets_go').click(function () {
         var selected_regions = [];
-        var maps = $('#pets_region_map').mapWidget('option','maps');
         var values = $('#pets_region_map').mapWidget('value');
         for (var k in values) {
             if (values[k]) {
@@ -20,15 +19,47 @@ $(function() {
         }
         getTameableMobs(
             $('#pets_level').digitPicker('value'),
+            $('#pets_maxpower').mapWidget('value')['level'],
             selected_regions
         );
     });
 
-    /** Level Chooser */
+    /** Pet Character Level Chooser */
     $('#pets_level').digitPicker({
         'min':1,
         'max':50,
         'defaultValue':1
+    });
+    $('#pets_maxpower').mapWidget({
+        maps: {
+            bg:{config:{image:'MAXPower',bgoffset:new Point(0,0)}},
+            level:{
+                config:{image:'MAXPower','default':'5'},
+                areas:{
+                    '1':{
+                        map:new Polygon([[0,148],[25,148],[25,186],[0,186]]),
+                        offset:new Point(-25,0)
+                    },
+                    '2':{
+                        map:new Polygon([[0,111],[25,111],[25,148],[0,148]]),
+                        offset:new Point(-50,0)
+                    },
+                    '3':{
+                        map:new Polygon([[0, 74],[25, 74],[25,111],[0,111]]),
+                        offset:new Point(-75,0)
+                    },
+                    '4':{
+                        map:new Polygon([[0, 37],[25, 37],[25, 74],[0, 90]]),
+                        offset:new Point(-100,0)
+                    },
+                    '5':{
+                        map:new Polygon([[0,  0],[25,  0],[25, 37],[0, 37]]),
+                        offset:new Point(-125,0)
+                    }
+                }
+            },
+            num:{config:{image:'MAXPower',bgoffset:new Point(-150,0)}}
+        }
     });
     /** Pet Region Map Magic */
     $('input[name="pets_regions"]')
@@ -111,16 +142,68 @@ $(function() {
             }
         }
     });
+
+    /** NPC Search */
+    $('#npcs_name').keypress(function(e) {
+        // Handle Enter to auto search
+        if (e.keyCode==13) {
+            $('#npcs_go').click();
+        }
+    });
+    $('#npcs_go').click(function() {
+        findNPCs($('#npcs_name').val());
+    });
+
+    /** Mob Search */
+    $('#mobs_name').keypress(function(e) {
+        // Handle Enter to auto search
+        if (e.keyCode==13) {
+            $('#mobs_go').click();
+        }
+    });
+    $('#mobs_go').click(function() {
+        findMobs($('#mobs_name').val());
+    });
 });
 
-function getTameableMobs(player_level, regions) {
+function getTameableMobs(player_level, maxpower, regions, offset) {
     var args = {
         player_level: player_level || 1,
-        regions: regions.join(',')
+        max_power: maxpower || 5,
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
+        offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
 }
 
+function findNPCs(name, behavior, profession, realm, offset) {
+    var args = {
+        name: name || '',
+        behavior: behavior || '',
+        profession: profession || '',
+        realm: realm || '',
+        offset: offset || 0
+    };
+    $.getJSON(ajaxRoot + 'findNPCs',args, loadNPCs);
+}
+
+function findMobs(name, realm, offset) {
+    var args = {
+        name: name || '',
+        realm: realm || '',
+        offset: offset || 0
+    };
+    $.getJSON(ajaxRoot + 'findMobs',args, loadMobs);
+}
+
 function loadTameableMobs(json, textStatus) {
     $('#pets_results').html(json.data);
+}
+
+function loadNPCs(json, textStatus) {
+    $('#npcs_results').html(json.data);
+}
+
+function loadMobs(json, textStatus) {
+    $('#mobs_results').html(json.data);
 }

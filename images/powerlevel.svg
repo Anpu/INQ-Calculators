@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="175"
+   height="200"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="powerlevel.svg"
+   inkscape:export-filename="/Users/urkle/Projects/Inquisition/INQ-Calculators/images/powerlevel.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="LevelPower">
+      <stop
+         offset="0"
+         id="PowerEasy"
+         style="stop-color:#78ff78;stop-opacity:1" />
+      <stop
+         id="PowerNormal"
+         offset="0.2"
+         style="stop-color:#8ca0ff;stop-opacity:1" />
+      <stop
+         id="PowerChallenging"
+         offset="0.40000001"
+         style="stop-color:#fbfb31;stop-opacity:1" />
+      <stop
+         id="PowerHard"
+         offset="0.60000002"
+         style="stop-color:#ff8032;stop-opacity:1" />
+      <stop
+         offset="0.80000001"
+         id="PowerVeryHard"
+         style="stop-color:#ff3232;stop-opacity:1" />
+      <stop
+         offset="1"
+         id="Final"
+         style="stop-color:#8123b7;stop-opacity:1" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#LevelPower"
+       id="linearGradient3691"
+       x1="62.5"
+       y1="1052.3622"
+       x2="62.5"
+       y2="852.36218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-25,-1.2617188e-5)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#LevelPower"
+       id="linearGradient3699"
+       x1="87.5"
+       y1="1052.3622"
+       x2="87.5"
+       y2="852.36218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-25,-1.2617188e-5)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#LevelPower"
+       id="linearGradient3707"
+       x1="112.5"
+       y1="1052.3622"
+       x2="112.5"
+       y2="852.36218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-25,-1.2617188e-5)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#LevelPower"
+       id="linearGradient3715"
+       x1="137.5"
+       y1="1052.3622"
+       x2="137.5"
+       y2="852.36218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-25,-1.2617188e-5)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#LevelPower"
+       id="linearGradient3735"
+       x1="162.5"
+       y1="200"
+       x2="162.5"
+       y2="0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-25,852.36216)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#LevelPower"
+       id="linearGradient3743"
+       x1="37.5"
+       y1="200"
+       x2="37.5"
+       y2="-1.1368684e-13"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-25,852.36216)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.3475945"
+     inkscape:cx="79.406609"
+     inkscape:cy="88.636056"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1123"
+     inkscape:window-height="880"
+     inkscape:window-x="321"
+     inkscape:window-y="133"
+     inkscape:window-maximized="0"
+     inkscape:snap-midpoints="true">
+    <sodipodi:guide
+       orientation="1,0"
+       position="0,103.03556"
+       id="guide2816" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="25,157.5"
+       id="guide2818" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="50,148.92857"
+       id="guide2875" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="37.142857,200"
+       id="guide2879" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="40.357143,0"
+       id="guide2881" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="75,170.71429"
+       id="guide3655" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="100,166.42857"
+       id="guide3657" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="125,166.78571"
+       id="guide3659" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="75,40.357143"
+       id="guide3717" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="60.714286,80"
+       id="guide3719" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="63.928572,120"
+       id="guide3721" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="62.857143,160"
+       id="guide3723" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="150,147.85714"
+       id="guide3725" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-852.36217)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="BackgrounSolid"
+       width="25"
+       height="200"
+       x="0"
+       y="852.36218" />
+    <rect
+       style="opacity:0.25;fill:url(#linearGradient3743);fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="BackgroundFaded"
+       width="25"
+       height="200"
+       x="0"
+       y="852.36218" />
+    <g
+       id="g3759"
+       style="opacity:0.25"
+       transform="translate(125,-1.2617188e-5)">
+      <text
+         id="text2834"
+         y="1046.2192"
+         x="25"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="1046.2192"
+           x="25"
+           id="tspan2836"
+           sodipodi:role="line">1</tspan></text>
+      <text
+         id="text2838"
+         y="1006.505"
+         x="25"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="1006.505"
+           x="25"
+           id="tspan2840"
+           sodipodi:role="line">2</tspan></text>
+      <text
+         id="text2842"
+         y="966.79071"
+         x="25"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="966.79071"
+           x="25"
+           id="tspan2844"
+           sodipodi:role="line">3</tspan></text>
+      <text
+         id="text2846"
+         y="927.07642"
+         x="25"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="927.07642"
+           x="25"
+           id="tspan2848"
+           sodipodi:role="line">4</tspan></text>
+      <text
+         id="text2850"
+         y="887.36218"
+         x="25"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="887.36218"
+           x="25"
+           id="tspan2852"
+           sodipodi:role="line">5</tspan></text>
+    </g>
+    <rect
+       y="1012.005"
+       x="25"
+       height="40.357155"
+       width="25"
+       id="Power1"
+       style="fill:url(#linearGradient3691);fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    <rect
+       style="fill:url(#linearGradient3699);fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="Power2"
+       width="25"
+       height="80.000015"
+       x="50"
+       y="972.36218" />
+    <rect
+       y="932.36218"
+       x="75"
+       height="120.00002"
+       width="25"
+       id="Power3"
+       style="fill:url(#linearGradient3707);fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    <rect
+       style="fill:url(#linearGradient3715);fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="Power4"
+       width="25"
+       height="160.00002"
+       x="100"
+       y="892.36218" />
+    <rect
+       style="fill:url(#linearGradient3735);fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="Power5"
+       width="25"
+       height="200"
+       x="125"
+       y="852.36218" />
+    <text
+       id="text3785"
+       y="1046.2192"
+       x="25"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="1046.2192"
+         x="25"
+         id="tspan3787"
+         sodipodi:role="line">1</tspan></text>
+    <text
+       id="text3789"
+       y="1006.505"
+       x="50"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="1006.505"
+         x="50"
+         id="tspan3791"
+         sodipodi:role="line">2</tspan></text>
+    <text
+       id="text3793"
+       y="966.79071"
+       x="75"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="966.79071"
+         x="75"
+         id="tspan3795"
+         sodipodi:role="line">3</tspan></text>
+    <text
+       id="text3797"
+       y="927.07642"
+       x="100"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="927.07642"
+         x="100"
+         id="tspan3799"
+         sodipodi:role="line">4</tspan></text>
+    <text
+       id="text3801"
+       y="887.36218"
+       x="125"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         y="887.36218"
+         x="125"
+         id="tspan3803"
+         sodipodi:role="line">5</tspan></text>
+  </g>
+</svg>

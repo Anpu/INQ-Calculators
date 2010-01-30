@@ -37,10 +37,10 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                     top:c.position.y});
             }
             if (c['default']) {
-                this._value[m] = c['default'];
+                //this._value[m] = c['default'];
+                this.setValue(m,c['default']);
             } else if (maps[m].areas) {
-                this._value[m] = false;
-                this._maps[m].hide();
+                this.setValue(m,false);
             }
 
             this._maps[m].appendTo(this.element);
@@ -89,9 +89,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                     left: bounds.r+off.left,
                     top: bounds.b+off.top
                 })
-                .show()
-                .delay(3000)
-                .hide('fast');
+                .show();
         } else {
             _hb = this._getHintBox(false);
             if (_hb) {
