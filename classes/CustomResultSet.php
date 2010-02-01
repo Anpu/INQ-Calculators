@@ -4,14 +4,20 @@
  *
  * @author Edward Rudd <urkle at outoforder.cc>
  */
-class CustomResultSet {
+class CustomResultSet implements ResultIteratorObject {
     private $record;
-    private $extra_filter;
+    private $extra;
+    private $config;
     private $obj_cache;
 
-    public function __construct($data) {
+    public function __construct($data, $extra) {
         $this->record = $data;
-        $this->config = array();
+        $this->extra = $extra;
+        if (property_exists($this->extra, 'config')) {
+            $this->config =& $this->extra->config;
+        } else {
+            $this->config = array();
+        }
         $this->obj_cache = array();
     }
 
@@ -19,21 +25,10 @@ class CustomResultSet {
         if (!array_key_exists($name,$this->obj_cache)) {
             $class = $this->config[$name]['class'];
             $key = $this->config[$name]['key'];
-            $obj = new $class($this->record->$key);
-            if (!empty($this->extra_filter) && method_exists($obj, 'setExtraFilter')) {
-                $obj->setExtraFilter($this->extra_filter);
-            }
+            $obj = new $class($this->record->$key, $this->extra);
             $this->obj_cache[$name] = $obj;
         }
         return $this->obj_cache[$name];
-    }
-
-    final public function setExtraFilter($filter)
-    {
-        if (isset($filter->config)) {
-            $this->config =& $filter->config;
-        }
-        $this->extra_filter = $filter;
     }
 
     /*** Object access methods **/

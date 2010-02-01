@@ -17,10 +17,10 @@ class RO_Mob extends RO_Base {
 
     protected function zones()
     {
-        if (empty($this->extra_filter->regions)) {
+        if (empty($this->extra->regions)) {
             $regions = '';
         } else {
-            $regions = implode(',',$this->extra_filter->regions);
+            $regions = implode(',',$this->extra->regions);
         }
         $stmt = Database::query("CALL GetMobAreas(?,?)",$this->ID(),$regions);
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);

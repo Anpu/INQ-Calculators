@@ -7,7 +7,7 @@
 class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator {
     private $results;
     private $classname;
-    private $extra_filter;
+    private $extra;
 
     private $position;
     private $object;
@@ -18,13 +18,13 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
      *
      * @param array $results A list of object IDs
      * @param string $classname  The cass name to instantiate
-     * @param array $extra_filter  Extra filter arguments to pass along to created objects
+     * @param array $extra  Extra arguments to pass along to created objects
      */
-    public function __construct(array $results, $classname, $extra_filter = array()) {
+    public function __construct(array $results, $classname, $extra = array()) {
         $this->results = $results;
         $this->classname = $classname;
-        if (!empty($extra_filter)) {
-            $this->extra_filter = is_array($extra_filter) ? (object)$extra_filter : $extra_filter;
+        if (!empty($extra)) {
+            $this->extra = is_array($extra) ? (object)$extra : $extra;
         }
         $this->object = null;
     }
@@ -38,10 +38,7 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
     private function fetchObject($position)
     {
         if (is_null($this->object) || $this->object_pos != $position) {
-            $this->object = new $this->classname($this->results[$position]);
-            if (!empty($this->extra_filter) && method_exists($this->object, 'setExtraFilter')) {
-                $this->object->setExtraFilter($this->extra_filter);
-            }
+            $this->object = new $this->classname($this->results[$position], $this->extra);
             $this->object_pos = $position;
         }
         return $this->object;

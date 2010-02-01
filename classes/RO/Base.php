@@ -7,13 +7,14 @@
 abstract class RO_Base {
     private $id;
     private $record;
-    protected $extra_filter;
+    protected $extra;
     static private $cache = array();
 
-    public function  __construct($id)
+    public function  __construct($id, $extra)
     {
         $this->record = null;
         $this->id = $id;
+        $this->extra = $extra;
     }
 
     abstract protected function configSQL();
@@ -62,12 +63,6 @@ abstract class RO_Base {
         } else {
             $this->record = $cache;
         }
-    }
-
-
-    final public function setExtraFilter($filter)
-    {
-        $this->extra_filter = $filter;
     }
 
     /*** Object access methods **/
