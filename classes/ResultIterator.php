@@ -11,7 +11,7 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
 
     private $position;
     private $object;
-    private $object_id;
+    private $object_pos;
 
     /**
      * Construct a generic object iterator
@@ -32,17 +32,17 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
     /**
      * Internal method to lazily instantiate the returned objects by the iterator
      *
-     * @param int $id  The ID of the record to instantiate
+     * @param int $position  The ID of the record to instantiate
      * @return Object
      */
-    private function fetchObject($id)
+    private function fetchObject($position)
     {
-        if (is_null($this->object) || $this->object_id != $id) {
-            $this->object = new $this->classname($id);
+        if (is_null($this->object) || $this->object_pos != $position) {
+            $this->object = new $this->classname($this->results[$position]);
             if (!empty($this->extra_filter) && method_exists($this->object, 'setExtraFilter')) {
                 $this->object->setExtraFilter($this->extra_filter);
             }
-            $this->object_id = $id;
+            $this->object_pos = $position;
         }
         return $this->object;
     }
@@ -68,7 +68,7 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
     }
 
     public function current() {
-        return $this->fetchObject($this->results[$this->position]);
+        return $this->fetchObject($this->position);
     }
 
     /*** Countable Methods **/
@@ -84,7 +84,7 @@ class ResultIterator implements Iterator,ArrayAccess,Countable,SeekableIterator 
     }
 
     public function offsetGet($offset) {
-        return $this->fetchObject($this->results[$offset]);
+        return $this->fetchObject($offset);
     }
 
     public function offsetSet($offset, $value) {
