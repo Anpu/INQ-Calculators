@@ -7,7 +7,6 @@
 class ajax_findNPCs implements AjaxRequest {
     public static function request($path_args) {
         $tpl = new Template("findNPCs.xhtml");
-        $realm = Util::GetString('realm','');
 
         $tpl->limit = 20;
         $tpl->offset = Util::GetInt('offset',0);;
@@ -15,7 +14,7 @@ class ajax_findNPCs implements AjaxRequest {
                 Util::GetString('name',''),
                 Util::GetString('behavior',''),
                 Util::GetString('profession',''),
-                RO_Realm::RealmToRegions($realm)
+                RO_Realm::mapRegions(explode(',',Util::GetString('regions','')))
             );
         return $tpl->execute();
     }

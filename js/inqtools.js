@@ -176,21 +176,21 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
     $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
 }
 
-function findNPCs(name, behavior, profession, realm, offset) {
+function findNPCs(name, behavior, profession, regions, offset) {
     var args = {
         name: name || '',
         behavior: behavior || '',
         profession: profession || '',
-        realm: realm || '',
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'findNPCs',args, loadNPCs);
 }
 
-function findMobs(name, realm, offset) {
+function findMobs(name, regions, offset) {
     var args = {
         name: name || '',
-        realm: realm || '',
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'findMobs',args, loadMobs);
