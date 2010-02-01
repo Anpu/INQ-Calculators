@@ -196,6 +196,21 @@ function findMobs(name, regions, offset) {
     $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
 }
 
+function getKillsToLevel(player_level, player_xp, min_level, max_level, regions, offset) {
+    if (!player_level && !player_xp) {
+        return;
+    }
+    var args = {
+        player_level: player_level,
+        player_xp: player_xp,
+        min_level: min_level || 1,
+        max_level: max_level || 4,
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
+        offset: offset || 0
+    };
+    $.getJSON(ajaxRoot + 'getKillsToLevel', args, loadIntoDIV('#levels_results'));
+}
+
 function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
