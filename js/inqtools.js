@@ -173,37 +173,50 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
+    $.getJSON(ajaxRoot + 'getTameable',args, loadIntoDIV('#pets_results'));
 }
 
-function findNPCs(name, behavior, profession, realm, offset) {
+function findNPCs(name, behavior, profession, regions, offset) {
     var args = {
         name: name || '',
         behavior: behavior || '',
         profession: profession || '',
-        realm: realm || '',
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'findNPCs',args, loadNPCs);
+    $.getJSON(ajaxRoot + 'findNPCs',args, loadIntoDIV('#npcs_results'));
 }
 
-function findMobs(name, realm, offset) {
+function findMobs(name, regions, offset) {
     var args = {
         name: name || '',
-        realm: realm || '',
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'findMobs',args, loadMobs);
+    $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
 }
 
-function loadTameableMobs(json, textStatus) {
-    $('#pets_results').html(json.data);
+function getKillsToLevel(player_level, player_xp, min_level, max_level, regions, offset) {
+    if (!player_level && !player_xp) {
+        return;
+    }
+    var args = {
+        player_level: player_level,
+        player_xp: player_xp,
+        min_level: min_level || 1,
+        max_level: max_level || 4,
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
+        offset: offset || 0
+    };
+    $.getJSON(ajaxRoot + 'getKillsToLevel', args, loadIntoDIV('#levels_results'));
 }
 
-function loadNPCs(json, textStatus) {
-    $('#npcs_results').html(json.data);
+function loadIntoDIV(aDiv) {
+    if (loadIntoDIV.funcs[aDiv]===undefined) {
+        loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
+            $(aDiv).html(json.data);
+        };
+    }
+    return loadIntoDIV.funcs[aDiv];
 }
-
-function loadMobs(json, textStatus) {
-    $('#mobs_results').html(json.data);
-}
+loadIntoDIV.funcs = {};

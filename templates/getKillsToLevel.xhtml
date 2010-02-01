@@ -1,0 +1,21 @@
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Mob Level</th>
+            <th>Base XP</th>
+            <th># of Kills</th>
+        </tr>
+    </thead>
+    <tbody tal:repeat="record limit: offset limit results">
+        <tr>
+            <td>${record/mob/name}</td>
+            <td>${record/mob/level}</td>
+            <td>${record/base_xp} + ${record/chg_xp}</td>
+            <td>${record/kills}</td>
+        </tr>
+        <tr tal:repeat="zone record/mob/zones">
+            <td colspan="4">${zone/name} in the ${zone/realm} ${zone/region}</td>
+        </tr>
+    </tbody>
+</table>

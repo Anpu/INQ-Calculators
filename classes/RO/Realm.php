@@ -37,20 +37,21 @@ class RO_Realm {
     );
     /**
      * Maps the short web names to the full DB names
-     * @example
-     *   $regions = array_map(array('RO_Realm','mapRegions'),$inarray);
      *
-     * @param string The short "webname" for the region
+     * @param string $regions The short "webname" for the region
      * @return string
      */
-    public static function mapRegions($a) {
-        $k = strtolower($a);
-        return array_key_exists($k,self::$map) ? self::$map[$k] : $a;
-    }
-
-    public static function RealmToRegions($realm)
-    {
-        return self::$realmmap[strtolower($realm)];
+    public static function mapRegions($regions) {
+        $ret = array();
+        foreach ($regions as $_r) {
+            $_r = strtolower($_r);
+            if (array_key_exists($_r, self::$map)) {
+                array_push($ret, self::$map[$_r]);
+            } elseif (array_key_exists($_r, self::$realmmap)) {
+                $ret += self::$realmmap[$_r];
+            }
+        }
+        return array_unique($ret);
     }
 }
 ?>
