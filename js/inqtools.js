@@ -173,7 +173,7 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'getTameable',args, loadTameableMobs);
+    $.getJSON(ajaxRoot + 'getTameable',args, loadIntoDIV('#pets_results'));
 }
 
 function findNPCs(name, behavior, profession, regions, offset) {
@@ -184,7 +184,7 @@ function findNPCs(name, behavior, profession, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'findNPCs',args, loadNPCs);
+    $.getJSON(ajaxRoot + 'findNPCs',args, loadIntoDIV('#npcs_results'));
 }
 
 function findMobs(name, regions, offset) {
@@ -193,17 +193,15 @@ function findMobs(name, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'findMobs',args, loadMobs);
+    $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
 }
 
-function loadTameableMobs(json, textStatus) {
-    $('#pets_results').html(json.data);
+function loadIntoDIV(aDiv) {
+    if (loadIntoDIV.funcs[aDiv]===undefined) {
+        loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
+            $(aDiv).html(json.data);
+        };
+    }
+    return loadIntoDIV.funcs[aDiv];
 }
-
-function loadNPCs(json, textStatus) {
-    $('#npcs_results').html(json.data);
-}
-
-function loadMobs(json, textStatus) {
-    $('#mobs_results').html(json.data);
-}
+loadIntoDIV.funcs = {};
