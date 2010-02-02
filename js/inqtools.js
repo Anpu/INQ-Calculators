@@ -249,6 +249,31 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
     $.getJSON(ajaxRoot + 'getKillsToLevel', args, loadIntoDIV('#levels_results'));
 }
 
+function cbAreas() {
+    getKillsToLevelByArea(
+        $('#player_level').digitPicker('value'),
+        0,
+        $('#min_level').digitPicker('value'),
+        $('#max_level').digitPicker('value'),
+        regionsFromMap()
+    );
+}
+
+function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, regions, offset) {
+    if (!player_level && !player_xp) {
+        return;
+    }
+    var args = {
+        player_level: player_level,
+        player_xp: player_xp,
+        min_level: min_level || 1,
+        max_level: max_level || 4,
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
+        offset: offset || 0
+    };
+    $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#areas_results'));
+}
+
 function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
