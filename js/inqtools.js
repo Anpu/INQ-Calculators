@@ -1,88 +1,65 @@
+// Compatability for "older browsers"
+if (!Array.prototype.indexOf)
+{
+  Array.prototype.indexOf = function(elt /*, from*/)
+  {
+    var len = this.length >>> 0;
+
+    var from = Number(arguments[1]) || 0;
+    from = (from < 0)
+         ? Math.ceil(from)
+         : Math.floor(from);
+    if (from < 0)
+      from += len;
+
+    for (; from < len; from++)
+    {
+      if (from in this &&
+          this[from] === elt)
+        return from;
+    }
+    return -1;
+  };
+}
+// JQuery on ready event
 $(function() {
     $("#main").tabs().bind('tabsshow',function (event, ui) {
+        var o = $(ui.tab);
+        switchTool(o.attr('callback') || '', o.attr('widgets') || '');
         if (ui.tab.hash.length > 0) {
             location.hash = '/'+ui.tab.hash.substr(1);
         }
     });
-    if (location.hash.length > 0 && $(location.hash.substr(2))) {
-        $('#main').tabs('select',location.hash.substr(2));
-    }
-    $('#main').tabs('option','fx',{opacity:'toggle'});
 
-    $('#pets_go').click(function () {
-        var selected_regions = [];
-        var values = $('#pets_region_map').mapWidget('value');
-        for (var k in values) {
-            if (values[k]) {
-                selected_regions.push(k);
-            }
-        }
-        getTameableMobs(
-            $('#pets_level').digitPicker('value'),
-            $('#pets_maxpower').mapWidget('value')['level'],
-            selected_regions
-        );
-    });
-
-    /** Pet Character Level Chooser */
-    $('#pets_level').digitPicker({
-        'min':1,
-        'max':50,
-        'defaultValue':1
-    });
-    $('#pets_maxpower').mapWidget({
-        maps: {
-            bg:{config:{image:'MAXPower',bgoffset:new Point(0,0)}},
-            level:{
-                config:{image:'MAXPower','default':'5'},
-                areas:{
-                    '1':{
-                        map:new Polygon([[0,148],[25,148],[25,186],[0,186]]),
-                        offset:new Point(-25,0)
-                    },
-                    '2':{
-                        map:new Polygon([[0,111],[25,111],[25,148],[0,148]]),
-                        offset:new Point(-50,0)
-                    },
-                    '3':{
-                        map:new Polygon([[0, 74],[25, 74],[25,111],[0,111]]),
-                        offset:new Point(-75,0)
-                    },
-                    '4':{
-                        map:new Polygon([[0, 37],[25, 37],[25, 74],[0, 90]]),
-                        offset:new Point(-100,0)
-                    },
-                    '5':{
-                        map:new Polygon([[0,  0],[25,  0],[25, 37],[0, 37]]),
-                        offset:new Point(-125,0)
-                    }
-                }
-            },
-            num:{config:{image:'MAXPower',bgoffset:new Point(-150,0)}}
+    // Begin tool widgets
+    $('#player_level').digitPicker({
+        min:1,
+        max:50,
+        defaultValue:1,
+        change: function(e, value) {
+            $('#min_level').digitPicker('setValue',value);
+            $('#max_level').digitPicker('setValue',value+3);
         }
     });
-    /** Pet Region Map Magic */
-    $('input[name="pets_regions"]')
-        .change(function () {
-            $('#pets_region_map').mapWidget('setValue',$(this).val(),$(this).is(':checked'));
-        })
-        .next('label')
-        .disableSelection();
-    $('#pets_region_map').mapWidget({
-        init: function() {
-            // Initialize the values
-            var self = $(this);
-            $('input[name="pets_regions"]:checked').each(function() {
-                self.mapWidget('setValue',$(this).val(),true);
-            });
-        },
-        click: function(e, hit) {
-            if (hit.map) {
-                var value = $(this).mapWidget('value')[hit.map];
-                $('input[name="pets_regions"][value="'+hit.map+'"]')
-                    .attr('checked',!!value);
-            }
-        },
+    $('#min_level').digitPicker({
+        min:1,
+        max:58,
+        defaultValue:1,
+        change: function(e, value) {
+            $('#max_level').digitPicker('setValue',value+3);
+        }
+    });
+    $('#max_level').digitPicker({
+        min:1,
+        max:58,
+        defaultValue:3
+    });
+    $('#maxpower').digitPicker({
+        min:1,
+        max:5,
+        defaultValue:5
+    });
+    $('#region_map').mapWidget({
         'class':'ROMap',
         maps: {
             'map':{config:{image:'ROMapImage map'}},
@@ -143,29 +120,64 @@ $(function() {
         }
     });
 
-    /** NPC Search */
-    $('#npcs_name').keypress(function(e) {
+    $('#search').keypress(function(e) {
         // Handle Enter to auto search
         if (e.keyCode==13) {
-            $('#npcs_go').click();
+            doSearch();
         }
-    });
-    $('#npcs_go').click(function() {
-        findNPCs($('#npcs_name').val());
     });
 
-    /** Mob Search */
-    $('#mobs_name').keypress(function(e) {
-        // Handle Enter to auto search
-        if (e.keyCode==13) {
-            $('#mobs_go').click();
-        }
+    $('#go').click(function() {
+       doSearch();
     });
-    $('#mobs_go').click(function() {
-        findMobs($('#mobs_name').val());
-    });
+
+    // Do this AFTER all widgets are setup to insure they "hide" correctly
+    if (location.hash.length > 0 && $('#'+location.hash.substr(2))) {
+        $('#main').tabs('select','#'+location.hash.substr(2));
+        var o = $('#main li > a[href="#'+location.hash.substr(2)+'"]');
+        switchTool(o.attr('callback') || '', o.attr('widgets') || '');
+    }
+    $('#main').tabs('option','fx',{opacity:'toggle'});
 });
 
+function switchTool(aCallback, aWidgets) {
+    var w = aWidgets.split(/[, ]+/); // Split on space or comma
+    if (aWidgets.length > 0) w.push('go');
+    $('#tool_options *[widget]').each(function() {
+        var o = $(this);
+        if (w.indexOf(o.attr('widget')) > -1) {
+            o.slideDown('fast');
+        } else {
+            o.slideUp('fast');
+        }
+    });
+    $('#tool_options').data('callback',aCallback);
+}
+
+function doSearch() {
+    var cb = $('#tool_options').data('callback');
+    if ($.isFunction(window[cb])) {
+        window[cb]();
+    }
+}
+
+function regionsFromMap() {
+    var selected_regions = [];
+    var values = $('#region_map').mapWidget('value');
+    for (var k in values) {
+        if (values[k]) {
+            selected_regions.push(k);
+        }
+    }
+    return selected_regions;
+}
+function cbPets() {
+    getTameableMobs(
+        $('#player_level').digitPicker('value'),
+        $('#maxpower').digitPicker('value'),
+        regionsFromMap()
+    );
+}
 function getTameableMobs(player_level, maxpower, regions, offset) {
     var args = {
         player_level: player_level || 1,
@@ -174,6 +186,15 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
         offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'getTameable',args, loadIntoDIV('#pets_results'));
+}
+
+function cbNPCs() {
+    findNPCs(
+        $('#search').val(),
+        undefined,
+        undefined,
+        regionsFromMap()
+    );
 }
 
 function findNPCs(name, behavior, profession, regions, offset) {
@@ -187,6 +208,13 @@ function findNPCs(name, behavior, profession, regions, offset) {
     $.getJSON(ajaxRoot + 'findNPCs',args, loadIntoDIV('#npcs_results'));
 }
 
+function cbMobs() {
+    findMobs(
+        $('#search').val(),
+        regionsFromMap()
+    );
+}
+
 function findMobs(name, regions, offset) {
     var args = {
         name: name || '',
@@ -194,6 +222,16 @@ function findMobs(name, regions, offset) {
         offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
+}
+
+function cbLevels() {
+    getKillsToLevel(
+        $('#player_level').digitPicker('value'),
+        0,
+        $('#min_level').digitPicker('value'),
+        $('#max_level').digitPicker('value'),
+        regionsFromMap()
+    );
 }
 
 function getKillsToLevel(player_level, player_xp, min_level, max_level, regions, offset) {

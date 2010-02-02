@@ -1,128 +1,154 @@
 html {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  font: 85% Georgia, serif;
-  line-height: 2.2em;
-  background-color: #000000;
-  color: #EFC235;
-  cursor: url("images/normal.cur"), default;
+    font: 85% Georgia, serif;
+    line-height: 2.2em;
+    background-color: #000000;
+    color: #EFC235;
+    cursor: url("images/normal.cur"), default;
 }
 
 a {
-  cursor: url("images/links.cur"), default;
+    cursor: url("images/links.cur"), default;
 }
 
 a:link, a:visited { 
-  text-decoration: none; 
-  color: #EFC325;
+    text-decoration: none;
+    color: #EFC325;
 }
 
 a:hover, a:active { 
-  text-decoration: underline; 
-  color: #FFFFFF;
+    text-decoration: underline;
+    color: #FFFFFF;
 }
 
 #header {
-  text-align: center;
+    text-align: center;
 }
 
 #main {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: hidden;
-  border: none;
-  background: transparent none;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    border: none;
+    background: transparent none;
 }
 
 h2 {
-  text-align: center;
+    text-align: center;
 }
 
 ul.legend {
-  list-style: url("images/gem.png");
-  color: #EFC235;
+    list-style: url("images/gem.png");
+    color: #EFC235;
 }
 
 ul.navigation {
-  background-color: transparent;
-  background-image: none;
-  border: none;
-  float: left;
-  position: relative;
-  left: 50%;
-  list-style: none;
-  list-style-type: none;
-  text-align: left;
-  padding: 0 !important;
-  margin: 0 auto;
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    float: left;
+    position: relative;
+    left: 50%;
+    list-style: none;
+    list-style-type: none;
+    text-align: left;
+    padding: 0 !important;
+    margin: 0 auto;
 }
 
 ul.navigation li {
-  float: left;
-  position: relative;
-  left: -50%;
-  font-weight: bold;
-  padding: 0.2em 1em;
-  padding-bottom: 0 !important;
-  background-image: url('images/menu-gradient.png') !important;
-  background-repeat: repeat-x;
-  background-position: 0 0 !important;
-  margin: 0 !important;
+    float: left;
+    position: relative;
+    left: -50%;
+    font-weight: bold;
+    padding: 0.2em 1em;
+    padding-bottom: 0 !important;
+    background-image: url('images/menu-gradient.png') !important;
+    background-repeat: repeat-x;
+    background-position: 0 0 !important;
+    margin: 0 !important;
 }
 
 ul.navigation li:first-child {
-  padding-left: 38px;
-  background-image: url('images/menu-left.png') !important;
-  background-repeat: no-repeat;
+    padding-left: 38px;
+    background-image: url('images/menu-left.png') !important;
+    background-repeat: no-repeat;
 }
 
 ul.navigation li:last-child {
-  padding-right: 38px;
-  background-image: url('images/menu-right.png') !important;
-  background-repeat: no-repeat;
-  background-position: top right !important;
+    padding-right: 38px;
+    background-image: url('images/menu-right.png') !important;
+    background-repeat: no-repeat;
+    background-position: top right !important;
 }
 
 .ui-tabs .ui-tabs-hide {
-  display: none;
+    display: none;
 }
 
 ul.navigation li.ui-state-default, ul.navigation li.ui-state-active {
-  border: none;
-  background-color: transparent;
-  color: #EFC235;
-  padding-bottom: 0px;
+    border: none;
+    background-color: transparent;
+    color: #EFC235;
+    padding-bottom: 0px;
 }
 
 ul.navigation li.ui-state-default a, ul.navigation li.ui-state-active a {
-  color: #EFC235;
+    color: #EFC235;
 }
 
 div.content {
-  clear: left;
-  width: 50%;
-  margin: 0 auto;
+    clear: left;
+    width: 50%;
+    margin: 0 auto;
 }
 
 div.content.ui-tabs-panel {
-  padding: 0;
+    padding: 0;
 }
 
 div.content.ui-widget-content {
-  color: #EFC235;
+    color: #EFC235;
 }
 
 div.content.ui-widget-content a {
-  color: #EFC235;
+    color: #EFC235;
 }
+
+/** Tool Options */
+#tool_options {
+    clear: left;
+    width: 50%;
+    margin: 0 auto;
+    color: #EFC235;
+    border: 1px solid green;
+    position: relative;
+}
+
+#tool_options .left {
+    float: left;
+}
+
+#tool_options .right {
+    float: right;
+}
+
+.tool_option {
+    padding: 0.5em 0 0.5em 0.5em;
+}
+
 /** Regnum Interactive Map Widget */
 .ROMap {
     width: 199px;
     height: 186px;
+}
+.ROMapDesc {
+    width: 199px;
 }
 .ROMapImage {
     background-image: url(images/ro_map-200.png);
@@ -205,26 +231,4 @@ div.content.ui-widget-content a {
     left:46px;
     top:34px;
     width:58px;
-}
-/** Pet Checkboxes */
-#pets_regions {
-    position: relative;
-}
-#pets_region_checks {
-    position: absolute;
-    top: 0px;
-    left: 240px;
-}
-/** Pet power selector */
-#pets_maxpower {
-    position: absolute;
-    left: 200px;
-    top: 0px;
-    width: 25px;
-    height: 186px;
-}
-.MAXPower {
-    width: 25px;
-    height: 186px;
-    background-image: url(images/powerlevel.png);
 }

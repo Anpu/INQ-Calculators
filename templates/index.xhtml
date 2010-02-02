@@ -40,125 +40,104 @@
     <div id="main">
       <ul class="navigation">
         <li><a href="#home">Home</a></li>
-        <li><a href="#levels">Levels</a></li>
-        <li><a href="#mobs">Mobs</a></li>
+        <li><a href="#levels" widgets="level,levelrange,region" callback="cbLevels">Levels</a></li>
+        <li><a href="#mobs" widgets="search,region" callback="cbMobs">Mobs</a></li>
         <li><a href="#areas">Areas</a></li>
-        <li><a href="#pets">Pets</a></li>
-        <li><a href="#npcs">NPCs</a></li>
+        <li><a href="#pets" widgets="level,power,region" callback="cbPets">Pets</a></li>
+        <li><a href="#npcs" widgets="search,region" callback="cbNPCs">NPCs</a></li>
         <li><a href="#shops">Shops</a></li>
         <li><a href="#armor">Armor</a></li>
         <li><a href="#trainer">Trainer</a></li>
         <li><a href="#credits">Credits</a></li>
       </ul>
-      <div id="home" class="content">
-        <h2><a name="home">Welcome to the Inquisition Clan Database!</a></h2>
-        Here you can find some useful tools to help you in Regnum Online.<br />
-        List of the tools:<br />
-        <ul class="legend">
-          <li><b>Levels:</b> calculate the number of mob kills till you level up.</li>
-          <li><b>Mobs:</b> search for the mobs by name.</li>
-          <li><b>Areas:</b> find the best area for a grind.</li>
-          <li><b>Pets:</b> find the pet for your hunter.</li>
-          <li><b>NPCs:</b> search for the quest NPCs.</li>
-          <li><b>Shops:</b> find out which merchants sell stuff for your class.</li>
-          <li><b>Armor:</b> calculate armor points per damage type of your armor set.</li>
-          <li><b>Trainer:</b> build the setup for your character.</li>
-          <li><b>Credits:</b> list who provided you all this.</li>
-        </ul>
-      </div>
-      <div id="levels" class="content">
-        <h2><a name="levels">Levels</a></h2>
-        <p>
-            Needing to level up? Trying to find that <em>perfect</em> mob to get you there the quickest?
-            Ask me, I'll tell you the <em>best</em> mob to go after.
-        </p>
-        <div id="levels_results"/>
-      </div>
-      <div id="mobs" class="content">
-        <h2><a name="mobs">Mobs</a></h2>
-        <p>
-        Having trouble finding that Beast or Monstor to finish a quest? Ask me, I'll help you locate them.
-        </p>
-        <p>
-            NPC Name: <input type="text" id="mobs_name"/>
-            <button id="mobs_go">Find Mobs</button>
-        </p>
-        <div id="mobs_results"/>
-      </div>
-      <div id="areas" class="content">
-        <h2><a name="areas">Areas</a></h2>
-        Coming soon
-      </div>
-      <div id="pets" class="content">
-        <h2><a name="pets">Pets</a></h2>
-        <p>
-        Let me find the best pet for you.  Enter you level, and power levels of your tame spells.
-        </p>
-        
-        <p>
-            Level: <span id="pets_level"/>
-        </p>
-        <div id="pets_regions">
-            <div id="pets_region_map"/>
-            <div id="pets_maxpower"/>
-            <div id="pets_region_checks">
-              <div>
-                  Alsius:<br/>
-                  <input type="checkbox" id="pets_regions_1" name="pets_regions" value="alsius-iz"/>
-                  <label for="pets_regions_1">Initiation Zone</label>
-                  <input type="checkbox" id="pets_regions_2" name="pets_regions" value="alsius-ir"/>
-                  <label for="pets_regions_2">Inner Realm</label>
-                  <input type="checkbox" id="pets_regions_3" name="pets_regions" value="alsius-wz"/>
-                  <label for="pets_regions_3">War Zone</label>
+      <div id="tool_options" class="ui-helper-clearfix">
+          <div class="left">
+              <div class="tool_option" widget="level">
+                  Level: <span id="player_level"/>
               </div>
-              <div>
-                  Ignis:<br/>
-                  <input type="checkbox" id="pets_regions_4" name="pets_regions" value="ignis-iz"/>
-                  <label for="pets_regions_4">Initiation Zone</label>
-                  <input type="checkbox" id="pets_regions_5" name="pets_regions" value="ignis-ir"/>
-                  <label for="pets_regions_5">Inner Realm</label>
-                  <input type="checkbox" id="pets_regions_6" name="pets_regions" value="ignis-wz"/>
-                  <label for="pets_regions_6">War Zone</label>
+              <div class="tool_option" widget="levelrange">
+                  Min Level: <span id="min_level"/>
+                  Max Level: <span id="max_level"/>
               </div>
-              <div>
-                  Syrtis:<br/>
-                  <input type="checkbox" id="pets_regions_7" name="pets_regions" value="syrtis-iz"/>
-                  <label for="pets_regions_7">Initiation Zone</label>
-                  <input type="checkbox" id="pets_regions_8" name="pets_regions" value="syrtis-ir"/>
-                  <label for="pets_regions_8">Inner Realm</label>
-                  <input type="checkbox" id="pets_regions_9" name="pets_regions" value="syrtis-wz"/>
-                  <label for="pets_regions_9">War Zone</label>
+              <div class="tool_option" widget="power">
+                  Power Level: <span id="maxpower"/>
               </div>
-            </div>
-        </div>
-        <button id="pets_go">Find Pets</button>
-
-        <div id="pets_results"></div>
+              <div class="tool_option" widget="search">
+                  Search: <input type="text" id="search"/>
+              </div>
+              <div class="tool_option" widget="go">
+                  <button id="go">Go</button>
+              </div>
+              <div class="tool_option" style="position: absolute; bottom: 0px;" widget="region">Click on the map to limit location searches</div>
+          </div>
+          <div widget="region" class="right">
+                <div id="region_map"/>
+          </div>
       </div>
-      <div id="npcs" class="content">
-        <h2><a name="npcs">NPCs</a></h2>
-        <p>Having trouble finding that NPC to finish a quest? Ask me, I'll help you locate them.</p>
-        <p>
-            NPC Name: <input type="text" id="npcs_name"/>
-            <button id="npcs_go">Find NPCs</button>
-        </p>
-        <div id="npcs_results"/>
-      </div>
-      <div id="shops" class="content">
-        <h2><a name="shops">Shops</a></h2>
-        Coming soon
-      </div>
-      <div id="armor" class="content">
-        <h2><a name="armor">Armor Points</a></h2>
-        Coming soon
-      </div>
-      <div id="trainer" class="content">
-        <h2><a name="trainer">Trainer</a></h2>
-        Coming soon
-      </div>
-      <div id="credits" class="content">
-        <h2><a name="credits">Credits</a></h2>
-        Coming soon
+      <div> <!-- wrapper around tabs -->
+          <div id="home" class="content">
+            <h2><a name="home">Welcome to the Inquisition Clan Database!</a></h2>
+            Here you can find some useful tools to help you in Regnum Online.<br />
+            List of the tools:<br />
+            <ul class="legend">
+              <li><b>Levels:</b> calculate the number of mob kills till you level up.</li>
+              <li><b>Mobs:</b> search for the mobs by name.</li>
+              <li><b>Areas:</b> find the best area for a grind.</li>
+              <li><b>Pets:</b> find the pet for your hunter.</li>
+              <li><b>NPCs:</b> search for the quest NPCs.</li>
+              <li><b>Shops:</b> find out which merchants sell stuff for your class.</li>
+              <li><b>Armor:</b> calculate armor points per damage type of your armor set.</li>
+              <li><b>Trainer:</b> build the setup for your character.</li>
+              <li><b>Credits:</b> list who provided you all this.</li>
+            </ul>
+          </div>
+          <div id="levels" class="content">
+            <h2><a name="levels">Levels</a></h2>
+            <p>
+                Needing to level up? Trying to find that <em>perfect</em> mob to get you there the quickest?
+                Ask me, I'll tell you the <em>best</em> mob to go after.
+            </p>
+            <div id="levels_results"/>
+          </div>
+          <div id="mobs" class="content">
+            <h2><a name="mobs">Mobs</a></h2>
+            <p>
+            Having trouble finding that Beast or Monstor to finish a quest? Ask me, I'll help you locate them.
+            </p>
+            <div id="mobs_results"/>
+          </div>
+          <div id="areas" class="content">
+            <h2><a name="areas">Areas</a></h2>
+            Coming soon
+          </div>
+          <div id="pets" class="content">
+            <h2><a name="pets">Pets</a></h2>
+            <p>
+            Let me find the best pet for you.  Enter you level, and power levels of your tame spells.
+            </p>
+            <div id="pets_results"></div>
+          </div>
+          <div id="npcs" class="content">
+            <h2><a name="npcs">NPCs</a></h2>
+            <p>Having trouble finding that NPC to finish a quest? Ask me, I'll help you locate them.</p>
+            <div id="npcs_results"/>
+          </div>
+          <div id="shops" class="content">
+            <h2><a name="shops">Shops</a></h2>
+            Coming soon
+          </div>
+          <div id="armor" class="content">
+            <h2><a name="armor">Armor Points</a></h2>
+            Coming soon
+          </div>
+          <div id="trainer" class="content">
+            <h2><a name="trainer">Trainer</a></h2>
+            Coming soon
+          </div>
+          <div id="credits" class="content">
+            <h2><a name="credits">Credits</a></h2>
+            Coming soon
+          </div>
       </div>
     </div>
   </body>
