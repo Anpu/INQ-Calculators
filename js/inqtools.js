@@ -23,12 +23,16 @@ if (!Array.prototype.indexOf)
 }
 // JQuery on ready event
 $(function() {
-    $("#main").tabs().bind('tabsshow',function (event, ui) {
+    $("#main").tabs().bind('tabsselect',function (event, ui) {
         var o = $(ui.tab);
         switchTool(o.attr('callback') || '', o.attr('widgets') || '');
         if (ui.tab.hash.length > 0) {
             location.hash = '/'+ui.tab.hash.substr(1);
         }
+    });
+    $('a.tablink').live('click',function() {
+        $('#main').tabs('select',this.hash);
+        return false;
     });
 
     // Begin tool widgets
@@ -132,23 +136,36 @@ $(function() {
     });
 
     // Do this AFTER all widgets are setup to insure they "hide" correctly
-    if (location.hash.length > 0 && $('#'+location.hash.substr(2))) {
-        $('#main').tabs('select','#'+location.hash.substr(2));
-        var o = $('#main li > a[href="#'+location.hash.substr(2)+'"]');
-        switchTool(o.attr('callback') || '', o.attr('widgets') || '');
+    var curpage = '#home';
+    if (location.hash.length > 0 && $('#'+location.hash.substr(2)).length > 0) {
+        curpage = '#'+location.hash.substr(2);
     }
+    $('#main').tabs('select',curpage);
+    var o = $('#main li > a[href="'+curpage+'"]');
+    switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
+
     $('#main').tabs('option','fx',{opacity:'toggle'});
 });
 
-function switchTool(aCallback, aWidgets) {
+function switchTool(aCallback, aWidgets, animate) {
+    animate = (animate === false) ? false : true;
+    console.log (animate);
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
     if (aWidgets.length > 0) w.push('go');
     $('#tool_options *[widget]').each(function() {
         var o = $(this);
         if (w.indexOf(o.attr('widget')) > -1) {
-            o.slideDown('fast');
+            if (animate) {
+                o.slideDown('fast');
+            } else {
+                o.show();
+            }
         } else {
-            o.slideUp('fast');
+            if (animate) {
+                o.slideUp('fast');
+            } else {
+                o.hide();
+            }
         }
     });
     $('#tool_options').data('callback',aCallback);
