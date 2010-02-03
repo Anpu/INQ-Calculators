@@ -8,11 +8,11 @@ body {
     line-height: 2.2em;
     background-color: #000000;
     color: #EFC235;
-    cursor: url("images/normal.cur"), default;
+    cursor: url('../images/normal.cur'), default;
 }
 
 a {
-    cursor: url("images/links.cur"), default;
+    cursor: url('../images/links.cur'), default;
 }
 
 a:link, a:visited { 
@@ -43,7 +43,7 @@ h2 {
 }
 
 ul.legend {
-    list-style: url("images/gem.png");
+    list-style: url('../images/gem.png');
     color: #EFC235;
 }
 
@@ -68,7 +68,7 @@ ul.navigation li {
     font-weight: bold;
     padding: 0.2em 1em;
     padding-bottom: 0 !important;
-    background-image: url('images/menu-gradient.png') !important;
+    background-image: url('../images/menu-gradient.png') !important;
     background-repeat: repeat-x;
     background-position: 0 0 !important;
     margin: 0 !important;
@@ -76,13 +76,13 @@ ul.navigation li {
 
 ul.navigation li:first-child {
     padding-left: 38px;
-    background-image: url('images/menu-left.png') !important;
+    background-image: url('../images/menu-left.png') !important;
     background-repeat: no-repeat;
 }
 
 ul.navigation li:last-child {
     padding-right: 38px;
-    background-image: url('images/menu-right.png') !important;
+    background-image: url('../images/menu-right.png') !important;
     background-repeat: no-repeat;
     background-position: top right !important;
 }
@@ -151,7 +151,7 @@ div.content.ui-widget-content a {
     width: 199px;
 }
 .ROMapImage {
-    background-image: url(images/ro_map-200.png);
+    background-image: url('../images/ro_map-200.png');
 }
 
 .ROMapImage.map {
