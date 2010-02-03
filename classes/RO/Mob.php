@@ -76,6 +76,36 @@ class RO_Mob extends RO_Base {
         ));
     }
 
+        /**
+     * Find Kills to the next Level By Area
+     *
+     * @param int $player_level     The level of the player
+     * @param int $player_xp        The experience of the user
+     * @param int $min_level        The minimum level of mobs to search for
+     * @param int $max_level        The maximum level of mobs to search for
+     * @param array $regions        List of regions to search in
+     *
+     * @return Iterator the found Areas
+     */
+    public static function findKillsToLevelByArea($player_level = 1, $player_xp = null,
+                $min_level = 1, $max_level = 3, $regions = array())
+    {
+        if (!empty($player_xp)) {
+            $sql = "CALL GetKillsToLevelByArea(?, ?, ?, ?)";
+            $stmt = Database::query($sql, $player_xp, $min_level, $max_level, implode(',',$regions));
+        } else {
+            $sql = "CALL GetKillsToLevelByArea(XPForLevel(?), ?, ?, ?)";
+            $stmt = Database::query($sql, $player_level, $min_level, $max_level, implode(',',$regions));
+        }
+        $ret = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $stmt->closeCursor();
+        return new ResultIterator($ret, 'CustomResultSet',array(
+            'config'=>array(
+                'zone'=>array('key'=>'zone_id','class'=>'RO_Zone'),
+            )
+        ));
+    }
+
     /**
      * Find Mob by name
      *

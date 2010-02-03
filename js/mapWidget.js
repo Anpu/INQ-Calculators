@@ -70,6 +70,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
                     .addClass(this._getData('hintclass'))
                     .hide()
                     .appendTo(document.body)
+                    .mouseover(function(e) {$(this).hide()})
             }
         }
         return this._hintbox;

@@ -38,6 +38,8 @@ $.widget('ui.digitPicker', {
         $.widget.prototype.destroy.apply(this, arguments);
     },
     setValue: function(value) {
+        if (value < this._getData('min')) value = this._getData('min');
+        if (value > this._getData('max')) value = this._getData('max');
         this._value = value;
         this.element.text(prefixNumber(value,'0',this._digits));
     },
@@ -119,6 +121,7 @@ $.widget('ui.digitPicker', {
         if (digit+1 >= this._digits || cur == this._getData('max')) {
             this.setValue(cur);
             this._clearPicker();
+            this._trigger('change', 0, cur);
         } else {
             this._generateRow(digit+1);
         }
