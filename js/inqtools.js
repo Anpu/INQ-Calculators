@@ -50,13 +50,22 @@ $(function() {
         max:58,
         defaultValue:1,
         change: function(e, value) {
-            $('#max_level').digitPicker('setValue',value+3);
+            var v = $('#max_level').digitPicker('value');
+            if (value > v) {
+                $('#max_level').digitPicker('setValue',value);
+            }
         }
     });
     $('#max_level').digitPicker({
         min:1,
         max:58,
-        defaultValue:3
+        defaultValue:3,
+        change: function(e, value) {
+            var v = $('#min_level').digitPicker('value');
+            if (value < v) {
+                $('#min_level').digitPicker('setValue',value);
+            }
+        }
     });
     $('#maxpower').digitPicker({
         min:1,
@@ -149,7 +158,6 @@ $(function() {
 
 function switchTool(aCallback, aWidgets, animate) {
     animate = (animate === false) ? false : true;
-    console.log (animate);
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
     if (aWidgets.length > 0) w.push('go');
     $('#tool_options *[widget]').each(function() {
