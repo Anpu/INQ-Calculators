@@ -43,6 +43,7 @@ if (empty($_SERVER['PATH_INFO'])) {
           'response'=>'error',
           'error'=>"Database Error: SQLSTATE:".$ex->getCode(),
       ));
+      error_log($ex->toString());
     } catch(Exception $ex) {
         echo json_encode(array(
             'response'=>'error',
