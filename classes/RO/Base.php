@@ -10,7 +10,7 @@ abstract class RO_Base {
     protected $extra;
     static private $cache = array();
 
-    public function  __construct($id, $extra)
+    public function  __construct($id, $extra = array())
     {
         $this->record = null;
         $this->id = $id;
