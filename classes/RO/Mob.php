@@ -70,6 +70,8 @@ class RO_Mob extends RO_Base {
         $stmt->closeCursor();
         return new ResultIterator($ret, 'CustomResultSet',array(
             'regions'=>$regions,
+            'min_level'=>$min_level,
+            'max_level'=>$max_level,
             'config'=>array(
                 'mob'=>array('key'=>'mob_id','class'=>'RO_Mob'),
             )
@@ -100,6 +102,8 @@ class RO_Mob extends RO_Base {
         $ret = $stmt->fetchAll(PDO::FETCH_OBJ);
         $stmt->closeCursor();
         return new ResultIterator($ret, 'CustomResultSet',array(
+            'min_level'=>$min_level,
+            'max_level'=>$max_level,
             'config'=>array(
                 'zone'=>array('key'=>'zone_id','class'=>'RO_Zone'),
             )
