@@ -44,7 +44,7 @@
         <li><a href="#mobs" widgets="search,region" callback="cbMobs">Mobs</a></li>
         <li><a href="#areas" widgets="level,levelrange,region" callback="cbAreas">Areas</a></li>
         <li><a href="#pets" widgets="level,power,region" callback="cbPets">Pets</a></li>
-        <li><a href="#npcs" widgets="search,region" callback="cbNPCs">NPCs</a></li>
+        <li><a href="#npcs" widgets="search,profession,region" callback="cbNPCs">NPCs</a></li>
         <li><a href="#shops">Shops</a></li>
         <li><a href="#armor">Armor</a></li>
         <li><a href="#trainer">Trainer</a></li>
@@ -64,6 +64,53 @@
               </div>
               <div class="tool_option" widget="search">
                   Search: <input type="text" id="search"/>
+              </div>
+              <div class="tool_option" widget="profession">
+                  <!-- Yeah we could pull this dynamically from the DB.. but why increase db load? -->
+                  Profession: <select id="profession">
+                      <option value=":">Any Profession</option>
+                      <option value="Arena Guardian:">Arena Guardian</option>
+                      <option value="Clan Notary:">Clan Notary</option>
+                      <optgroup label="Denizens">
+                        <option value="Denizen:">Any Denizen</option>
+                        <option value="Denizen:Animal">Animal</option>
+                        <option value="Denizen:Denizen">Denizen</option>
+                        <option value="Denizen:Guide">Guide</option>
+                        <option value="Denizen:Noble">Noble</option>
+                        <option value="Denizen:Town Crier">Town Crier</option>
+                      </optgroup>
+                      <optgroup label="Guards">
+                        <option value="Guard:">Any Guard</option>
+                        <option value="Guard:Guard">Guard</option>
+                        <option value="Guard:General">General</option>
+                        <option value="Guard:Elite guard">Elite guard</option>
+                      </optgroup>
+                      <optgroup label="Merchants">
+                        <option value="Merchant:">Any Merchant</option>
+                        <option value="Merchant:Alchemist">Alchemist</option>
+                        <option value="Merchant:Blacksmith">Blacksmith</option>
+                        <option value="Merchant:Enchanter">Enchanter</option>
+                        <option value="Merchant:Farrier">Farrier</option>
+                        <option value="Merchant:Herbalist">Herbalist</option>
+                        <option value="Merchant:Merchant">Merchant</option>
+                        <option value="Merchant:Tailor">Tailor</option>
+                        <option value="Merchant:Weaponsmith">Weaponsmith</option>
+                        <option value="Merchant:Woodworker">Woodworker</option>
+                      </optgroup>
+                      <option value="Teleporter:">Teleporter</option>
+                      <optgroup label="Trainers">
+                        <option value="Trainer:">Any Trainer</option>
+                        <option value="Trainer:Archer Trainer">Archer Trainer</option>
+                        <option value="Trainer:Hunter Trainer">Hunter Trainer</option>
+                        <option value="Trainer:Marksman Trainer">Marksman Trainer</option>
+                        <option value="Trainer:Mage Trainer">Mage Trainer</option>
+                        <option value="Trainer:Conjurer Trainer">Conjurer Trainer</option>
+                        <option value="Trainer:Warlock Trainer">Warlock Trainer</option>
+                        <option value="Trainer:Warrior Trainer">Warrior Trainer</option>
+                        <option value="Trainer:Barbarian Trainer">Barbarian Trainer</option>
+                        <option value="Trainer:Knight Trainer">Knight Trainer</option>
+                      </optgroup>
+                  </select>
               </div>
               <div class="tool_option" widget="go">
                   <button id="go">Go</button>

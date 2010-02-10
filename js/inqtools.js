@@ -254,10 +254,11 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
 }
 
 function cbNPCs() {
+    var b = $('#profession').val().split(':');
     findNPCs(
         $('#search').val(),
-        undefined,
-        undefined,
+        b[0],
+        b[1],
         regionsFromMap()
     );
 }
