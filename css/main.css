@@ -232,3 +232,33 @@ div.content.ui-widget-content a {
     top:34px;
     width:58px;
 }
+/** Crests */
+.ROCrests {
+    width: 46px;
+    height: 186px;
+}
+.ROCrestsImage {
+    background-image: url(../images/crests-200.png);
+}
+.ROCrestsImage.bg {
+    background-position: -46px 0px;
+    width: 46px;
+    height: 186px;
+}
+.ROCrestsImage.ignis {
+    background-position: 0px 0px;
+    width: 46px;
+    height: 61px
+}
+.ROCrestsImage.alsius {
+    background-position: 0px -61px;
+    width: 46px;
+    height: 63px;
+    top: 61px;
+}
+.ROCrestsImage.syrtis {
+    background-position: 0px -124px;
+    width: 46px;
+    height: 62px;
+    top: 124px;
+}

@@ -72,6 +72,37 @@ $(function() {
         max:5,
         defaultValue:5
     });
+    $('#realm_crests').mapWidget({
+        'class':'ROCrests',
+        maps: {
+            'map':{config:{image:'ROCrestsImage bg'}},
+            'ignis':{
+                config:{image:'ROCrestsImage ignis',hint:"Anywhere in Ignis"},
+                areas:{
+                    'main':{toggle:true,map:new Polygon([[0,0],[46,0],[46,61],[0,61]])}
+                }
+            },
+            'alsius':{
+                config:{image:'ROCrestsImage alsius',hint:"Anywhere in Alsius"},
+                areas:{
+                    'main':{toggle:true,map:new Polygon([[0,61],[46,61],[46,124],[0,124]])}
+                }
+            },
+            'syrtis':{
+                config:{image:'ROCrestsImage syrtis',hint:"Anywhere in Syrtis"},
+                areas:{
+                    'main':{toggle:true,map:new Polygon([[0,124],[46,124],[46,186],[0,186]])}
+                }
+            }
+        },
+        click:function(e, hit) {
+            var v = $(this).mapWidget('value')[hit.map];
+            $('#region_map')
+                .mapWidget('setValue',hit.map+'-iz',v)
+                .mapWidget('setValue',hit.map+'-ir',v)
+                .mapWidget('setValue',hit.map+'-wz',v);
+        }
+    });
     $('#region_map').mapWidget({
         'class':'ROMap',
         maps: {
@@ -129,6 +160,15 @@ $(function() {
                 areas:{
                     'main': {toggle:true,map:new Polygon([[74.2,54.2],[78.2,54.2],[81.2,49.2],[91.2,51.2],[91.2,48.2],[87.2,46.2],[85.2,40.2],[88.2,36.2],[99.2,35.2],[104.2,40.2],[103.2,46.2],[100.2,42.2],[97.2,44.2],[95.2,49.2],[99.2,52.2],[97.2,57.2],[96.2,63.2],[95.2,71.2],[100.2,77.2],[102.2,83.2],[94.2,84.2],[89.2,83.2],[80.2,87.2],[74.2,87.2],[70.2,87.2],[62.2,88.2],[58.2,89.2],[54.2,92.2],[50.2,91.2],[50.2,88.2],[46.2,83.2],[52.2,76.2],[57.2,70.2],[65.2,65.2],[70.2,59.2]])}
                 }
+            }
+        },
+        click:function(e, hit) {
+            var v = $(this).mapWidget('value');
+            var r = hit.map.substr(0,hit.map.length-3);
+            if (v[r+'-iz'] && v[r+'-ir'] && v[r+'-wz']) {
+                $('#realm_crests').mapWidget('setValue',r,true);
+            } else {
+                $('#realm_crests').mapWidget('setValue',r,false);
             }
         }
     });
