@@ -1,0 +1,21 @@
+<tr metal:define-macro="mob_zone_list">
+    <td tal:attributes="colspan colspan">
+        <div id="mob_zones_${mob/mob_id}" class="detail_row">
+            <table>
+                <tr tal:repeat="zone mob/zones">
+                    <td><span tal:condition="repeat/zone/start">Location:</span></td>
+                    <td colspan="3">${zone/name} in the ${zone/realm} ${zone/region}</td>
+                </tr>
+            </table>
+        </div>
+    </td>
+</tr>
+<tr metal:define-macro="zone_mob_list">
+    <td tal:attributes="colspan colspan">
+        <div id="zone_mobs_${zone/zone_id}" class="detail_row" style="padding-left:4em;">
+            <tal:block tal:repeat="mob zone/mobs">
+                <span>${mob/name}</span><span tal:condition="not: repeat/mob/end">,</span>
+            </tal:block>
+        </div>
+    </td>
+</tr>
