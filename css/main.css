@@ -25,6 +25,11 @@ a:hover, a:active {
     color: #FFFFFF;
 }
 
+/** Make Option Font Styles Consistant */
+option, optgroup, optgroup > option {
+    font-family: inherit !important;
+}
+
 #header {
     text-align: center;
 }
