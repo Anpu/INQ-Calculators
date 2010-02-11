@@ -1,5 +1,6 @@
-Options +FollowSymlinks
+Options +FollowSymlinks -MultiViews
 RewriteEngine on
+RewriteBase /~xia/inq-calculators/
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php/$1 [L]
