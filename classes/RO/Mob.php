@@ -27,6 +27,16 @@ class RO_Mob extends RO_Base {
         return new ResultIterator($rows,'RO_Zone');
     }
 
+    protected function tameSpell()
+    {
+      $spell_map = array(
+        'Monster' => 'Control Monsters',
+        'Lesser' => 'Tame Lesser Creatures',
+        'Beast' => 'Tame Beasts'
+      );
+      return isset($spell_map[$this->class]) ? $spell_map[$this->class] : "undefined";
+    }
+
     /**
      * Find tameable mobs for a hunter
      *
