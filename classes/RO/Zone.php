@@ -17,7 +17,6 @@ class RO_Zone extends RO_Base {
 
     protected function mobs()
     {
-        FB::log($this->extra);
         $min_level = empty($this->extra->min_level) ? null : $this->extra->min_level;
         $max_level = empty($this->extra->max_level) ? null : $this->extra->max_level;
         $stmt = Database::query("CALL GetAreaMobs(?,?,?)",$this->ID(),$min_level, $max_level);
