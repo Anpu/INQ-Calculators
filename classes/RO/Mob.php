@@ -34,7 +34,11 @@ class RO_Mob extends RO_Base {
         'Lesser' => 'Tame Lesser Creatures',
         'Beast' => 'Tame Beasts'
       );
-      return isset($spell_map[$this->class]) ? $spell_map[$this->class] : "undefined";
+      if (isset($spell_map[$this->class])) {
+        return $spell_map[$this->class].'('.$this->tameable.')';
+      } else {
+        return "Untameable";
+      }
     }
 
     /**
