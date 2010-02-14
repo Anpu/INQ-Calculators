@@ -12,7 +12,7 @@ body {
 }
 
 a {
-    cursor: url('../images/links.cur'), default;
+    cursor: url('../images/links.cur'), default !important;
 }
 
 a:link, a:visited { 
