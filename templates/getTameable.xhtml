@@ -1,19 +1,25 @@
-<div class="search_result_set">
-  <div class="search_result_header">
-    <span class="mob_name">Mob Name</span>
-    <span class="mob_level">Level</span>
-    <span class="mob_spell">Requires</span>
-    <span class="mob_areas">Found in</span>
-  </div>
-  <div class="search_result_row" tal:repeat="mob limit: offset limit mobs">
-    <span class="mob_name">${mob/name}</span>
-    <span class="mob_level">${mob/level}</span>
-    <span class="mob_spell">${mob/tameSpell}</span>
-    <span class="mob_area">${mob/name}</span>
-    <span class="mob_area_detail">
-      <span tal:repeat="zone mob/zones">
-        ${zone/name} in the ${zone/realm} ${zone/region}
-      </span>
-    </span>
-  </div>
-</div>
+<table class="search_result_set">
+  <thead>
+    <tr>
+      <th class="mob_name">Mob Name</th>
+      <th class="mob_level">Level</th>
+      <th class="mob_spell">Requires</th>
+      <th class="mob_areas">Found in</th>
+    </tr>
+  </thead>
+  <tbody class="search_result_row" tal:repeat="mob limit: offset limit mobs">
+    <tr>
+      <td class="mob_name">${mob/name}</td>
+      <td class="mob_level">${mob/level}</td>
+      <td class="mob_spell">${mob/tameSpell}</td>
+      <td class="mob_area">${mob/name}</td>
+    </tr>
+    <tr>
+      <td class="mob_area_detail" colspan="4">
+        <span tal:repeat="zone mob/zones">
+          ${zone/name} in the ${zone/realm} ${zone/region}
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
