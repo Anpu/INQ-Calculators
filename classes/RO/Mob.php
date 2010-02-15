@@ -27,6 +27,17 @@ class RO_Mob extends RO_Base {
         return new ResultIterator($rows,'RO_Zone');
     }
 
+    protected function zoneOverview() {
+      $zone_summary = array();
+      foreach($this->zones() as $zone) {
+        if (!isset($zone_summary[$zone->shortName])) {
+          $zone_summary[$zone->shortName] = 1;
+        }
+      }
+      ksort($zone_summary);
+      return array_keys($zone_summary);
+    }
+
     protected function tameSpell()
     {
       $spell_map = array(
@@ -46,7 +57,7 @@ class RO_Mob extends RO_Base {
      *
      * @param int $player_level     The level of the player
      * @param int $maxpower         The max spell power to return mobs for
-     * @param array $regions       List of regions to search in
+     * @param array $regions        List of regions to search in
      *
      * @return Iterator the found Mobs
      */
