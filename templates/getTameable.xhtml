@@ -4,21 +4,27 @@
       <th class="mob_name">Mob Name</th>
       <th class="mob_level">Level</th>
       <th class="mob_spell">Requires</th>
-      <th class="mob_areas">Found in</th>
+      <th class="mob_areas">Found In</th>
     </tr>
   </thead>
-  <tbody class="search_result_row" tal:repeat="mob limit: offset limit mobs">
-    <tr>
+  <tbody tal:repeat="mob limit: offset limit mobs">
+    <tr class="search_result_row">
       <td class="mob_name">${mob/name}</td>
       <td class="mob_level">${mob/level}</td>
       <td class="mob_spell">${mob/tameSpell}</td>
-      <td class="mob_area">${mob/name}</td>
-    </tr>
-    <tr>
-      <td class="mob_area_detail" colspan="4">
-        <span tal:repeat="zone mob/zones">
-          ${zone/name} in the ${zone/realm} ${zone/region}
+      <td class="mob_area">
+        <span tal:repeat="zone mob/zoneOverview">
+          <img src="images/${zone}.png" title="${zone}" />
         </span>
+      </td>
+    </tr>
+    <tr class="search_result_detail">
+      <td class="mob_detail" colspan="4">
+        <ul class="area_list">
+          <li tal:repeat="zone mob/zones" class="${zone/shortName}">
+          ${zone/name} in the ${zone/realm} ${zone/region}
+          </li>
+        </ul>
       </td>
     </tr>
   </tbody>
