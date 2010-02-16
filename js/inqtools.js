@@ -21,16 +21,27 @@ if (!Array.prototype.indexOf)
     return -1;
   };
 }
+
+function prefixNumber(number, prefix, digits) {
+    var n = parseInt(number).toString();
+    var ret = '';
+    for (var i=0,l=digits-n.length; i<l; i++) {
+        ret += prefix;
+    }
+    return ret + n;
+}
+
 // JQuery on ready event
 $(function() {
     $("#main").tabs().bind('tabsselect',function (event, ui) {
         var o = $(ui.tab);
-        switchTool(o.attr('callback') || '', o.attr('widgets') || '');
+        switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
         if (ui.tab.hash.length > 0) {
             location.hash = '/'+ui.tab.hash.substr(1);
         }
     });
     $('a.tablink').live('click',function() {
+        if (e.button !=0) return;
         $('#main').tabs('select',this.hash);
         return false;
     });
@@ -66,42 +77,106 @@ $(function() {
         $(this).toggleClass('expanded').next('.search_result_detail').find('div.detail_content').slideToggle();
         });
 
-    $('#player_level').digitPicker({
-        min:1,
-        max:50,
-        defaultValue:1,
-        change: function(e, value) {
-            $('#min_level').digitPicker('setValue',value);
-            $('#max_level').digitPicker('setValue',value+3);
+    function toolPopupGlobalClick(e) {
+        var test = $(e.target).closest('.tool_popup_wrapper,.tool_popup_button').length;
+        if (!test) {
+            $('.tool_popup_wrapper').stop(true,true).slideUp();
+            $(document).unbind('mouseup',toolPopupGlobalClick);
         }
+    }
+
+    $('.tool_popup_button').live('click',function(e) {
+        if (e.button !=0) return;
+        var o = $(this);
+        var popup = $('#'+o.attr('popup'));
+        $(document).bind('mouseup',toolPopupGlobalClick);
+        var v = popup.is(':visible');
+        $('.tool_popup_wrapper').stop(true,true).slideUp();
+        if (!v) {
+            //Position
+            var l = o.offset().left;
+            var p = o.closest('div');
+            var t = p.offset().top + p.height();
+            if (o.attr('side')=='right') {
+                l += o.width() - popup.parent().outerWidth();
+                popup.parent()
+                    .css({left:l,top:t})
+                    .slideDown();
+            } else {
+                popup.parent()
+                    .css({left:l,top:t})
+                    .slideDown();
+            }
+        }
+
     });
-    $('#min_level').digitPicker({
-        min:1,
-        max:58,
-        defaultValue:1,
-        change: function(e, value) {
-            var v = $('#max_level').digitPicker('value');
-            if (value > v) {
-                $('#max_level').digitPicker('setValue',value);
+
+    // Begin tool widgets
+    $('.tool_popup')
+        .wrap('<div class="tool_popup_wrapper"/>')
+        .parent()
+        .appendTo('body');
+
+    $('#player_level').height(200).slider({
+        orientation: 'vertical',
+        min: 1,
+        max: 50,
+        animate: true,
+        value: 1,
+        slide: function(e, ui) {
+            $('#player_level_display').text(prefixNumber(ui.value,'0',2));
+            var o = $('#level_range');
+            var v = o.slider('values');
+            if (v[0] < ui.value) {
+                var d = ui.value - v[0];
+                var n = v[0]+d;
+                if (n > 58) n = 58;
+                o.slider('values',0,n);
+                n = v[1]+d;
+                if (n > 58) n = 58;
+                o.slider('values',1,n);
             }
         }
     });
-    $('#max_level').digitPicker({
-        min:1,
-        max:58,
-        defaultValue:3,
-        change: function(e, value) {
-            var v = $('#min_level').digitPicker('value');
-            if (value < v) {
-                $('#min_level').digitPicker('setValue',value);
-            }
+    $('#player_level_display').text('01');
+
+    $('#level_range').height(200).slider({
+        orientation: 'vertical',
+        min: 1,
+        max: 58,
+        animate: true,
+        range: true,
+        values: [1,3],
+        slide: function(e, ui) {
+            $('#level_range_display').text(
+                    prefixNumber(ui.values[0],'0',2)
+                        +'-'
+                        +prefixNumber(ui.values[1],'0',2));
+        },
+        change: function(e, ui) {
+            $('#level_range_display').text(
+                    prefixNumber(ui.values[0],'0',2)
+                        +'-'
+                        +prefixNumber(ui.values[1],'0',2));
         }
     });
-    $('#maxpower').digitPicker({
-        min:1,
-        max:5,
-        defaultValue:5
+    $('#level_range_display').text('01-03');
+
+    $('#max_power').height(200).slider({
+        orientation: 'vertical',
+        min: 1,
+        max: 5,
+        animate: true,
+        value: 5,
+        slide: function(e, ui) {
+            $('#max_power_display').text(ui.value);
+        },
+        change: function(e, ui) {
+            $('#max_power_display').text(ui.value);
+        }
     });
+    $('#max_power_display').text('05');
+
     $('#realm_crests').mapWidget({
         'class':'ROCrests',
         maps: {
@@ -202,6 +277,7 @@ $(function() {
             }
         }
     });
+    $('#location_map_display').text('Anywhere');
 
     $('input[type="text"]').keypress(function(e) {
         if (e.keyCode==13) {
@@ -268,8 +344,8 @@ function regionsFromMap() {
 
 function cbPets() {
     getTameableMobs(
-        $('#player_level').digitPicker('value'),
-        $('#maxpower').digitPicker('value'),
+        $('#player_level').slider('value'),
+        $('#max_power').slider('value'),
         regionsFromMap()
     );
 }
@@ -322,11 +398,12 @@ function findMobs(name, regions, offset) {
 }
 
 function cbLevels() {
+    var v = $('#level_range').slider('value');
     getKillsToLevel(
-        $('#player_level').digitPicker('value'),
+        $('#player_level').slider('value'),
         0,
-        $('#min_level').digitPicker('value'),
-        $('#max_level').digitPicker('value'),
+        v[0],
+        v[1],
         regionsFromMap()
     );
 }
@@ -347,11 +424,12 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
 }
 
 function cbAreas() {
+    var v = $('#level_range').slider('value');
     getKillsToLevelByArea(
-        $('#player_level').digitPicker('value'),
+        $('#player_level').slider('value'),
         0,
-        $('#min_level').digitPicker('value'),
-        $('#max_level').digitPicker('value'),
+        v[0],
+        v[1],
         regionsFromMap()
     );
 }
