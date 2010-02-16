@@ -398,7 +398,7 @@ function findMobs(name, regions, offset) {
 }
 
 function cbLevels() {
-    var v = $('#level_range').slider('value');
+    var v = $('#level_range').slider('values');
     getKillsToLevel(
         $('#player_level').slider('value'),
         0,
@@ -424,7 +424,7 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
 }
 
 function cbAreas() {
-    var v = $('#level_range').slider('value');
+    var v = $('#level_range').slider('values');
     getKillsToLevelByArea(
         $('#player_level').slider('value'),
         0,
