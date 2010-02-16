@@ -161,7 +161,7 @@ div.content.ui-widget-content a {
 }
 
 .tool_popup_button {
-    cursor: pointer;
+    cursor: url('../images/links.cur'), pointer;
 }
 .tool_popup_wrapper {
     position:absolute;
@@ -176,7 +176,7 @@ div.content.ui-widget-content a {
 }
 
 .mapWidget-point {
-    cursor: url('../images/links.cur'), pointer;
+    cursor: url('../images/links.cur'), pointer !important;
 }
 /** Regnum Interactive Map Widget */
 .ROMap {
