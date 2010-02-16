@@ -61,7 +61,21 @@ $(function() {
                 .addClass('ui-icon-triangle-1-s');
         }
     });
-    // Begin tool widgets
+
+    $('.search_result_row').live('toggle', function() {
+        $(this).addClass('expanded');
+        $(this).next('.search_result_detail').addClass('expanded');
+        alert('PLUS');
+        }, function() {
+        $(this).removeClass('expanded');
+        $(this).next('.search_result_detail').removeClass('expanded');
+        alert('MINUS');
+        });
+
+    $('.search_result_row').live('click', function() {
+        $(this).next('.search_result_detail').toggle().colSpan = 4;
+        });
+
     $('#player_level').digitPicker({
         min:1,
         max:50,
@@ -261,6 +275,7 @@ function regionsFromMap() {
     }
     return selected_regions;
 }
+
 function cbPets() {
     getTameableMobs(
         $('#player_level').digitPicker('value'),
@@ -268,6 +283,7 @@ function cbPets() {
         regionsFromMap()
     );
 }
+
 function getTameableMobs(player_level, maxpower, regions, offset) {
     var args = {
         player_level: player_level || 1,
@@ -275,7 +291,7 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'getTameable',args, loadIntoDIV('#pets_results'));
+    $.getJSON(ajaxRoot + 'getTameable', args, loadIntoDIV('#pets_results'));
 }
 
 function cbNPCs() {
@@ -374,3 +390,4 @@ function loadIntoDIV(aDiv) {
     return loadIntoDIV.funcs[aDiv];
 }
 loadIntoDIV.funcs = {};
+
