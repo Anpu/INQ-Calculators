@@ -11,10 +11,6 @@ body {
     cursor: url('../images/normal.cur'), default;
 }
 
-a {
-    cursor: url('../images/links.cur'), default !important;
-}
-
 a:link, a:visited { 
     text-decoration: none;
     color: #EFC325;
@@ -23,6 +19,7 @@ a:link, a:visited {
 a:hover, a:active { 
     text-decoration: underline;
     color: #FFFFFF;
+    cursor: url('../images/links.cur'), pointer !important;
 }
 
 /** Make Option Font Styles Consistant */
