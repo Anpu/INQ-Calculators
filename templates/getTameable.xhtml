@@ -18,13 +18,15 @@
         </span>
       </td>
     </tr>
-    <tr class="search_result_detail">
+    <tr>
       <td class="mob_detail" colspan="4">
-        <ul class="area_list">
-          <li tal:repeat="zone mob/zones" class="${zone/shortName}">
-          ${zone/name} in the ${zone/realm} ${zone/region}
-          </li>
-        </ul>
+        <div class="search_result_detail">
+          <ul class="area_list">
+            <li tal:repeat="zone mob/zones" class="${zone/shortName}">
+            ${zone/name} in the ${zone/realm} ${zone/region}
+            </li>
+          </ul>
+        </div>
       </td>
     </tr>
   </tbody>
