@@ -145,7 +145,7 @@ div.content.ui-widget-content a {
     margin: 0 auto;
     color: #EFC235;
     border: 1px solid green;
-    position: relative;
+    padding: 0 0.5em;
 }
 
 #tool_options .left {
@@ -157,7 +157,22 @@ div.content.ui-widget-content a {
 }
 
 .tool_option {
-    padding: 0.5em 0 0.5em 0.5em;
+    padding: 0.5em 0;
+}
+
+.tool_popup_button {
+    cursor: pointer;
+}
+.tool_popup_wrapper {
+    position:absolute;
+    padding: 1em;
+    background-color: black;
+    border: 1px solid #EFC235;
+    display: none;
+}
+.tool_value {
+    font-size: 110%;
+    color: white;
 }
 
 .mapWidget-point {

@@ -10,23 +10,16 @@
       tal:attributes="href string:css/themes/inquisition/jquery-ui-1.7.2.custom.css"/>
     <link rel="stylesheet" type="text/css" href="../css/mapWidget.css"
       tal:attributes="href string:css/mapWidget.css"/>
-    <link rel="stylesheet" type="text/css" href="../css/digitPicker.css"
-      tal:attributes="href string:css/digitPicker.css"/>
     <script type="text/javascript" src="../js/jquery-1.3.2.min.js"
       tal:attributes="src string:js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="../js/jquery-ui-1.7.2.custom.min.js"
       tal:attributes="src string:js/jquery-ui-1.7.2.custom.min.js"></script>
-    <!-- Remove this if we ever upgrade to jQuery 1.4 as it's built in now -->
-    <script type="text/javascript" src="../js/jquery.delay.min.js"
-      tal:attributes="src string:js/jquery.delay.min.js"></script>
     <script type="text/javascript" src="../js/inqtools.js"
       tal:attributes="src string:js/inqtools.js"></script>
     <script type="text/javascript" src="../js/mapWidget.js"
       tal:attributes="src string:js/mapWidget.js"></script>
     <script type="text/javascript" src="../js/Polygon.js"
       tal:attributes="src string:js/Polygon.js"></script>
-    <script type="text/javascript" src="../js/digitPicker.js"
-      tal:attributes="src string:js/digitPicker.js"></script>
     <script type="text/javascript">
       <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
     </script>
@@ -50,77 +43,90 @@
         <li><a href="#trainer">Trainer</a></li>
         <li><a href="#credits">Credits</a></li>
       </ul>
-      <div id="tool_options" class="ui-helper-clearfix">
-          <div class="left">
-              <div class="tool_option" widget="level">
-                  Character Level: <span id="player_level"/>
+      <div id="tool_options">
+          <span class="tool_option" widget="level">
+              <span class="tool_popup_button" popup="player_level" side="right">Character Level:
+                  <span class="tool_value" id="player_level_display"/><span
+                      style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
+              <div class="tool_popup" id="player_level"/>
+          </span>
+          <span class="tool_option" widget="levelrange">
+              <span class="tool_popup_button" popup="level_range" side="right">Mob Level Range:
+                  <span class="tool_value" id="level_range_display"/><span
+                      style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
+              <div class="tool_popup" id="level_range"/>
+          </span>
+          <span class="tool_option" widget="power">
+              <span class="tool_popup_button" popup="max_power" side="right">Tame Power Level:
+                  <span class="tool_value" id="max_power_display"/><span
+                      style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
+              <div class="tool_popup" id="max_power"/>
+          </span>
+          <span class="tool_option" widget="mob_search">
+              Mob Name: <input type="text" id="mob_search"/>
+          </span>
+          <span class="tool_option" widget="npc_search">
+              NPC Name: <input type="text" id="npc_search"/>
+          </span>
+          <span class="tool_option" widget="profession">
+              <!-- Yeah we could pull this dynamically from the DB.. but why increase db load? -->
+              Profession: <select id="profession">
+                  <option value=":">Any Profession</option>
+                  <option value="Arena Guardian:">Arena Guardian</option>
+                  <option value="Clan Notary:">Clan Notary</option>
+                  <optgroup label="Denizens">
+                    <option value="Denizen:">Any Denizen</option>
+                    <option value="Denizen:Animal">Animal</option>
+                    <option value="Denizen:Denizen">Denizen</option>
+                    <option value="Denizen:Guide">Guide</option>
+                    <option value="Denizen:Noble">Noble</option>
+                    <option value="Denizen:Town Crier">Town Crier</option>
+                  </optgroup>
+                  <optgroup label="Guards">
+                    <option value="Guard:">Any Guard</option>
+                    <option value="Guard:Guard">Guard</option>
+                    <option value="Guard:General">General</option>
+                    <option value="Guard:Elite guard">Elite guard</option>
+                  </optgroup>
+                  <optgroup label="Merchants">
+                    <option value="Merchant:">Any Merchant</option>
+                    <option value="Merchant:Alchemist">Alchemist</option>
+                    <option value="Merchant:Blacksmith">Blacksmith</option>
+                    <option value="Merchant:Enchanter">Enchanter</option>
+                    <option value="Merchant:Farrier">Farrier</option>
+                    <option value="Merchant:Herbalist">Herbalist</option>
+                    <option value="Merchant:Merchant">Merchant</option>
+                    <option value="Merchant:Tailor">Tailor</option>
+                    <option value="Merchant:Weaponsmith">Weaponsmith</option>
+                    <option value="Merchant:Woodworker">Woodworker</option>
+                  </optgroup>
+                  <option value="Teleporter:">Teleporter</option>
+                  <optgroup label="Trainers">
+                    <option value="Trainer:">Any Trainer</option>
+                    <option value="Trainer:Archer Trainer">Archer Trainer</option>
+                    <option value="Trainer:Hunter Trainer">Hunter Trainer</option>
+                    <option value="Trainer:Marksman Trainer">Marksman Trainer</option>
+                    <option value="Trainer:Mage Trainer">Mage Trainer</option>
+                    <option value="Trainer:Conjurer Trainer">Conjurer Trainer</option>
+                    <option value="Trainer:Warlock Trainer">Warlock Trainer</option>
+                    <option value="Trainer:Warrior Trainer">Warrior Trainer</option>
+                    <option value="Trainer:Barbarian Trainer">Barbarian Trainer</option>
+                    <option value="Trainer:Knight Trainer">Knight Trainer</option>
+                  </optgroup>
+              </select>
+          </span>
+          <span class="tool_option" widget="region">
+              <span class="tool_popup_button" popup="location_map">Location:
+                      <span class="tool_value" id="location_map_display"/><span
+                          style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
+              <div class="tool_popup" id="location_map">
+                <div id="region_map"/>
+                <div id="realm_crests"/>
               </div>
-              <div class="tool_option" widget="levelrange">
-                  Mob Level Range: <span id="min_level" /> to <span id="max_level" />
-              </div>
-              <div class="tool_option" widget="power">
-                  Tame Power Level: <span id="maxpower"/>
-              </div>
-              <div class="tool_option" widget="mob_search">
-                  Mob Name: <input type="text" id="mob_search"/>
-              </div>
-              <div class="tool_option" widget="npc_search">
-                  NPC Name: <input type="text" id="npc_search"/>
-              </div>
-              <div class="tool_option" widget="profession">
-                  <!-- Yeah we could pull this dynamically from the DB.. but why increase db load? -->
-                  Profession: <select id="profession">
-                      <option value=":">Any Profession</option>
-                      <option value="Arena Guardian:">Arena Guardian</option>
-                      <option value="Clan Notary:">Clan Notary</option>
-                      <optgroup label="Denizens">
-                        <option value="Denizen:">Any Denizen</option>
-                        <option value="Denizen:Animal">Animal</option>
-                        <option value="Denizen:Denizen">Denizen</option>
-                        <option value="Denizen:Guide">Guide</option>
-                        <option value="Denizen:Noble">Noble</option>
-                        <option value="Denizen:Town Crier">Town Crier</option>
-                      </optgroup>
-                      <optgroup label="Guards">
-                        <option value="Guard:">Any Guard</option>
-                        <option value="Guard:Guard">Guard</option>
-                        <option value="Guard:General">General</option>
-                        <option value="Guard:Elite guard">Elite guard</option>
-                      </optgroup>
-                      <optgroup label="Merchants">
-                        <option value="Merchant:">Any Merchant</option>
-                        <option value="Merchant:Alchemist">Alchemist</option>
-                        <option value="Merchant:Blacksmith">Blacksmith</option>
-                        <option value="Merchant:Enchanter">Enchanter</option>
-                        <option value="Merchant:Farrier">Farrier</option>
-                        <option value="Merchant:Herbalist">Herbalist</option>
-                        <option value="Merchant:Merchant">Merchant</option>
-                        <option value="Merchant:Tailor">Tailor</option>
-                        <option value="Merchant:Weaponsmith">Weaponsmith</option>
-                        <option value="Merchant:Woodworker">Woodworker</option>
-                      </optgroup>
-                      <option value="Teleporter:">Teleporter</option>
-                      <optgroup label="Trainers">
-                        <option value="Trainer:">Any Trainer</option>
-                        <option value="Trainer:Archer Trainer">Archer Trainer</option>
-                        <option value="Trainer:Hunter Trainer">Hunter Trainer</option>
-                        <option value="Trainer:Marksman Trainer">Marksman Trainer</option>
-                        <option value="Trainer:Mage Trainer">Mage Trainer</option>
-                        <option value="Trainer:Conjurer Trainer">Conjurer Trainer</option>
-                        <option value="Trainer:Warlock Trainer">Warlock Trainer</option>
-                        <option value="Trainer:Warrior Trainer">Warrior Trainer</option>
-                        <option value="Trainer:Barbarian Trainer">Barbarian Trainer</option>
-                        <option value="Trainer:Knight Trainer">Knight Trainer</option>
-                      </optgroup>
-                  </select>
-              </div>
-              <div class="tool_option" widget="go">
-                  <button id="go">Go</button>
-              </div>
-              <div class="tool_option" style="position: absolute; bottom: 0px;" widget="region">Click on the map to limit location searches</div>
-          </div>
-          <div id="region_map" widget="region" class="right"/>
-          <div id="realm_crests" widget="region" class="right"/>
+          </span>
+          <span class="tool_option" widget="go">
+              <button id="go">Go</button>
+          </span>
       </div>
       <div> <!-- wrapper around tabs -->
           <div id="home" class="content">
