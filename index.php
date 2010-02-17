@@ -24,6 +24,7 @@ if (empty($_SERVER['PATH_INFO'])) {
 } else {
     try {
         $path_info = explode("/",trim($_SERVER['PATH_INFO'],'/'));
+        header("Content-Type: application/json");
         if ($path_info[0]=='ajax' && !empty($path_info[1])
                 && preg_match("/^[a-zA-Z]+$/",$path_info[1])) {
             // Process Ajax request
