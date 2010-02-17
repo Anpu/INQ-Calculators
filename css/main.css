@@ -171,7 +171,6 @@ div.content.ui-widget-content a {
 }
 .tool_popup_wrapper {
     position:absolute;
-    padding: 1em;
     background-color: black;
     border: 1px solid #EFC235;
     display: none;
@@ -179,6 +178,11 @@ div.content.ui-widget-content a {
 .tool_value {
     font-size: 110%;
     color: white;
+}
+
+.tool_popup.ui-slider-horizontal {
+    margin: 0.5em auto;
+    width: 95%;
 }
 
 .mapWidget-point {
