@@ -11,10 +11,6 @@ body {
     cursor: url('../images/normal.cur'), default;
 }
 
-a {
-    cursor: url('../images/links.cur'), default !important;
-}
-
 a:link, a:visited { 
     text-decoration: none;
     color: #EFC325;
@@ -23,6 +19,7 @@ a:link, a:visited {
 a:hover, a:active { 
     text-decoration: underline;
     color: #FFFFFF;
+    cursor: url('../images/links.cur'), pointer !important;
 }
 
 /** Make Option Font Styles Consistant */
@@ -134,7 +131,7 @@ div.content.ui-widget-content a {
     text-align: left;
 }
 .toggle_detail {
-    cursor: pointer;
+    cursor: url('../images/links.cur'), pointer;
 }
 .detail_row {
     font-size: 85%;
@@ -163,6 +160,9 @@ div.content.ui-widget-content a {
     padding: 0.5em 0 0.5em 0.5em;
 }
 
+.mapWidget-point {
+    cursor: url('../images/links.cur'), pointer;
+}
 /** Regnum Interactive Map Widget */
 .ROMap {
     width: 199px;
