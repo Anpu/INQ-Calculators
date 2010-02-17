@@ -131,8 +131,7 @@ $(function() {
     // Begin tool widgets
     $('.tool_popup')
         .wrap('<div class="tool_popup_wrapper"/>')
-        .parent()
-        .appendTo('body');
+        .show();
 
     $('#player_level').slider({
         orientation: 'horizontal',

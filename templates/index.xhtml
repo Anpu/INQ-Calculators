@@ -26,6 +26,16 @@
   </head>
 
   <body>
+    <!-- The Tools -->
+        <div class="tool_popup" id="player_level">
+        </div>
+        <div class="tool_popup" id="level_range"/>
+        <div class="tool_popup" id="max_power"/>
+        <div class="tool_popup" id="location_map">
+            <div id="region_map"/>
+            <div id="realm_crests"/>
+        </div>
+    <!-- End The Tools -->
     <div id="header">
       <img src="images/header.png" alt="Inquisition Clan Database" />
       <h1>Inquisition Clan Database</h1>
@@ -48,19 +58,16 @@
               <span class="tool_popup_button" popup="player_level" side="full">Character Level:
                   <span class="tool_value" id="player_level_display"/><span
                       style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-              <div class="tool_popup" id="player_level"/>
           </span>
           <span class="tool_option" widget="levelrange">
               <span class="tool_popup_button" popup="level_range" side="full">Mob Level Range:
                   <span class="tool_value" id="level_range_display"/><span
                       style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-              <div class="tool_popup" id="level_range"/>
           </span>
           <span class="tool_option" widget="power">
               <span class="tool_popup_button" popup="max_power" side="full">Tame Power Level:
                   <span class="tool_value" id="max_power_display"/><span
                       style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-              <div class="tool_popup" id="max_power"/>
           </span>
           <span class="tool_option" widget="mob_search">
               Mob Name: <input type="text" id="mob_search"/>
@@ -119,10 +126,6 @@
               <span class="tool_popup_button" popup="location_map">Location:
                       <span class="tool_value" id="location_map_display"/><span
                           style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-              <div class="tool_popup" id="location_map">
-                <div id="region_map"/>
-                <div id="realm_crests"/>
-              </div>
           </span>
           <span class="tool_option" widget="go">
               <button id="go">Go</button>

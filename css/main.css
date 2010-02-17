@@ -166,6 +166,9 @@ div.content.ui-widget-content a {
     padding: 0.5em 0;
 }
 
+.tool_popup {
+    display: none;
+}
 .tool_popup_button {
     cursor: url('../images/links.cur'), pointer;
 }
