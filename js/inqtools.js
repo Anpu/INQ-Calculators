@@ -62,18 +62,8 @@ $(function() {
         }
     });
 
-    $('.search_result_row').live('toggle', function() {
-        $(this).addClass('expanded');
-        $(this).next('.search_result_detail').addClass('expanded');
-        alert('PLUS');
-        }, function() {
-        $(this).removeClass('expanded');
-        $(this).next('.search_result_detail').removeClass('expanded');
-        alert('MINUS');
-        });
-
     $('.search_result_row').live('click', function() {
-        $(this).next('.search_result_detail').toggle().colSpan = 4;
+        $(this).toggleClass('expanded').next('.search_result_detail').slideToggle();
         });
 
     $('#player_level').digitPicker({
