@@ -20,9 +20,13 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         this._MWmouseMoveDelegate = function(event) {
 			return self._MWmouseMove(event);
 		};
+        this._MWmouseOutDelegate = function(event) {
+			return self._MWmouseOut(event);
+		};
         this.element
             .addClass('mapWidget '+this._getData('class'))
-            .bind('mousemove.mapWidget',this._MWmouseMoveDelegate);
+            .bind('mousemove.mapWidget',this._MWmouseMoveDelegate)
+            .bind('mouseout.mapWidget',this._MWmouseOutDelegate);
         var maps = this._getData('maps');
         for (var m in maps) {
             var c = maps[m].config;
@@ -60,6 +64,10 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         } else {
             this._setHint(); // Unset the hint
         }
+    },
+
+    _MWmouseOut: function(e) {
+        this._setHint(); // Unset the hint when mouse leaves the control
     },
 
     _getHintBox: function(create) {
@@ -318,6 +326,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         this.editmode(false);
 
         this.element.unbind('mousemove.mapWidget',this._MWmouseMoveDelegate);
+        this.element.unbind('mouseout.mapWidget',this._MWmouseMoveOut);
         this.element.find('div.mapWidget-overlay').remove();
         this.element.removeClass('mapWidget mapWidget-editing '+this._getData('class'));
 
