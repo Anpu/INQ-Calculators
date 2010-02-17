@@ -199,8 +199,7 @@ $(function() {
         }
     });
 
-    $('#search').keypress(function(e) {
-        // Handle Enter to auto search
+    $('input[type="text"]').keypress(function(e) {
         if (e.keyCode==13) {
             doSearch();
         }
@@ -282,7 +281,7 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
 function cbNPCs() {
     var b = $('#profession').val().split(':');
     findNPCs(
-        $('#search').val(),
+        $('#npc_search').val(),
         b[0],
         b[1],
         regionsFromMap()
@@ -302,7 +301,7 @@ function findNPCs(name, behavior, profession, regions, offset) {
 
 function cbMobs() {
     findMobs(
-        $('#search').val(),
+        $('#mob_search').val(),
         regionsFromMap()
     );
 }

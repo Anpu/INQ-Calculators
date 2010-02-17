@@ -41,10 +41,10 @@
       <ul class="navigation">
         <li><a href="#home">Home</a></li>
         <li><a href="#levels" widgets="level,levelrange,region" callback="cbLevels">Levels</a></li>
-        <li><a href="#mobs" widgets="search,region" callback="cbMobs">Mobs</a></li>
+        <li><a href="#mobs" widgets="mob_search,region" callback="cbMobs">Mobs</a></li>
         <li><a href="#areas" widgets="level,levelrange,region" callback="cbAreas">Areas</a></li>
         <li><a href="#pets" widgets="level,power,region" callback="cbPets">Pets</a></li>
-        <li><a href="#npcs" widgets="search,profession,region" callback="cbNPCs">NPCs</a></li>
+        <li><a href="#npcs" widgets="npc_search,profession,region" callback="cbNPCs">NPCs</a></li>
         <li><a href="#shops">Shops</a></li>
         <li><a href="#armor">Armor</a></li>
         <li><a href="#trainer">Trainer</a></li>
@@ -61,8 +61,11 @@
               <div class="tool_option" widget="power">
                   Tame Power Level: <span id="maxpower"/>
               </div>
-              <div class="tool_option" widget="search">
-                  Search: <input type="text" id="search"/>
+              <div class="tool_option" widget="mob_search">
+                  Mob Name: <input type="text" id="mob_search"/>
+              </div>
+              <div class="tool_option" widget="npc_search">
+                  NPC Name: <input type="text" id="npc_search"/>
               </div>
               <div class="tool_option" widget="profession">
                   <!-- Yeah we could pull this dynamically from the DB.. but why increase db load? -->
