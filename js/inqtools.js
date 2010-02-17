@@ -206,6 +206,7 @@ $(function() {
                 .mapWidget('setValue',hit.map+'-iz',v)
                 .mapWidget('setValue',hit.map+'-ir',v)
                 .mapWidget('setValue',hit.map+'-wz',v);
+            locationLabel();
         }
     });
     $('#region_map').mapWidget({
@@ -275,6 +276,7 @@ $(function() {
             } else {
                 $('#realm_crests').mapWidget('setValue',r,false);
             }
+            locationLabel();
         }
     });
     $('#location_map_display').text('Anywhere');
@@ -300,6 +302,48 @@ $(function() {
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
 });
+
+function locationLabel() {
+    var v = $('#region_map').mapWidget('value');
+    var bm = 0;
+    for (var i in v) {
+        if (v[i]) bm |= locationLabel.bitmap[i];
+    }
+    // Label
+    var label = '';
+    switch (bm) {
+    case locationLabel.bitmap['all']:
+    case 0:
+        label = 'Anywhere'; break;
+    case locationLabel.bitmap['alsius']:
+        label = 'Alsius'; break;
+    case locationLabel.bitmap['ignis']:
+        label = 'Ignis'; break;
+    case locationLabel.bitmap['syrtis']:
+        label = 'Syrtis'; break;
+    case locationLabel.bitmap['warzone']:
+        label = 'Warzone'; break;
+    default:
+        label = 'Custom'; break;
+    }
+    $('#location_map_display').text(label);
+}
+locationLabel.bitmap = {
+    'alsius':0x007,
+    'alsius-iz':0x001,
+    'alsius-ir':0x002,
+    'alsius-wz':0x004,
+    'ignis':0x070,
+    'ignis-iz':0x010,
+    'ignis-ir':0x020,
+    'ignis-wz':0x040,
+    'syrtis':0x700,
+    'syrtis-iz':0x100,
+    'syrtis-ir':0x200,
+    'syrtis-wz':0x400,
+    'warzone':0x444,
+    'all':0x777
+};
 
 function switchTool(aCallback, aWidgets, animate) {
     animate = (animate === false) ? false : true;
