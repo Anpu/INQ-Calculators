@@ -77,7 +77,7 @@ $(function() {
         var test = $(e.target).closest('.tool_popup_wrapper,.tool_popup_button').length;
         if (!test) {
             $('.tool_popup_wrapper').stop(true,true).slideUp();
-            $(document).unbind('mouseup',toolPopupGlobalClick);
+            $(document).unbind('click',toolPopupGlobalClick);
         }
     }
 
@@ -85,22 +85,39 @@ $(function() {
         if (e.button !=0) return;
         var o = $(this);
         var popup = $('#'+o.attr('popup'));
-        $(document).bind('mouseup',toolPopupGlobalClick);
+        $(document).bind('click',toolPopupGlobalClick);
         var v = popup.is(':visible');
         $('.tool_popup_wrapper').stop(true,true).slideUp();
         if (!v) {
             //Position
-            var l = o.offset().left;
-            var p = o.closest('div');
-            var t = p.offset().top + p.height();
-            if (o.attr('side')=='right') {
-                l += o.width() - popup.parent().outerWidth();
-                popup.parent()
-                    .css({left:l,top:t})
+            var ooff = o.offset();
+            var toolbox = o.closest('div');
+            var toff = toolbox.offset();
+            switch (o.attr('side')) {
+            case 'full':
+                popup
+                    .parent()
+                    .css({
+                        width:toolbox.innerWidth(),
+                        left:toff.left,
+                        top:toff.top + toolbox.height()
+                    })
                     .slideDown();
-            } else {
+                break;
+            case 'right':
                 popup.parent()
-                    .css({left:l,top:t})
+                    .css({
+                        left:ooff.left + o.width() - popup.parent().outerWidth(),
+                        top:toff.top + toolbox.height()
+                    })
+                    .slideDown();
+                break;
+            default:
+                popup.parent()
+                    .css({
+                        left:ooff.left,
+                        top:toff.top + toolbox.height()
+                    })
                     .slideDown();
             }
         }
@@ -113,8 +130,8 @@ $(function() {
         .parent()
         .appendTo('body');
 
-    $('#player_level').height(200).slider({
-        orientation: 'vertical',
+    $('#player_level').slider({
+        orientation: 'horizontal',
         min: 1,
         max: 50,
         animate: true,
@@ -136,8 +153,8 @@ $(function() {
     });
     $('#player_level_display').text('01');
 
-    $('#level_range').height(200).slider({
-        orientation: 'vertical',
+    $('#level_range').slider({
+        orientation: 'horizontal',
         min: 1,
         max: 58,
         animate: true,
@@ -158,8 +175,8 @@ $(function() {
     });
     $('#level_range_display').text('01-03');
 
-    $('#max_power').height(200).slider({
-        orientation: 'vertical',
+    $('#max_power').slider({
+        orientation: 'orizontal',
         min: 1,
         max: 5,
         animate: true,
@@ -345,6 +362,7 @@ function switchTool(aCallback, aWidgets, animate) {
     animate = (animate === false) ? false : true;
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
     if (aWidgets.length > 0) w.push('go');
+    $('.tool_popup_wrapper').stop(true,true).slideUp({queue:false});
     $('#tool_options *[widget]').each(function() {
         var o = $(this);
         if (w.indexOf(o.attr('widget')) > -1) {
