@@ -4,7 +4,7 @@
       <th class="mob_name">Mob Name</th>
       <th class="mob_level">Level</th>
       <th class="mob_spell">Requires</th>
-      <th class="mob_areas">Found In</th>
+      <th class="mob_areas">Zone</th>
     </tr>
   </thead>
   <tbody tal:repeat="mob limit: offset limit mobs">
@@ -20,7 +20,7 @@
     </tr>
     <tr class="search_result_detail">
       <td colspan="4">
-        <div>
+        <div class="detail_content">
           <ul class="area_list">
             <li tal:repeat="zone mob/zones" class="${zone/shortName}">
             ${zone/name} in the ${zone/realm} ${zone/region}
