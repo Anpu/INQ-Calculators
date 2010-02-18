@@ -283,3 +283,27 @@ div.content.ui-widget-content a {
     height: 62px;
     top: 124px;
 }
+.difficulty.unchallenging {
+    color: #c8c8c8;
+}
+.difficulty.very_easy {
+    color: #a6de98;
+}
+.difficulty.easy {
+    color: #88f980;
+}
+.difficulty.normal {
+    color: #88a3fc;
+}
+.difficulty.challenging {
+    color: #fffb48;
+}
+.difficulty.hard {
+    color: #fb8437;
+}
+.difficulty.very_hard {
+    color: #fa4532;
+}
+.difficulty.impossible {
+    color: #a148ec;
+}
