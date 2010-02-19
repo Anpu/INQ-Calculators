@@ -9,12 +9,20 @@ class RO_Zone extends RO_Base {
         'Ignis Initiation Zone' => 'ignis_inner',
         'Ignis Inner Realm' => 'ignis_inner',
         'Ignis War Zone' => 'ignis_warzone',
+        'ignis_warzone'=>'Ignis War Zone',
+        'ignis_inner'=>'Ignis Inner Realms',
+
         'Syrtis Initiation Zone' => 'syrtis_inner',
         'Syrtis Inner Realm' => 'syrtis_inner',
         'Syrtis War Zone' => 'syrtis_warzone',
+        'syrtis_warzone'=>'Syrtis War Zone',
+        'syrtis_inner'=>'Syrtis Inner Realms',
+
         'Alsius Initiation Zone' => 'alsius_inner',
         'Alsius Inner Realm' => 'alsius_inner',
-        'Alsius War Zone' => 'alsius_warzone'
+        'Alsius War Zone' => 'alsius_warzone',
+        'alsius_warzone'=>'Alsius War Zone',
+        'alsius_inner'=>'Alisus Inner Realms',
     );
 
     protected function configSQL()
@@ -27,8 +35,12 @@ class RO_Zone extends RO_Base {
         return array('zones','zone_id');
     }
 
+    protected function shortID() {
+        return self::$zone_map[$this->realm.' '.$this->region];
+    }
+
     protected function shortName() {
-        return RO_Zone::$zone_map[$this->realm.' '.$this->region];
+        return self::$zone_map[$this->shortID()];
     }
 
     protected function mobs()

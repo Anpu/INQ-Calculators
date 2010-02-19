@@ -30,12 +30,12 @@ class RO_Mob extends RO_Base {
     protected function zoneOverview() {
         $zone_summary = array();
         foreach($this->zones() as $zone) {
-            if (!isset($zone_summary[$zone->shortName])) {
-                $zone_summary[$zone->shortName] = 1;
+            if (!isset($zone_summary[$zone->shortID])) {
+                $zone_summary[$zone->shortID] = $zone->shortName;
             }
         }
         ksort($zone_summary);
-        return array_keys($zone_summary);
+        return $zone_summary;
     }
 
     protected function tameSpell()

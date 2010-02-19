@@ -12,9 +12,7 @@
             <td><span class="ui-icon ui-icon-triangle-1-e" style="display:inline-block"/>${mob/name}</td>
             <td>${mob/level}</td>
             <td>${mob/tameSpell} ( ${mob/tameable} )</td>
-            <td>
-                <span tal:repeat="zone mob/zoneOverview" class="zone-icon ${zone}"/>
-            </td>
+            <td metal:use-macro="library.xhtml/mob_zone_shields"/>
         </tr>
         <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:3"/>
     </tbody>
