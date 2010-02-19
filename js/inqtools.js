@@ -1,4 +1,4 @@
-// Compatability for "older browsers"
+// Compatibility for "older browsers"
 if (!Array.prototype.indexOf)
 {
   Array.prototype.indexOf = function(elt /*, from*/)
@@ -493,6 +493,7 @@ function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
             $(aDiv).html(json.data);
+            $('div.detail_content').hide();
         };
     }
     return loadIntoDIV.funcs[aDiv];
