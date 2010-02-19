@@ -123,6 +123,14 @@ div.content.ui-widget-content {
 div.content.ui-widget-content a {
     color: #EFC235;
 }
+/** horizontal UL */
+.horizontal-list {
+    list-style: none;
+    position: relative;
+}
+.horizontal-list li {
+    float: left;
+}
 
 
 /* Result Set Styles */
@@ -306,34 +314,48 @@ div.content.ui-widget-content a {
 
 /* Crests */
 
+#realm_crests {
+    padding-left: 3px;
+}
+#realm_crests li.label {
+    line-height: 41px;
+    color: white;
+    padding: 0 2px;
+}
+#realm_crests li.selected, #realm_wz.selected {
+    color: #EFC235;
+}
+#realm_wz {
+    color: white;
+    display: block;
+    text-align: center;
+}
 .ROCrests {
-    width: 46px;
-    height: 186px;
+    background-image: url(../images/crests.png);
 }
-.ROCrestsImage {
-    background-image: url(../images/crests-200.png);
+.ROCrests.alsius {
+    height: 41px;
+    width: 30px;
+    background-position: -28px -41px;
 }
-.ROCrestsImage.bg {
-    background-position: -46px 0px;
-    width: 46px;
-    height: 186px;
+.ROCrests.alsius.selected {
+    background-position: -28px 0;
 }
-.ROCrestsImage.ignis {
-    background-position: 0px 0px;
-    width: 46px;
-    height: 61px
+.ROCrests.ignis {
+    height: 41px;
+    width: 28px;
+    background-position: 0 -41px;
 }
-.ROCrestsImage.alsius {
-    background-position: 0px -61px;
-    width: 46px;
-    height: 63px;
-    top: 61px;
+.ROCrests.ignis.selected {
+    background-position: 0 0;
 }
-.ROCrestsImage.syrtis {
-    background-position: 0px -124px;
-    width: 46px;
-    height: 62px;
-    top: 124px;
+.ROCrests.syrtis {
+    height: 41px;
+    width: 22px;
+    background-position: -58px -41px;
+}
+.ROCrests.syrtis.selected {
+    background-position: -58px 0;
 }
 
 
