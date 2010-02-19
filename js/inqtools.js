@@ -21,16 +21,27 @@ if (!Array.prototype.indexOf)
     return -1;
   };
 }
+
+function prefixNumber(number, prefix, digits) {
+    var n = parseInt(number).toString();
+    var ret = '';
+    for (var i=0,l=digits-n.length; i<l; i++) {
+        ret += prefix;
+    }
+    return ret + n;
+}
+
 // JQuery on ready event
 $(function() {
     $("#main").tabs().bind('tabsselect',function (event, ui) {
         var o = $(ui.tab);
-        switchTool(o.attr('callback') || '', o.attr('widgets') || '');
+        switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
         if (ui.tab.hash.length > 0) {
             location.hash = '/'+ui.tab.hash.substr(1);
         }
     });
     $('a.tablink').live('click',function() {
+        if (e.button !=0) return;
         $('#main').tabs('select',this.hash);
         return false;
     });
@@ -61,73 +72,143 @@ $(function() {
                 .addClass('ui-icon-triangle-1-s');
         }
     });
+
+    function toolPopupGlobalClick(e) {
+        var test = $(e.target).closest('.tool_popup_wrapper,.tool_popup_button').length;
+        if (!test) {
+            $('.tool_popup_wrapper').stop(true,true).slideUp();
+            $(document).unbind('click',toolPopupGlobalClick);
+        }
+    }
+
+    $('.tool_popup_button').live('click',function(e) {
+        if (e.button !=0) return;
+        var o = $(this);
+        var popup = $('#'+o.attr('popup'));
+        $(document).bind('click',toolPopupGlobalClick);
+        var v = popup.is(':visible');
+        $('.tool_popup_wrapper').stop(true,true).slideUp();
+        if (!v) {
+            //Position
+            var ooff = o.offset();
+            var toolbox = o.closest('div');
+            var toff = toolbox.offset();
+            switch (o.attr('side')) {
+            case 'full':
+                popup
+                    .parent()
+                    .css({
+                        width:toolbox.innerWidth(),
+                        left:toff.left,
+                        top:toff.top + toolbox.height()
+                    })
+                    .slideDown();
+                break;
+            case 'right':
+                popup.parent()
+                    .css({
+                        left:ooff.left + o.width() - popup.parent().outerWidth(),
+                        top:toff.top + toolbox.height()
+                    })
+                    .slideDown();
+                break;
+            default:
+                popup.parent()
+                    .css({
+                        left:ooff.left,
+                        top:toff.top + toolbox.height()
+                    })
+                    .slideDown();
+            }
+        }
+
+    });
+
     // Begin tool widgets
-    $('#player_level').digitPicker({
-        min:1,
-        max:50,
-        defaultValue:1,
-        change: function(e, value) {
-            $('#min_level').digitPicker('setValue',value);
-            $('#max_level').digitPicker('setValue',value+3);
-        }
-    });
-    $('#min_level').digitPicker({
-        min:1,
-        max:58,
-        defaultValue:1,
-        change: function(e, value) {
-            var v = $('#max_level').digitPicker('value');
-            if (value > v) {
-                $('#max_level').digitPicker('setValue',value);
+    $('.tool_popup')
+        .wrap('<div class="tool_popup_wrapper"/>')
+        .show();
+
+    $('#player_level').slider({
+        orientation: 'horizontal',
+        min: 1,
+        max: 50,
+        animate: true,
+        value: 1,
+        slide: function(e, ui) {
+            $('#player_level_display').text(prefixNumber(ui.value,'0',2));
+            var o = $('#level_range');
+            var v = o.slider('values');
+            if (v[0] < ui.value) {
+                var d = ui.value - v[0];
+                var n = v[0]+d;
+                if (n > 58) n = 58;
+                o.slider('values',0,n);
+                n = v[1]+d;
+                if (n > 58) n = 58;
+                o.slider('values',1,n);
             }
         }
     });
-    $('#max_level').digitPicker({
-        min:1,
-        max:58,
-        defaultValue:3,
-        change: function(e, value) {
-            var v = $('#min_level').digitPicker('value');
-            if (value < v) {
-                $('#min_level').digitPicker('setValue',value);
-            }
-        }
-    });
-    $('#maxpower').digitPicker({
-        min:1,
-        max:5,
-        defaultValue:5
-    });
-    $('#realm_crests').mapWidget({
-        'class':'ROCrests',
-        maps: {
-            'map':{config:{image:'ROCrestsImage bg'}},
-            'ignis':{
-                config:{image:'ROCrestsImage ignis',hint:"Anywhere in Ignis"},
-                areas:{
-                    'main':{toggle:true,map:new Polygon([[0,0],[46,0],[46,61],[0,61]])}
-                }
-            },
-            'alsius':{
-                config:{image:'ROCrestsImage alsius',hint:"Anywhere in Alsius"},
-                areas:{
-                    'main':{toggle:true,map:new Polygon([[0,61],[46,61],[46,124],[0,124]])}
-                }
-            },
-            'syrtis':{
-                config:{image:'ROCrestsImage syrtis',hint:"Anywhere in Syrtis"},
-                areas:{
-                    'main':{toggle:true,map:new Polygon([[0,124],[46,124],[46,186],[0,186]])}
-                }
-            }
+    $('#player_level_display').text('01');
+
+    $('#level_range').slider({
+        orientation: 'horizontal',
+        min: 1,
+        max: 58,
+        animate: true,
+        range: true,
+        values: [1,3],
+        slide: function(e, ui) {
+            $('#level_range_display').text(
+                    prefixNumber(ui.values[0],'0',2)
+                        +'-'
+                        +prefixNumber(ui.values[1],'0',2));
         },
-        click:function(e, hit) {
-            var v = $(this).mapWidget('value')[hit.map];
-            $('#region_map')
-                .mapWidget('setValue',hit.map+'-iz',v)
-                .mapWidget('setValue',hit.map+'-ir',v)
-                .mapWidget('setValue',hit.map+'-wz',v);
+        change: function(e, ui) {
+            $('#level_range_display').text(
+                    prefixNumber(ui.values[0],'0',2)
+                        +'-'
+                        +prefixNumber(ui.values[1],'0',2));
         }
+    });
+    $('#level_range_display').text('01-03');
+
+    $('#max_power').slider({
+        orientation: 'horizontal',
+        min: 1,
+        max: 5,
+        animate: true,
+        value: 5,
+        slide: function(e, ui) {
+            $('#max_power_display').text(ui.value);
+        },
+        change: function(e, ui) {
+            $('#max_power_display').text(ui.value);
+        }
+    });
+    $('#max_power_display').text('05');
+
+    $('#realm_crests > li').live('click',function(e) {
+        var o = $(this);
+        var sel =  !o.hasClass('selected');
+        var realm = o.attr('realm');
+        $('#region_map')
+                .mapWidget('setValue',realm+'-iz',sel)
+                .mapWidget('setValue',realm+'-ir',sel)
+                .mapWidget('setValue',realm+'-wz',sel);
+        updateQuickMap();
+        locationLabel();
+    });
+    $('#realm_wz').click(function(e) {
+        var o = $(this);
+        var sel = !o.hasClass('selected');
+        $('#region_map')
+                .mapWidget('setValue','alsius-wz',sel)
+                .mapWidget('setValue','ignis-wz',sel)
+                .mapWidget('setValue','syrtis-wz',sel);
+        updateQuickMap();
+        locationLabel();
     });
     $('#region_map').mapWidget({
         'class':'ROMap',
@@ -191,13 +272,11 @@ $(function() {
         click:function(e, hit) {
             var v = $(this).mapWidget('value');
             var r = hit.map.substr(0,hit.map.length-3);
-            if (v[r+'-iz'] && v[r+'-ir'] && v[r+'-wz']) {
-                $('#realm_crests').mapWidget('setValue',r,true);
-            } else {
-                $('#realm_crests').mapWidget('setValue',r,false);
-            }
+            updateQuickMap();
+            locationLabel();
         }
     });
+    $('#location_map_display').text('Anywhere');
 
     $('input[type="text"]').keypress(function(e) {
         if (e.keyCode==13) {
@@ -221,10 +300,53 @@ $(function() {
     $('#main').tabs('option','fx',{opacity:'toggle'});
 });
 
+function updateQuickMap() {
+    var v = $('#region_map').mapWidget('value');
+    $('#realm_wz').toggleClass("selected",!!(v['alsius-wz'] && v['ignis-wz'] && v['syrtis-wz']));
+    for (var realm in {alsius:0,ignis:0,syrtis:0}) {
+        $('#realm_crests > li[realm="'+realm+'"]')
+            .toggleClass('selected',!!(v[realm+'-iz'] && v[realm+'-ir'] && v[realm+'-wz']));
+    }
+}
+
+function locationLabel() {
+    var v = $('#region_map').mapWidget('value');
+    var bm = 0;
+    for (var i in v) {
+        if (v[i]) bm |= locationLabel.bitmap[i];
+    }
+    // Label
+    var label = locationLabel.labels[bm] || "Custom";
+    $('#location_map_display').text(label);
+}
+locationLabel.bitmap = {
+    'alsius-iz':0x001,
+    'alsius-ir':0x002,
+    'alsius-wz':0x004,
+    'ignis-iz':0x010,
+    'ignis-ir':0x020,
+    'ignis-wz':0x040,
+    'syrtis-iz':0x100,
+    'syrtis-ir':0x200,
+    'syrtis-wz':0x400
+};
+locationLabel.labels = {
+    0x000: "Anywhere",
+    0x777: "Anywhere",
+    0x444: "Warzone",
+    0x007: "Alsius",
+    0x447: "Alsius + WZ",
+    0x070: "Ignis",
+    0x474: "Ignis + WZ",
+    0x700: "Syrtis",
+    0x744: "Syrtis + WZ"
+}
+
 function switchTool(aCallback, aWidgets, animate) {
     animate = (animate === false) ? false : true;
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
     if (aWidgets.length > 0) w.push('go');
+    $('.tool_popup_wrapper').stop(true,true).slideUp({queue:false});
     $('#tool_options *[widget]').each(function() {
         var o = $(this);
         if (w.indexOf(o.attr('widget')) > -1) {
@@ -263,8 +385,8 @@ function regionsFromMap() {
 }
 function cbPets() {
     getTameableMobs(
-        $('#player_level').digitPicker('value'),
-        $('#maxpower').digitPicker('value'),
+        $('#player_level').slider('value'),
+        $('#max_power').slider('value'),
         regionsFromMap()
     );
 }
@@ -316,11 +438,12 @@ function findMobs(name, regions, offset) {
 }
 
 function cbLevels() {
+    var v = $('#level_range').slider('values');
     getKillsToLevel(
-        $('#player_level').digitPicker('value'),
+        $('#player_level').slider('value'),
         0,
-        $('#min_level').digitPicker('value'),
-        $('#max_level').digitPicker('value'),
+        v[0],
+        v[1],
         regionsFromMap()
     );
 }
@@ -341,11 +464,12 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
 }
 
 function cbAreas() {
+    var v = $('#level_range').slider('values');
     getKillsToLevelByArea(
-        $('#player_level').digitPicker('value'),
+        $('#player_level').slider('value'),
         0,
-        $('#min_level').digitPicker('value'),
-        $('#max_level').digitPicker('value'),
+        v[0],
+        v[1],
         regionsFromMap()
     );
 }
