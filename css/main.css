@@ -313,22 +313,23 @@ div.content.ui-widget-content a {
     width: 24px;
     height: 24px;
     display: inline-block;
+    background-image: url(../images/zoneshields.png);
 }
 .zone-icon.alsius_inner {
-    background-image: url(../images/alsius_inner.png);
+    background-position: 0 0;
 }
 .zone-icon.alsius_warzone {
-    background-image: url(../images/alsius_warzone.png);
+    background-position: 0 -24px;
 }
 .zone-icon.ignis_inner {
-    background-image: url(../images/ignis_inner.png);
+    background-position: -24px 0;
 }
 .zone-icon.ignis_warzone {
-    background-image: url(../images/ignis_warzone.png);
+    background-position: -24px -24px;
 }
 .zone-icon.syrtis_inner {
-    background-image: url(../images/syrtis_inner.png);
+    background-position: -48px 0;
 }
 .zone-icon.syrtis_warzone {
-    background-image: url(../images/syrtis_warzone.png);
+    background-position: -48px -24px;
 }
