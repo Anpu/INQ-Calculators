@@ -1,5 +1,7 @@
 Options +FollowSymlinks
 RewriteEngine on
+#if you are running in your ~user directory enable this next line
+#RewriteBase /~user/inq-calculators/
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php/$1 [L]
