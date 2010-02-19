@@ -3,16 +3,16 @@
         <tr>
             <th>Name</th>
             <th>Mob Level</th>
-            <th>Class</th>
-            <th>Power Level</th>
+            <th>Requires</th>
+            <th>Found In</th>
         </tr>
     </thead>
     <tbody tal:repeat="mob limit: offset limit mobs">
         <tr mob_id="${mob/mob_id}" class="toggle_detail">
             <td><span class="ui-icon ui-icon-triangle-1-e" style="display:inline-block"/>${mob/name}</td>
             <td>${mob/level}</td>
-            <td>${mob/class}</td>
-            <td>${mob/tameable}</td>
+            <td>${mob/tameSpell} ( ${mob/tameable} )</td>
+            <td metal:use-macro="library.xhtml/mob_zone_shields"/>
         </tr>
         <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:3"/>
     </tbody>

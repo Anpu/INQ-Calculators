@@ -27,12 +27,33 @@ class RO_Mob extends RO_Base {
         return new ResultIterator($rows,'RO_Zone');
     }
 
+    protected function zoneOverview() {
+        $zone_summary = array();
+        foreach($this->zones() as $zone) {
+            if (!isset($zone_summary[$zone->shortID])) {
+                $zone_summary[$zone->shortID] = $zone->shortName;
+            }
+        }
+        ksort($zone_summary);
+        return $zone_summary;
+    }
+
+    protected function tameSpell()
+    {
+      $spell_map = array(
+        'Monster' => 'Control Monsters',
+        'Lesser' => 'Tame Lesser Creatures',
+        'Beast' => 'Tame Beasts'
+      );
+      return isset($spell_map[$this->class]) ? $spell_map[$this->class] : null;
+    }
+
     /**
      * Find tameable mobs for a hunter
      *
      * @param int $player_level     The level of the player
      * @param int $maxpower         The max spell power to return mobs for
-     * @param array $regions       List of regions to search in
+     * @param array $regions        List of regions to search in
      *
      * @return Iterator the found Mobs
      */

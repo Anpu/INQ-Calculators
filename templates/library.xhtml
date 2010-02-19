@@ -10,6 +10,9 @@
         </div>
     </td>
 </tr>
+<td metal:define-macro="mob_zone_shields">
+    <span tal:repeat="zone mob/zoneOverview" class="zone-icon ${repeat/zone/key}" title="${zone}"/>
+</td>
 <tr metal:define-macro="zone_mob_list">
     <td tal:attributes="colspan colspan">
         <div id="zone_mobs_${zone/zone_id}" class="detail_row" style="padding-left:4em;">

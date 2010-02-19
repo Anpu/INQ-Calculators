@@ -307,3 +307,29 @@ div.content.ui-widget-content a {
 .difficulty.impossible {
     color: #a148ec;
 }
+
+/* Zone Summary Icons */
+.zone-icon {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    background-image: url(../images/zoneshields.png);
+}
+.zone-icon.alsius_inner {
+    background-position: 0 0;
+}
+.zone-icon.alsius_warzone {
+    background-position: 0 -24px;
+}
+.zone-icon.ignis_inner {
+    background-position: -24px 0;
+}
+.zone-icon.ignis_warzone {
+    background-position: -24px -24px;
+}
+.zone-icon.syrtis_inner {
+    background-position: -48px 0;
+}
+.zone-icon.syrtis_warzone {
+    background-position: -48px -24px;
+}
