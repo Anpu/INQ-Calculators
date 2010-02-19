@@ -22,7 +22,9 @@ a:hover, a:active {
     cursor: url('../images/links.cur'), pointer !important;
 }
 
-/** Make Option Font Styles Consistant */
+
+/* Make Option Font Styles Consistent */
+
 option, optgroup, optgroup > option {
     font-family: inherit !important;
 }
@@ -122,7 +124,9 @@ div.content.ui-widget-content a {
     color: #EFC235;
 }
 
-/** Result set Styles */
+
+/* Result Set Styles */
+
 .results > table {
     width: 100%;
     border-collapse: collapse;
@@ -138,7 +142,9 @@ div.content.ui-widget-content a {
     display: none;
 }
 
-/** Tool Options */
+
+/* Tool Options */
+
 #tool_options {
     clear: left;
     width: 50%;
@@ -163,7 +169,10 @@ div.content.ui-widget-content a {
 .mapWidget-point {
     cursor: url('../images/links.cur'), pointer;
 }
-/** Regnum Interactive Map Widget */
+
+
+/* Regnum Interactive Map Widget */
+
 .ROMap {
     width: 199px;
     height: 186px;
@@ -181,7 +190,10 @@ div.content.ui-widget-content a {
     width: 199px;
     height: 186px;
 }
+
+
 /* Syrtis */
+
 .ROMapImage.syrtis-iz {
     background-position: -268px -17px;
     height: 25px;
@@ -205,7 +217,10 @@ div.content.ui-widget-content a {
     top: 86px;
     width: 75px;
 }
-/* Ignus */
+
+
+/* Ignis */
+
 .ROMapImage.ignis-iz {
     background-position: -6px -300px;
     height: 57px;
@@ -229,7 +244,10 @@ div.content.ui-widget-content a {
     top: 41px;
     width: 56px;
 }
+
+
 /* Alsius */
+
 .ROMapImage.alsius-iz {
     background-position:-9px -222px;
     height:34px;
@@ -253,7 +271,10 @@ div.content.ui-widget-content a {
     top:34px;
     width:58px;
 }
-/** Crests */
+
+
+/* Crests */
+
 .ROCrests {
     width: 46px;
     height: 186px;
@@ -283,6 +304,10 @@ div.content.ui-widget-content a {
     height: 62px;
     top: 124px;
 }
+
+
+/* Challenge Ratings */
+
 .difficulty.unchallenging {
     color: #c8c8c8;
 }
@@ -308,7 +333,9 @@ div.content.ui-widget-content a {
     color: #a148ec;
 }
 
+
 /* Zone Summary Icons */
+
 .zone-icon {
     width: 24px;
     height: 24px;
