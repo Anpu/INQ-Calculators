@@ -63,7 +63,7 @@ $(function() {
     });
 
     $('.search_result_row').live('click', function() {
-        $(this).toggleClass('expanded').next('.search_result_detail').slideToggle();
+        $(this).toggleClass('expanded').next('.search_result_detail').find('div.detail_content').slideToggle();
         });
 
     $('#player_level').digitPicker({
