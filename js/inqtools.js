@@ -73,6 +73,16 @@ $(function() {
         }
     });
 
+    $('.search_result_row').live('click', function(e) {
+        $(this).toggleClass('expanded')
+        .next('.search_result_detail').find('div.detail_content').slideToggle('fast');
+        });
+
+    $('.search_result_detail').live('click', function(e) {
+        $(this).prev('.search_result_row').toggleClass('expanded');
+        $(this).find('div.detail_content').slideToggle('fast');
+        });
+
     function toolPopupGlobalClick(e) {
         var test = $(e.target).closest('.tool_popup_wrapper,.tool_popup_button').length;
         if (!test) {
@@ -494,6 +504,10 @@ function loadIntoDIV(aDiv) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
             $(aDiv).html(json.data);
             $('div.detail_content').hide();
+            $('.search_result_row:odd').addClass('odd');
+            $('.search_result_row:even').addClass('even');
+            $('.search_result_detail:odd').addClass('odd');
+            $('.search_result_detail:even').addClass('even');
         };
     }
     return loadIntoDIV.funcs[aDiv];

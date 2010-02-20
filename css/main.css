@@ -138,7 +138,7 @@ ul.legend a {
     float: left;
 }
 
-/** Result set Styles */
+/** Result Set Styles */
 .results > table {
     width: 100%;
     border-collapse: collapse;
@@ -152,6 +152,47 @@ ul.legend a {
 .detail_row {
     font-size: 85%;
     display: none;
+}
+
+.search_results {
+  color: #CCCCCC;
+  padding-left: 0.5em;
+}
+
+.search_results th {
+  color: #EFC235;
+}
+
+.search_results .even {
+  background: #333333;
+}
+
+.search_result_row, .search_result_detail {
+  cursor: url('../images/links.cur'), pointer;
+}
+
+.search_result_detail {
+  font-size: 85%;
+}
+
+.toggle_icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-position: 0 -192px;
+  background-image: url(themes/inquisition/images/ui-icons_cccccc_256x240.png);
+}
+
+.search_result_row:hover {
+  color: #FFFFFF;
+}
+
+.search_result_row:hover .toggle_icon {
+  background-image: url(themes/inquisition/images/ui-icons_ffffff_256x240.png);
+}
+
+.expanded .toggle_icon {
+  background-position: -16px -192px;
 }
 
 /** Tool Options */
