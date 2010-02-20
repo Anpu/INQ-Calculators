@@ -505,11 +505,11 @@ function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
             $(aDiv).html(json.data);
-            $('div.detail_content').hide();
-            $('.search_result_row:odd').addClass('odd');
-            $('.search_result_row:even').addClass('even');
-            $('.search_result_detail:odd').addClass('odd');
-            $('.search_result_detail:even').addClass('even');
+            $(aDiv).find('div.detail_content').hide();
+            $(aDiv).find('.search_result_row:odd').addClass('odd');
+            $(aDiv).find('.search_result_row:even').addClass('even');
+            $(aDiv).find('.search_result_detail:odd').addClass('odd');
+            $(aDiv).find('.search_result_detail:even').addClass('even');
         };
     }
     return loadIntoDIV.funcs[aDiv];
