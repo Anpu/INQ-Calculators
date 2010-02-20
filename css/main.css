@@ -22,7 +22,9 @@ a:hover, a:active {
     cursor: url('../images/links.cur'), pointer !important;
 }
 
-/** Make Option Font Styles Consistant */
+
+/* Make Option Font Styles Consistent */
+
 option, optgroup, optgroup > option {
     font-family: inherit !important;
 }
@@ -121,6 +123,15 @@ div.content.ui-widget-content {
 div.content.ui-widget-content a {
     color: #EFC235;
 }
+/** horizontal UL */
+.horizontal-list {
+    list-style: none;
+    position: relative;
+}
+.horizontal-list li {
+    float: left;
+}
+
 
 /* Home section styles */
 
@@ -138,7 +149,6 @@ ul.legend a {
     float: left;
 }
 
-/** Result Set Styles */
 .results > table {
     width: 100%;
     border-collapse: collapse;
@@ -195,7 +205,9 @@ ul.legend a {
   background-position: -16px -192px;
 }
 
-/** Tool Options */
+
+/* Tool Options */
+
 #tool_options {
     clear: left;
     width: 50%;
@@ -252,7 +264,10 @@ ul.legend a {
 .mapWidget-point {
     cursor: url('../images/links.cur'), pointer !important;
 }
-/** Regnum Interactive Map Widget */
+
+
+/* Regnum Interactive Map Widget */
+
 .ROMap {
     width: 199px;
     height: 186px;
@@ -270,7 +285,10 @@ ul.legend a {
     width: 199px;
     height: 186px;
 }
+
+
 /* Syrtis */
+
 .ROMapImage.syrtis-iz {
     background-position: -268px -17px;
     height: 25px;
@@ -294,7 +312,10 @@ ul.legend a {
     top: 86px;
     width: 75px;
 }
-/* Ignus */
+
+
+/* Ignis */
+
 .ROMapImage.ignis-iz {
     background-position: -6px -300px;
     height: 57px;
@@ -318,7 +339,10 @@ ul.legend a {
     top: 41px;
     width: 56px;
 }
+
+
 /* Alsius */
+
 .ROMapImage.alsius-iz {
     background-position:-9px -222px;
     height:34px;
@@ -342,7 +366,10 @@ ul.legend a {
     top:34px;
     width:58px;
 }
-/** Crests */
+
+
+/* Crests */
+
 #realm_crests {
     padding-left: 3px;
 }
@@ -386,7 +413,10 @@ ul.legend a {
 .ROCrests.syrtis.selected {
     background-position: -58px 0;
 }
-/** Mob Difficulty colors */
+
+
+/* Challenge Ratings */
+
 .difficulty.unchallenging {
     color: #c8c8c8;
 }
@@ -412,7 +442,9 @@ ul.legend a {
     color: #a148ec;
 }
 
+
 /* Zone Summary Icons */
+
 .zone-icon {
     width: 24px;
     height: 24px;
