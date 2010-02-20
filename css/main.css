@@ -18,7 +18,7 @@ a:link, a:visited {
 
 a:hover, a:active { 
     text-decoration: underline;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     cursor: url('../images/links.cur'), pointer !important;
 }
 
