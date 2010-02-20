@@ -180,7 +180,7 @@ ul.legend a {
     display: none;
 }
 
-.tool_popup_button {
+.tool_option label, .tool_popup_button {
     cursor: url('../images/links.cur'), pointer;
 }
 .tool_popup_wrapper {
