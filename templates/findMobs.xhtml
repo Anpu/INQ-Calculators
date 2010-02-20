@@ -1,20 +1,19 @@
-<table>
-    <col/>
-    <col/>
-    <col/>
+<table class="search_results">
     <thead>
         <tr>
+            <th></th>
             <th>Name</th>
             <th>Mob Level</th>
             <th>Class</th>
         </tr>
     </thead>
     <tbody tal:repeat="mob limit: offset limit mobs">
-        <tr mob_id="${mob/mob_id}" class="toggle_detail">
-            <td><span class="ui-icon ui-icon-triangle-1-e" style="display:inline-block"/>${mob/name}</td>
+        <tr class="search_result_row">
+            <td><span class="toggle_icon"></span></td>
+            <td>${mob/name}</td>
             <td>${mob/level}</td>
             <td>${mob/class}</td>
         </tr>
-        <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:3"/>
+        <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:4"/>
     </tbody>
 </table>
