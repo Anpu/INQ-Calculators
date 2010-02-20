@@ -127,7 +127,10 @@ switch ($args->command_name) {
         $normx = $bounds->l/2 - 5;
         $normy = $bounds->t/2 - 5;
 
-        $img = imagecreate($bounds->r/2-$bounds->l/2+10, $bounds->b/2-$bounds->t/2+10);
+        $width = $bounds->r/2-$bounds->l/2;
+        $img = imagecreate(
+                    $width * 2 +15,
+                    $bounds->b/2-$bounds->t/2+10);
 
         $white = imagecolorallocatealpha($img, 255, 255, 255,127.0);
 
@@ -137,24 +140,25 @@ switch ($args->command_name) {
             $_zone = $zoneinfo->fetchObject();
             $zoneinfo->closeCursor();
 
-            $polys = fetchPolygons($_zid);
+            $ft = new FloodTracer($_zid);
+            $polys = $ft->findPolys();
 
             echo sprintf("Drawing %3d (%d polys) %s\n",
                         $_zid,
                         count($polys),
                         $_zone->name
                     );
-            #drawZonePoints($img, $_zone, $color,$normx,$normy,true);
+            drawPoints($img, $ft->edges, allocateColor($img), $normx, $normy);
             foreach ($polys as $_poly) {
-                if (count($_poly)<4) {
-                    echo sprintf("Throwing away %d  (%d,%d)\n",count($_poly),$_poly[0]->x,$_poly[0]->y);
-                } else {
-                    #echo "Drawing poly ".count($_poly)."\n";
+//                if (count($_poly)<4) {
+//                    echo sprintf("Throwing away %d  (%d,%d)\n",count($_poly),$_poly[0]->x,$_poly[0]->y);
+//                } else {
+                    echo "Drawing poly ".count($_poly)."\n";
                     $color = allocateColor($img);
                     
-                    drawPoints($img, $_poly, $color, $normx, $normy);
+                    drawPoints($img, $_poly, $color, $normx-5-$width, $normy);
                     imagepng($img, $args->command->options['outputfile']);
-                }
+//                }
             }
             #drawPoly($img, $polys, $color);
             #drawZone($img, $polys, $color);
@@ -169,26 +173,31 @@ switch ($args->command_name) {
         echo "Rendering ".count($zones)." zones\n";
         $normx = $bounds->l;
         $normy = $bounds->t;
-
         $width = $bounds->r-$bounds->l;
         $height = $bounds->b-$bounds->t;
-        echo "$width $height\n";
-        $img = imagecreate($width, $height);
+        $img = imagecreate($width+5, $height+5);
         $white = imagecolorallocate($img, 255, 255, 255);
 
         foreach ($zones as $_zid) {
             $file = tempnam('./','trace');
+
+            $zonebounds->execute(array($_zid));
+            $_bounds = $zonebounds->fetchObject();
+            $zonebounds->closeCursor();
+
             echo "Write PBM\n";
-            writePBM($_zid, $file);
+            writePBM($_zid, $file, $bounds);
             echo "Process PBM\n";
             exec("potrace -n -s -o $file.svg $file");
             echo "Parse SVG\n";
-            $polys = parsePolygonsFromSVG($file.'.svg', $width, $height);
+            $polys = parsePolygonsFromSVG($file.'.svg', $bounds);
 
             foreach ($polys as $_poly) {
-                var_dump($_poly);
+                #var_dump($_poly);
+                echo "Rendering Poly for ".$_zid." of size ".count($_poly)."\n";
                 $color = allocateColor($img);
-                drawPoly($img, $_poly, $color);
+                drawPoly($img, $_poly, $color, $normx, $normy);
+                imagepng($img, $args->command->options['outputfile']);
             }
 
             unlink($file);
@@ -262,19 +271,13 @@ switch ($args->command_name) {
 
 exit(0);
 
-function writePBM($zid, $file, $width = null, $height = null, $normx = null, $normy = null) {
-    global $zonebounds,$zonepoints;
-    if (is_null($width)) {
-        $zonebounds->execute(array($zid));
-        $bounds = $zonebounds->fetchObject();
-        $zonebounds->closeCursor();
+function writePBM($zid, $file, $bounds) {
+    global $zonepoints;
+    $normx = $bounds->l/2;
+    $normy = $bounds->t/2;
 
-        $normx = $bounds->l/2;
-        $normy = $bounds->t/2;
-
-        $width = $bounds->r/2-$bounds->l/2;
-        $height = $bounds->b/2-$bounds->t/2;
-    }
+    $width = $bounds->r/2-$bounds->l/2;
+    $height = $bounds->b/2-$bounds->t/2;
 
     try {
         $zonepoints->execute(array($zid));
@@ -306,7 +309,6 @@ function matrix_product(&$m1, &$m2) {
     $cols = count($m2[0]);
     $len = count($m2);
     $ret = array();
-
     for ($r=0; $r<$rows; $r++) {
         for ($c=0; $c<$cols; $c++) {
             $d = 0;
@@ -329,13 +331,25 @@ function transformSVG(&$matrix,$point) {
     return (object)array('x'=>$r[0][0],'y'=>$r[1][0]);
 }
 
-function parsePolygonsFromSVG($file, $width = null, $height = null) {
+function parsePolygonsFromSVG($file, $bounds) {
     $xml = simplexml_load_file($file);
     $xml->registerXPathNamespace('svg','http://www.w3.org/2000/svg');
     preg_match('/(\d+) (\d+) (\d+) (\d+)/',$xml['viewBox'],$a);
 
-    $width = $a[3];
-    $height = $a[4];
+    $svg_width = $a[3];
+    $svg_height = $a[4];
+    $width = $bounds->r - $bounds->l;
+    $height = $bounds->b - $bounds->t;
+    $scale_x = $width / $svg_width;
+    $scale_y = $height / $svg_height;
+    echo "Req ".$width."x".$height."\n";
+    echo "SVG ".$svg_width."x".$svg_height."\n";
+    echo "Scale ".$scale_x."x".$scale_y."\n";
+    $scale_mtx = array(
+        array($scale_x,0,$bounds->l),
+        array(0,$scale_y,$bounds->t),
+        array(0,0,1),
+    );
     $paths = $xml->xpath('//svg:path/..');
     $polys = array();
     foreach ($paths as $geomtry) {
@@ -369,7 +383,9 @@ function parsePolygonsFromSVG($file, $width = null, $height = null) {
                     $current->x = $_x;
                     $current->y = $_y;
                 }
-                $poly[0] = transformSVG($matrix,(object)array('x'=>$current->x, 'y'=>$current->y));
+                $poly[] = transformSVG($scale_mtx,
+                                transformSVG($matrix,
+                                    (object)array('x'=>$current->x, 'y'=>$current->y)));
                 break;
             case 'z':
                 //end Polygon
@@ -388,7 +404,9 @@ function parsePolygonsFromSVG($file, $width = null, $height = null) {
                     $current->x = $_x;
                     $current->y = $_y;
                 }
-                $poly[] = transformSVG($matrix,(object)array('x'=>$current->x, 'y'=>$current->y));
+                $poly[] = transformSVG($scale_mtx,
+                                transformSVG($matrix,
+                                    (object)array('x'=>$current->x, 'y'=>$current->y)));
                 break;
             case 'C':
             case 'c':
@@ -406,7 +424,9 @@ function parsePolygonsFromSVG($file, $width = null, $height = null) {
                         $current->x = $_x;
                         $current->y = $_y;
                     }
-                    $poly[] = transformSVG($matrix,(object)array('x'=>$current->x, 'y'=>$current->y));
+                    $poly[] = transformSVG($scale_mtx,
+                                transformSVG($matrix,
+                                    (object)array('x'=>$current->x, 'y'=>$current->y)));
                 }
                 break;
             }
@@ -457,121 +477,176 @@ function &fastFindPoly($_zone) {
     return $points;
 }
 
-function &fetchPolygons($_zone) {
-    global $zonepoints;
-
-
-    $zonepoints->execute(array($_zone));
-    $zonepoints->setFetchMode(PDO::FETCH_ASSOC);
-    // Initalize all the points
-    $points = array();
-    $map = array();
-    foreach ($zonepoints as $row) {
-        $point = (object)array(
-            'x'=>$row['x']/2,
-            'y'=>$row['y']/2,
-            'seen'=>false,
-            'edge'=>false,
-        );
-        $map[$row['x']/2][$row['y']/2] = $point;
-        $points[] = $point;
-    }
-    $zonepoints->closeCursor();
-
-    $edges = array();
-    $edgemap = array();
-    // Walk through all points finding edges
-    foreach ($points as $point) {
-        // check surrounding pixel
-        if (pointExists($map, $point->x+1, $point->y)
-                && pointExists($map, $point->x-1, $point->y)
-                && pointExists($map, $point->x, $point->y+1)
-                && pointExists($map, $point->x, $point->y-1) ) {
-            continue;
-        }
-        $point->edge = true;
-        $edges[] = $point;
-        $edgemap[$point->x][$point->y] = $point;
-    }
-
-    // ok walk the edges and build the polygons
-    $polys = array();
-    while (($startedge = unseenEdge($edges))!==false) {
-        #echo sprintf("finding poly staring @ %d,%d\n",$startedge->x,$startedge->y);
-        $poly = array();
-        $poly[] = $startedge;
-        $curedge = $startedge;
-        while (($curedge = nextEdge($edgemap, $curedge, $startedge))!==false) {
-            $poly[] = $curedge;
-        }
-        $polys[] = $poly;
-    }
-    return $polys;
+function pointExists(array &$map, $x, $y)
+{
+    return array_key_exists($x,$map) && array_key_exists($y, $map[$x]);
 }
 
-function unseenEdge(array &$edges) {
-    foreach ($edges as $edge) {
-        if (!$edge->seen) {
-            $edge->seen = true;
-            return $edge;
-        }
-    }
-    return false;
-}
 
-/**
- *
- * @param array $edgemap
- * @param <type> $curedge
- * @param <type> $startedge
- * @return <type>
- *
- * @todo pass in current line angle and adjust possibilities based on that angle
- */
-function nextEdge(array &$edgemap, $curedge, $startedge) {
-    $x = $curedge->x;
-    $y = $curedge->y;
-    $points = array(
-        array($x  ,$y+1), //top
-        array($x+1,$y  ), //right
-        array($x  ,$y-1), //bottom
-        array($x-1,$y  ), //left
-        array($x+1,$y+1), //top right
-        array($x+1,$y-1), //bottom right
-        array($x-1,$y-1), //bottom left
-        array($x-1,$y+1), //top left
-        // 2 away at angles
-        array($x+1,$y+2), // knight up right
-        array($x+2,$y+1), // knight right up
-        array($x+2,$y-1), // knight right down
-        array($x+1,$y-2), // knight down right
-        array($x-1,$y-2), // knight down left
-        array($x-2,$y-1), // knight left down
-        array($x-2,$y+1), // knight left up
-        array($x-1,$y+2), // knight up left
-        // 2 away straight
-        array($x  ,$y+2), //up
-        array($x+2,$y  ), //right
-        array($x  ,$y-2), //down
-        array($x-2,$y  ), //left
-    );
-    $i=0;
-    foreach ($points as $_p) {
-        $i++;
-        if (pointExists($edgemap, $_p[0], $_p[1])) {
-            $edge = $edgemap[$_p[0]][$_p[1]];
+class FloodTracer {
+    private $pointmap;
+    public $points;
+    private $edgemap;
+    public $edges;
+
+    private $zoneid;
+    public function __construct($_zone)
+    {
+        $this->zoneid = $_zone;
+    }
+
+    function loadZone()
+    {
+        global $zonepoints;
+
+        $zonepoints->execute(array($this->zoneid));
+        $zonepoints->setFetchMode(PDO::FETCH_ASSOC);
+        // Initalize all the points
+        $this->points = array();
+        $this->pointmap = array();
+        foreach ($zonepoints as $row) {
+            $point = (object)array(
+                'x'=>$row['x']/2,
+                'y'=>$row['y']/2,
+                'seen'=>false,
+                'edge'=>false,
+            );
+            $this->pointmap[$row['x']/2][$row['y']/2] = $point;
+            $this->points[] = $point;
+        }
+        $zonepoints->closeCursor();
+    }
+
+    function unseenEdge()
+    {
+        foreach ($this->edges as $edge) {
             if (!$edge->seen) {
                 $edge->seen = true;
-                //echo "$i,";
                 return $edge;
             }
         }
+        return false;
     }
-    return false;
-}
 
-function pointExists(array &$map, $x, $y) {
-    return array_key_exists($x,$map) && array_key_exists($y, $map[$x]);
+    function findEdges()
+    {
+        if (empty($this->points)) {
+            $this->loadZone();
+        }
+        $this->edges = array();
+        $this->edgemap = array();
+        // Walk through all points finding edges
+        foreach ($this->points as $point) {
+            // check surrounding pixel
+            if (pointExists($this->pointmap, $point->x+1, $point->y)
+                    && pointExists($this->pointmap, $point->x-1, $point->y)
+                    && pointExists($this->pointmap, $point->x, $point->y+1)
+                    && pointExists($this->pointmap, $point->x, $point->y-1) ) {
+                continue;
+            }
+            $point->edge = true;
+            $this->edges[] = $point;
+            $this->edgemap[$point->x][$point->y] = $point;
+        }
+    }
+
+    function findPolys()
+    {
+        if (empty($this->edges)) {
+            $this->findEdges();
+        }
+        // ok walk the edges and build the polygons
+        $polys = array();
+        while (($startedge = $this->unseenEdge())!==false) {
+            #echo sprintf("finding poly staring @ %d,%d\n",$startedge->x,$startedge->y);
+            $poly = array();
+            $poly[] = $startedge;
+            $curedge = $startedge;
+            $angle = 0;
+            while (($nextedge = $this->nextEdge($angle, $curedge, $startedge))!==false) {
+                $poly[] = $nextedge;
+                $angle = rad2deg(atan2($nextedge->y - $curedge->y, $nextedge->x - $curedge->x));
+                //echo sprintf("%d,%d -> %d,%d = %d\n",$curedge->x,$curedge->y, $nextedge->x,$nextedge->y,$angle);
+                $curedge = $nextedge;
+            }
+            //return array();
+            $polys[] = $poly;
+        }
+        return $polys;
+    }
+
+
+    static $checkangles = array(
+        0=>array(1, 0 ), //right
+        45=>array(1,1), //top right
+        -45=>array(1,-1), //bottom right
+        90=>array( 0 ,1), //up
+        -90=>array(0  ,-1), //down
+        135=>array(-1,1), //top left
+        -135=>array(-1,-1), //bottom left
+        180=>array(-1, 0 ), //left
+        '2_0'=>array(2, 0 ), //2 right
+        '2_90'=>array(0  ,2), //2 up
+        '2_-90'=>array(0  ,-2), //2 down
+        '2_180'=>array(-2, 0 ), //2 left
+        63=>array(1,2), // knight up right
+        -63=>array(1,-2), // knight down right
+        117=>array(-1,2), // knight up left
+        -117=>array(-1,-2), // knight down left
+        27=>array(2,1), // knight right up
+        -27=>array(2,-1), // knight right down
+        153=>array(-2,1), // knight left up
+        -153=>array(-2,-1), // knight left down
+    );
+
+    static $checkorder = array(
+        0=>array( 0, 27, -27, 45, -45, 63, -63, 90, 90, 117, -117, 135, -135, 153, -153 ),
+        45=>array( 45, 63, 27, 90, 0, 117, -27, 135, -45, 153, -63, 180, -90, -153, -117 ),
+        -45=>array( -45, -63, -27, -90, 0, -117, 27, -135, 45, -153, 63, 180, 90, 153, 117 ),
+        90=>array( 90, 117, 63, 135, 45, 153, 27, 180, 0, -153, -27, -135, -45, -117, -63 ),
+        -90=>array( -90, -117, -63, -135, -45, -153, -27, 180, 0, 153, 27, 135, 45, 117, 63 ),
+        180=>array( 180, 153, -153, 135, -135, 117, -117, 90, -90, 63, -63, 45, -45, 27, -27 ),
+        27=>array( 27, 45, 0, 63, -27, 90, -45, 117, -63, 135, -90, 153, -117, 180, -135),
+        -27=>array( -27, -45, 0, -63, 27, -90, 45, -117, 63, -135, 90, -153, 117, 180, 135),
+        63=>array(63, 90, 45, 117, 27, 135, 0, 153, -27, 180, -45, -153, -63, -135, -90),
+        -63=>array(-63, -90, -45, -117, -27, -135, 0, -153, 27, 180, 45, 153, 63, 135, 90),
+        135=>array(135, 153, 117, 180, 90, -135, 63, -135, 45, -117, 27, -90, 0, -63, -27),
+        -135=>array(-135, -153, -117, 180, -90, 135, -63, 135, -45, 117, -27, 90, 0, 63, 27),
+        117=>array(117, 135, 90, 153, 63, 180, 45, -153, 27, -135, 0, -117, -27, -90, -45),
+        -117=>array(-117, -135, -90, -153, -63, 180, -45, 153, -27, 135, 0, 117, 27, 90, 45),
+        153=>array(153, 180, 135, -153, 117, -135, 90, -117, 63, -90, 45, -63, 27, -45, 0),
+        -153=>array(-153, 180, -135, 153, -117, 135, -90, 117, -63, 90, -45, 63, -27, 45, 0),
+    );
+
+    /**
+     *
+     * @param float $angle
+     * @param point $curedge
+     * @param point $startedge
+     * @return point or false
+     *
+     * @todo pass in current line angle and adjust possibilities based on that angle
+     */
+    function nextEdge($angle, $curedge, $startedge) {
+        $x = $curedge->x;
+        $y = $curedge->y;
+
+        $in = (int)round($angle);
+        if (!array_key_exists($in,self::$checkorder)) {
+            throw new Exception("Error unknown angle chosen $in\n");
+        }
+        foreach (self::$checkorder[$in] as $_a) {
+            $_p = self::$checkangles[$_a];
+            if (pointExists($this->edgemap, $x + $_p[0], $y + $_p[1])) {
+                $edge = $this->edgemap[$x + $_p[0]][$y + $_p[1]];
+                if (!$edge->seen) {
+                    $edge->seen = true;
+                    return $edge;
+                }
+            }
+        }
+        return false;
+    }
 }
 
 function allocateColor($img) {
