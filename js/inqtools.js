@@ -40,7 +40,7 @@ $(function() {
             location.hash = '/'+ui.tab.hash.substr(1);
         }
     });
-    $('a.tablink').live('click',function() {
+    $('a.tablink').live('click',function(e) {
         if (e.button !=0) return;
         $('#main').tabs('select',this.hash);
         return false;
