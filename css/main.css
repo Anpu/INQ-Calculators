@@ -121,6 +121,14 @@ div.content.ui-widget-content {
 div.content.ui-widget-content a {
     color: #EFC235;
 }
+
+/* Home section styles */
+
+ul.legend a {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
 /** horizontal UL */
 .horizontal-list {
     list-style: none;
