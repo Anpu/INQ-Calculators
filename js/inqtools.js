@@ -40,37 +40,11 @@ $(function() {
             location.hash = '/'+ui.tab.hash.substr(1);
         }
     });
+
     $('a.tablink').live('click',function(e) {
         if (e.button !=0) return;
         $('#main').tabs('select',this.hash);
         return false;
-    });
-
-    // Search result magic
-    $('.toggle_detail').live('click',function(e) {
-        if (e.button !=0) return;
-
-        var mid = $(this).attr('mob_id');
-        var zid = $(this).attr('zone_id');
-        var o;
-        if (mid) {
-            o = $('#mob_zones_'+mid);
-        } else if (zid) {
-            o = $('#zone_mobs_'+zid);
-        } else {
-            return;
-        }
-        if (o.is(':visible')) {
-            o.slideUp('fast');
-            $(this).find('span.ui-icon')
-                .addClass('ui-icon-triangle-1-e')
-                .removeClass('ui-icon-triangle-1-s');
-        } else {
-            o.slideDown('fast');
-            $(this).find('span.ui-icon')
-                .removeClass('ui-icon-triangle-1-e')
-                .addClass('ui-icon-triangle-1-s');
-        }
     });
 
     $('.search_result_row').live('click', function(e) {

@@ -149,19 +149,16 @@ ul.legend a {
     float: left;
 }
 
+
+/* Result Set Styles */
+
 .results > table {
     width: 100%;
     border-collapse: collapse;
 }
+
 .results > table > thead > tr > th {
     text-align: left;
-}
-.toggle_detail {
-    cursor: url('../images/links.cur'), pointer;
-}
-.detail_row {
-    font-size: 85%;
-    display: none;
 }
 
 .search_results {
