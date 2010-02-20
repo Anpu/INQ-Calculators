@@ -1,6 +1,7 @@
-<table>
+<table class="search_results">
     <thead>
         <tr>
+            <th></th>
             <th>Name</th>
             <th>Mob Level</th>
             <th>Base XP</th>
@@ -8,12 +9,13 @@
         </tr>
     </thead>
     <tbody tal:repeat="record limit: offset limit results">
-        <tr mob_id="${record/mob/mob_id}" class="toggle_detail">
-            <td><span class="ui-icon ui-icon-triangle-1-e" style="display:inline-block"/>${record/mob/name}</td>
+        <tr class="search_result_row">
+            <td><span class="toggle_icon"/></td>
+            <td>${record/mob/name}</td>
             <td>${record/mob/level}</td>
             <td>${record/base_xp} + ${record/chg_xp}</td>
             <td>${record/kills}</td>
         </tr>
-        <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:4; mob record/mob"/>
+        <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:5; mob record/mob"/>
     </tbody>
 </table>

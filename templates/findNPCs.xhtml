@@ -1,4 +1,4 @@
-<table>
+<table class="search_results">
     <thead>
         <tr>
             <th>Name</th>
@@ -9,7 +9,7 @@
         </tr>
     </thead>
     <tbody tal:repeat="npc limit: offset limit npcs">
-        <tr>
+        <tr class="search_result_row">
             <td>${npc/name}</td>
             <td>${npc/profession}</td>
             <td>${npc/zone/realm}</td>
