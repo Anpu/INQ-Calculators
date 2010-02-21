@@ -84,21 +84,25 @@ $(function() {
         });
 
     function toolPopupGlobalClick(e) {
-        var test = $(e.target).closest('.tool_popup_wrapper,.tool_popup_button').length;
+        var test = $(e.target).closest('.tool_popup_wrapper,.tool_popup_button, .tool_option > label').length;
         if (!test) {
             $('.tool_popup_wrapper').stop(true,true).slideUp();
             $(document).unbind('click',toolPopupGlobalClick);
         }
     }
 
-    $('.tool_popup_button').live('click',function(e) {
+    $('.tool_option > label, .tool_popup_button').live('click',function(e) {
         if (e.button !=0) return;
         var o = $(this);
+        // if it's a label fetch the span after it'
+        if (o.is('label')) o = o.next();
         var popup = $('#'+o.attr('popup'));
-        $(document).bind('click',toolPopupGlobalClick);
         var v = popup.is(':visible');
         $('.tool_popup_wrapper').stop(true,true).slideUp();
+        $(document).unbind('click',toolPopupGlobalClick);
+
         if (!v) {
+            $(document).bind('click',toolPopupGlobalClick);
             //Position
             var ooff = o.offset();
             var toolbox = o.closest('div');
