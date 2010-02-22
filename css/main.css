@@ -108,7 +108,7 @@ ul.navigation li.ui-state-default a, ul.navigation li.ui-state-active a {
 
 div.content {
     clear: left;
-    width: 50%;
+    width: 60%;
     margin: 0 auto;
 }
 
@@ -207,7 +207,7 @@ ul.legend a {
 
 #tool_options {
     clear: left;
-    width: 50%;
+    width: 60%;
     margin: 0 auto;
     color: #EFC235;
     border: 1px solid green;
