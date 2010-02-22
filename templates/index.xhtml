@@ -72,33 +72,34 @@
         <li><a href="#credits">Credits</a></li>
       </ul>
       <div id="tool_options">
-          <span class="tool_option" widget="level">
-            <label for="player_level_display">Character Level:</label>
+        <ul class="horizontal-list ui-helper-reset ui-helper-clearfix">
+          <li class="tool_option" widget="level">
+            <label>Character Level:</label>
             <span class="tool_popup_button" popup="player_level" side="full">
               <span class="tool_value" id="player_level_display"></span>
               <span style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-          </span>
-          <span class="tool_option" widget="levelrange">
-            <label for="level_range_display">Mob Level Range:</label>
+          </li>
+          <li class="tool_option" widget="levelrange">
+            <label>Mob Level Range:</label>
             <span class="tool_popup_button" popup="level_range" side="full">
               <span class="tool_value" id="level_range_display"></span>
               <span style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-          </span>
-          <span class="tool_option" widget="power">
-            <label for="max_power_display">Tame Power Level:</label>
+          </li>
+          <li class="tool_option" widget="power">
+            <label>Tame Power Level:</label>
             <span class="tool_popup_button" popup="max_power" side="full">
               <span class="tool_value" id="max_power_display"></span>
               <span style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-          </span>
-          <span class="tool_option" widget="mob_search">
+          </li>
+          <li class="tool_option" widget="mob_search">
             <label for="mob_search">Mob Name:</label>
             <input type="text" id="mob_search" />
-          </span>
-          <span class="tool_option" widget="npc_search">
+          </li>
+          <li class="tool_option" widget="npc_search">
             <label for="npc_search">NPC Name:</label>
             <input type="text" id="npc_search" />
-          </span>
-          <span class="tool_option" widget="profession">
+          </li>
+          <li class="tool_option" widget="profession">
               <!-- Yeah we could pull this dynamically from the DB.. but why increase db load? -->
               <label for="profession">Profession:</label>
               <select id="profession">
@@ -145,16 +146,17 @@
                     <option value="Trainer:Knight Trainer">Knight Trainer</option>
                   </optgroup>
               </select>
-          </span>
-          <span class="tool_option" widget="region">
-            <label for="location_map_display">Location:</label>
+          </li>
+          <li class="tool_option" widget="region">
+            <label>Location:</label>
             <span class="tool_popup_button" popup="location_map">
               <span class="tool_value" id="location_map_display"></span>
               <span style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
-          </span>
-          <span class="tool_option" widget="go">
+          </li>
+          <li class="tool_option" widget="go">
               <button id="go">Go</button>
-          </span>
+          </li>
+        </ul>
       </div>
       <div> <!-- wrapper around tabs -->
           <div id="home" class="content">

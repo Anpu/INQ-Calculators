@@ -211,19 +211,11 @@ ul.legend a {
     margin: 0 auto;
     color: #EFC235;
     border: 1px solid green;
-    padding: 0 0.5em;
-}
-
-#tool_options .left {
-    float: left;
-}
-
-#tool_options .right {
-    float: right;
+    padding: 0;
 }
 
 .tool_option {
-    padding: 0.5em 0;
+    padding: 0.5em 0 0.5em 0.5em;
 }
 
 .tool_popup {
@@ -232,6 +224,9 @@ ul.legend a {
 
 .tool_option label, .tool_popup_button {
     cursor: url('../images/links.cur'), pointer;
+}
+.tool_option input, .tool_option button {
+    margin:0px;
 }
 .tool_popup_wrapper {
     position:absolute;

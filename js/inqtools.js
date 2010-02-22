@@ -70,6 +70,7 @@ $(function() {
         var o = $(this);
         // if it's a label fetch the span after it'
         if (o.is('label')) o = o.next();
+        if (!o.attr('popup')) return;
         var popup = $('#'+o.attr('popup'));
         var v = popup.is(':visible');
         $('.tool_popup_wrapper').stop(true,true).slideUp();
