@@ -39,15 +39,19 @@ function transformPoint(&$matrix,$point) {
     return (object)array('x'=>$r[0][0],'y'=>$r[1][0]);
 }
 
-function writePolys($polys, $file, $filter = 0) {
+function writePolys(Zone $zone, $polys, $file, $filter = 0) {
     $fp = fopen($file, "w");
+    fwrite($fp, "ZONE\n".$zone->id."\n");
+    fwrite($fp, $zone->name."\n");
+    fwrite($fp, $zone->region."\n");
+    fwrite($fp, $zone->realm."\n");
     foreach ($polys as $_poly) {
         if (count($_poly) <= $filter) continue;
-        fwrite($fp,"POLY\n");
+        $_poly = optimizePoly($_poly);
+        fwrite($fp,"POLY ".count($_poly)."\n");
         foreach($_poly as $_p) {
             fwrite($fp, $_p->x." ".$_p->y."\n");
         }
-        fwrite($fp,"\n");
     }
     fclose($fp);
 }
@@ -382,7 +386,8 @@ class EdgeTracer {
                 //echo sprintf("%d,%d -> %d,%d = %d\n",$curedge->x,$curedge->y, $nextedge->x,$nextedge->y,$angle);
                 $curedge = $nextedge;
             }
-            //return array();
+            // append first point to end
+            $poly[] = $poly[0];
             $polys[] = $poly;
         }
         return $polys;
@@ -598,6 +603,67 @@ class EdgeTracer {
     }
 }
 
+class POLYParser {
+    private $file;
+    private $double;
+    public $polys;
+    public $zone;
+    public $name;
+    public $region;
+    public $realm;
+
+    public function __construct($file, $double = false)
+    {
+        $this->file = $file;
+        $this->double = $double;
+    }
+
+    public function parse()
+    {
+        $iter = new FileReader($this->file);
+        $this->polys = array();
+        foreach ($iter as $line) {
+            if (strncmp($line, "ZONE", 4) == 0) {
+                $this->parseZone($iter);
+            } elseif (strncmp($line, "POLY", 4) == 0) {
+                $this->polys[] = $this->parsePoly($iter);
+            }
+        }
+    }
+
+    public function parseZone(FileReader $iter)
+    {
+        $this->zone = (int)$iter->next();
+        $this->name = trim($iter->next());
+        $this->region = trim($iter->next());
+        $this->realm = trim($iter->next());
+    }
+
+    public function parsePoly(FileReader $iter)
+    {
+        $line = $iter->current();
+        $d = preg_split('/\s+/', $line, -1, PREG_SPLIT_NO_EMPTY);
+        $total = $d[1];
+        echo "Parsing $total points\n";
+        $count = 0;
+        $points = array();
+        $iter->next(); // advance to next line
+        foreach ($iter as $line) {
+            $d = preg_split('/\s+/', $line, -1, PREG_SPLIT_NO_EMPTY);
+            if ($this->double) {
+                $d[0] *= 2;
+                $d[1] *= 2;
+            }
+            $points[] = (object)array('x'=>$d[0], 'y'=>$d[1]);
+            ++$count;
+            if ($count == $total) {
+                break;
+            }
+        }
+        return $points;
+    }
+}
+
 class XFIGParser {
     private $file;
     public $polys;
@@ -734,6 +800,27 @@ class FileReader implements Iterator {
     }
 }
 
+function getAngle($a, $b) {
+    return rad2deg(atan2($b->y - $a->y, $b->x - $a->x));
+}
+
+function optimizePoly(array $_poly) {
+    $curangle = getAngle($_poly[0], $_poly[1]);
+    $ret = array($_poly[0]);
+    for ($i=1,$l=count($_poly)-1; $i < $l; ++$i) {
+        $angle = getAngle($_poly[$i], $_poly[$i+1]);
+        if ($angle != $curangle) {
+            $curangle = $angle;
+            $ret[] = $_poly[$i];
+        }
+    }
+    $ret[] = $_poly[$i];
+    return $ret;
+}
+
+function PointToText($p) {
+    return $p->x.' '.$p->y;
+}
 function allocateColor($img) {
     static $colors;
     static $colormap;
@@ -930,6 +1017,23 @@ $cmd->addArgument('zoneids',array(
 ));
 
 $cmd = $parser->addCommand('trace',array(
+    'description'=>'Trace to SVG file using "My algorithm"',
+));
+$cmd->addOption('outputfile',array(
+    'short_name'    => '-o',
+    'description'   => 'Output filename',
+    'default'       => 'Zone.png',
+    'optional'      => true,
+    'help_name'     => 'FILE',
+));
+$cmd->addArgument('zoneids',array(
+    'multiple'      => true,
+    'description'   => 'the Zones to convert',
+    'optional'      => true,
+    'help_name'     => 'zones',
+));
+
+$cmd = $parser->addCommand('potrace',array(
     'description'=>'Trace to SVG file using potrace',
 ));
 $cmd->addOption('outputfile',array(
@@ -945,6 +1049,29 @@ $cmd->addArgument('zoneids',array(
     'optional'      => true,
     'help_name'     => 'zones',
 ));
+
+$cmd = $parser->addCommand('poly',array(
+    'description'=>'Convery Poly files (from trace commands) into GIS polygons in a DB',
+));
+$cmd->addOption('spatialite',array(
+    'short_name'    => '-s',
+    'description'   => 'Spatialite DB',
+    'optional'      => false,
+    'help_name'     => 'FILE',
+));
+$cmd->addOption('table',array(
+    'short_name'    => '-t',
+    'description'   => 'The Table to insert the geometry',
+    'optional'      => false,
+    'help_name'     => 'table',
+));
+$cmd->addArgument('polyfiles',array(
+    'multiple'      => true,
+    'description'   => 'the Polyfiles to import',
+    'optional'      => true,
+    'help_name'     => 'zones',
+));
+
 
 try {
     $args = $parser->parse();
@@ -969,11 +1096,13 @@ $zoneinfo = $dbh->prepare("SELECT * FROM $zonestable WHERE zone_id = ?");
 $zonepoints = $dbh->prepare("SELECT x y,z x FROM $pointstable WHERE zone_id = ? ORDER BY z, x");
 
 if (empty($args->command->args['zoneids'])) {
-    $bounds = (object)array('l'=>0,'t'=>0,'b'=>6110,'r'=>6130);
+    $bounds = (object)array('l'=>0,'t'=>0,'b'=>6110,'r'=>6130, 'width'=>6132, 'height'=>6112);
 } else {
     $stmt = $dbh->query("SELECT MIN(x) t, MIN(z) l, MAX(x) b, MAX(z) r FROM $pointstable"
             .(empty($args->command->args['zoneids'])?"":" WHERE zone_id IN (".implode(',',$args->command->args['zoneids']).")"));
     $bounds = $stmt->fetchObject();
+    $bounds->width = $bounds->r - $bounds->l + 2;
+    $bounds->height = $bounds->b - $bounds->t + 2;
     $stmt->closeCursor();
 }
 
@@ -987,10 +1116,21 @@ if (empty($args->command->args['zoneids'])) {
 
 switch ($args->command_name) {
     case 'flood':
+        $normx = $bounds->l/2;
+        $normy = $bounds->t/2;
+
+        $img = imagecreate(
+                    $bounds->width/2,
+                    $bounds->height/2);
+        foreach ($zones as $_zid) {
+
+        }
+        break;
+    case 'trace':
         $normx = $bounds->l/2 - 5;
         $normy = $bounds->t/2 - 5;
 
-        $width = $bounds->r/2-$bounds->l/2;
+        $width = $bounds->r/2-$bounds->l/2+1;
         $img = imagecreate(
                     $width * 2 +15,
                     $bounds->b/2-$bounds->t/2+10);
@@ -1008,10 +1148,10 @@ switch ($args->command_name) {
                         count($polys),
                         $_zone->name
                     );
-            drawPoints($img, $ft->edges, allocateColor($img), $normx, $normy);
             $color = allocateColor($img);
+            drawPoints($img, $ft->edges, $color, $normx, $normy);
             foreach ($polys as $_poly) {
-                if (count($_poly)<8) {
+                if (count($_poly)<=8) {
                     //echo sprintf("Throwing away %d  (%d,%d)\n",count($_poly),$_poly[0]->x,$_poly[0]->y);
                 } else {
                     echo "Drawing poly ".count($_poly)."\n";
@@ -1021,7 +1161,7 @@ switch ($args->command_name) {
                 }
             }
             echo "Writing Poly file\n";
-            writePolys($polys, "trace-".$_zid.".poly", 8);
+            writePolys($_zone, $polys, "trace-".$_zid.".poly", 8);
             #drawPoly($img, $polys, $color);
             #drawZone($img, $polys, $color);
         }
@@ -1031,7 +1171,7 @@ switch ($args->command_name) {
         //imagepng($img, 'Zone'.'.png');
         imagedestroy($img);
         break;
-    case 'trace':
+    case 'potrace':
         echo "Rendering ".count($zones)." zones\n";
         $normx = $bounds->l/2;
         $normy = $bounds->t/2;
@@ -1060,7 +1200,7 @@ switch ($args->command_name) {
             exec(sprintf("potrace -b xfig -W%d.pt -o %s.fig %s.pbm", $_zone->halfwidth, $file, $file));
             $xf = new XFIGParser($file.'.fig');
             $xf->parse($_zone->halfbounds);
-            writePolys($xf->polys,$file.'.poly');
+            writePolys($_zone, $xf->polys,$file.'.poly');
 
             foreach ($xf->polys as $_poly) {
                 #var_dump($_poly);
@@ -1131,6 +1271,86 @@ switch ($args->command_name) {
         echo "Write Map\n";
         imagepng($img, $args->command->options['outputfile']);
         imagedestroy($img);
+        break;
+    case 'poly':
+        if (!empty($args->command->options['spatialite'])) {
+            if (empty($args->command->options['table'])) {
+                throw new Exception("Must specify Table Name");
+            }
+            $sdb = new SQLite3($args->command->options['spatialite']);
+            $sdb->loadExtension('libspatialite.dylib');
+            $insert_final = $sdb->prepare(sprintf("REPLACE INTO %s"
+                    ." (zone_id, polygon, realm, region, name)"
+                    ." VALUES (:id, CastToMultiPolygon(GeomFromText(:geom,1000)),:realm,:region,:name)",
+                $args->command->options['table']
+            ));
+        }
+        $tdb = new SQLite3(':memory:');
+        $tdb->loadExtension('libspatialite.dylib');
+        $tdb->query("CREATE TABLE poly (ID INT NOT NULL PRIMARY KEY, polygon POLYGON NOT NULL, type INT NOT NULL DEFAULT '0')");
+        $insert = $tdb->prepare("INSERT INTO poly (ID, polygon) VALUES (:id,PolyFromText(:poly))");
+        $update = $tdb->prepare("UPDATE poly SET type = 1 WHERE ID = :id");
+        $check = $tdb->prepare("SELECT COUNT(P2.ID)"
+                    ." FROM poly P1, poly P2"
+                    ." WHERE P1.ID = :inner AND P2.ID != P1.ID"
+                    ." AND Within(P1.polygon, P2.polygon)=1");
+        $merge = $tdb->prepare("INSERT INTO poly (ID, polygon, type)"
+                    ." SELECT :id, GUnion(polygon), 2 FROM poly WHERE type = 0");
+        $diff = $tdb->prepare("REPLACE INTO poly (ID, polygon, type)"
+                    ." SELECT P1.ID, Difference(P1.polygon, P2.polygon), P1.type FROM poly P1, poly P2"
+                    ." WHERE P1.ID = :outer AND P2.ID = :inner");
+        foreach ($args->command->args['polyfiles'] as $_file) {
+            $p = new POLYParser($_file, true);
+            $p->parse();
+            echo "Importing ".$p->name."\n";
+            if (count($p->polys)==0) {
+                echo "No Polys\n";
+                continue;
+            }
+            $count = 0;
+            $gis = '';
+            $tdb->query("DELETE FROM poly");
+            $insert->clear();
+            $insert->bindParam('poly',$gis,SQLITE3_TEXT);
+            $insert->bindParam('id',$count,SQLITE3_INTEGER);
+            foreach ($p->polys as $_poly) {
+                $gis = 'POLYGON(('.implode(',',array_map('PointToText',$_poly)).'))';
+                ++$count;
+                $insert->execute();
+            }
+            for ($i=1; $i<=$count; ++$i) {
+                $check->bindValue('inner',$i);
+                $res = $check->execute();
+                $row = $res->fetchArray(SQLITE_NUM);
+                if ($row[0] > 0) {
+                    $update->bindValue('id',$i);
+                    $update->execute();
+                }
+                $res->finalize();
+            }
+            ++$count;
+            $merge->bindValue('id',$count);
+            $merge->execute();
+
+            $res = $tdb->query("SELECT ID FROM poly WHERE type = 1");
+            $diff->bindValue('outer',$count);
+            while ($row = $res->fetchArray(SQLITE_NUM)) {
+                echo "Diffing ".$row[0]."\n";
+                $diff->bindValue('inner',$row[0]);
+                $diff->execute();
+            }
+            $res->finalize();
+            $endpoly = $tdb->querySingle("SELECT AsText(polygon) FROM poly WHERE id = ".(int)$count);
+            echo $endpoly."\n";
+            if (!empty($insert_final) && !empty($endpoly)) {
+                $insert_final->bindValue('id',$p->zone,SQLITE3_INTEGER);
+                $insert_final->bindValue('name',$p->name);
+                $insert_final->bindValue('region',$p->region);
+                $insert_final->bindValue('realm',$p->realm);
+                $insert_final->bindValue('geom',$endpoly);
+                $insert_final->execute();
+            }
+        }
         break;
     default:
         $parser->displayUsage();
