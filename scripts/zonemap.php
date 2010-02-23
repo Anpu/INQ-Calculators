@@ -1248,7 +1248,7 @@ switch ($args->command_name) {
                 throw new Exception("Must specify Table Name");
             }
             $sdb = new SQLite3($args->command->options['spatialite']);
-            $sdb->loadExtension('libspatialite.dylib');
+            $sdb->loadExtension($config->spatialite);
             $insert_final = $sdb->prepare(sprintf("REPLACE INTO %s"
                     ." (zone_id, polygon, realm, region, name)"
                     ." VALUES (:id, CastToMultiPolygon(GeomFromText(:geom,1000)),:realm,:region,:name)",
@@ -1256,7 +1256,7 @@ switch ($args->command_name) {
             ));
         }
         $tdb = new SQLite3(':memory:');
-        $tdb->loadExtension('libspatialite.dylib');
+        $tdb->loadExtension($config->spatialite);
         $tdb->query("CREATE TABLE poly (ID INT NOT NULL PRIMARY KEY, polygon POLYGON NOT NULL, type INT NOT NULL DEFAULT '0')");
         $insert = $tdb->prepare("INSERT INTO poly (ID, polygon) VALUES (:id,PolyFromText(:poly))");
         $update = $tdb->prepare("UPDATE poly SET type = 1 WHERE ID = :id");
@@ -1291,7 +1291,7 @@ switch ($args->command_name) {
             for ($i=1; $i<=$count; ++$i) {
                 $check->bindValue('inner',$i);
                 $res = $check->execute();
-                $row = $res->fetchArray(SQLITE_NUM);
+                $row = $res->fetchArray(SQLITE3_NUM);
                 if ($row[0] > 0) {
                     $update->bindValue('id',$i);
                     $update->execute();
@@ -1304,7 +1304,7 @@ switch ($args->command_name) {
 
             $res = $tdb->query("SELECT ID FROM poly WHERE type = 1");
             $diff->bindValue('outer',$count);
-            while ($row = $res->fetchArray(SQLITE_NUM)) {
+            while ($row = $res->fetchArray(SQLITE3_NUM)) {
                 echo "Diffing ".$row[0]."\n";
                 $diff->bindValue('inner',$row[0]);
                 $diff->execute();
