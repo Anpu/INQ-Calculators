@@ -67,22 +67,24 @@ function parsePolygonsFromSVG($file, $bounds) {
     $height = $bounds->height;
     echo "Req ".$width."x".$height."\n";
     echo "SVG ".$svg_width."x".$svg_height."\n";
-    $paths = $xml->xpath('//svg:path/..');
-    if (empty($paths)) {
+    $geom = $xml->xpath('//svg:g');
+    if (empty($geom)) {
         return array();
     }
     $polys = array();
-    foreach ($paths as $geomtry) {
-        $transform = $geomtry['transform'];
-        $fill = $geomtry['fill'];
-        preg_match('/scale\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$scale);
-        preg_match('/translate\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$translate);
-        $matrix = array(
-            array($scale[1],0,$translate[1]+$bounds->l-2),
-            array(0,$scale[2],$translate[2]+$bounds->t-2),
-            array(0,0,1),
-        );
-        $path = (string)$geomtry->path['d'];
+    echo "Found ".count($geom)." Geometries\n";
+    $transform = $geom[0]['transform'];
+    $fill = $geom[0]['fill'];
+    preg_match('/scale\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$scale);
+    preg_match('/translate\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$translate);
+    $matrix = array(
+        array($scale[1],0,$translate[1]+$bounds->l-2),
+        array(0,$scale[2],$translate[2]+$bounds->t-2),
+        array(0,0,1),
+    );
+
+    foreach ($geom[0]->path as $geomtry) {
+        $path = (string)$geomtry['d'];
         preg_match_all('/([a-zA-Z])?([-\d]+)\s+([-\d]+)([zZ]?)/',$path,$points, PREG_SET_ORDER);
         $current = (object)array('x'=>0,'y'=>0);
         $type = '';
