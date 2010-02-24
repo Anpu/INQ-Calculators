@@ -63,62 +63,58 @@ function parsePolygonsFromSVG($file, $bounds) {
 
     $svg_width = $a[3];
     $svg_height = $a[4];
-    $width = $bounds->r - $bounds->l;
-    $height = $bounds->b - $bounds->t;
+    $width = $bounds->width;
+    $height = $bounds->height;
     echo "Req ".$width."x".$height."\n";
     echo "SVG ".$svg_width."x".$svg_height."\n";
-    $paths = $xml->xpath('//svg:path/..');
+    $geom = $xml->xpath('//svg:g');
+    if (empty($geom)) {
+        return array();
+    }
     $polys = array();
-    foreach ($paths as $geomtry) {
-        $transform = $geomtry['transform'];
-        $fill = $geomtry['fill'];
-        preg_match('/scale\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$scale);
-        preg_match('/translate\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$translate);
-        $matrix = array(
-            array($scale[1],0,$translate[1]+$bounds->l-2),
-            array(0,$scale[2],$translate[2]+$bounds->t-2),
-            array(0,0,1),
-        );
-        $path = (string)$geomtry->path['d'];
-        $pos = 0;
-        $len = strlen($path);
+    echo "Found ".count($geom)." Geometries\n";
+    $transform = $geom[0]['transform'];
+    $fill = $geom[0]['fill'];
+    preg_match('/scale\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$scale);
+    preg_match('/translate\(([0-9\.\-]+),([0-9\.\-]+)\)/',$transform,$translate);
+    $matrix = array(
+        array($scale[1],0,$translate[1]+$bounds->l-2),
+        array(0,$scale[2],$translate[2]+$bounds->t-2),
+        array(0,0,1),
+    );
+
+    foreach ($geom[0]->path as $geomtry) {
+        $path = (string)$geomtry['d'];
+        preg_match_all('/([a-zA-Z])?([-\d]+)\s+([-\d]+)([zZ]?)/',$path,$points, PREG_SET_ORDER);
         $current = (object)array('x'=>0,'y'=>0);
-        while ($pos < $len) {
-            $type = $path[$pos];
-            ++$pos;
+        $type = '';
+        //Start Polygon
+        $poly = array();
+        for ($i=0,$l=count($points); $i<$l; ++$i) {
+            if (!empty($points[$i][1])) {
+                $type = $points[$i][1];
+            }
             switch($type) {
             case 'M':
             case 'm':
-                //Start Polygon
-                $poly = array();
-                consumeNumber($path, $pos, $_x);
-                consumeNumber($path, $pos, $_y);
                 if ($type == 'm') {
-                    $current->x += $_x;
-                    $current->y += $_y;
+                    $current->x += $points[$i][2];
+                    $current->y += $points[$i][3];
                 } else {
-                    $current->x = $_x;
-                    $current->y = $_y;
+                    $current->x = $points[$i][2];
+                    $current->y = $points[$i][3];
                 }
                 $poly[] = transformPoint($matrix,
                                     (object)array('x'=>$current->x, 'y'=>$current->y));
                 break;
-            case 'z':
-                //end Polygon
-                $poly[] = $poly[0];
-                $polys[] = $poly;
-                $poly = array();
-                break;
             case 'L':
             case 'l':
-                consumeNumber($path, $pos, $_x);
-                consumeNumber($path, $pos, $_y);
                 if ($type == 'l') {
-                    $current->x += $_x;
-                    $current->y += $_y;
+                    $current->x += $points[$i][2];
+                    $current->y += $points[$i][3];
                 } else {
-                    $current->x = $_x;
-                    $current->y = $_y;
+                    $current->x = $points[$i][2];
+                    $current->y = $points[$i][3];
                 }
                 $poly[] = transformPoint($matrix,
                                     (object)array('x'=>$current->x, 'y'=>$current->y));
@@ -126,55 +122,29 @@ function parsePolygonsFromSVG($file, $bounds) {
             case 'C':
             case 'c':
                 // in pairs of 3
-                while (consumeNumber($path, $pos, $d)) {
-                    consumeNumber($path, $pos, $d);
-                    consumeNumber($path, $pos, $d);
-                    consumeNumber($path, $pos, $d);
-                    consumeNumber($path, $pos, $_x);
-                    consumeNumber($path, $pos, $_y);
-                    if ($type == 'c') {
-                        $current->x += $_x;
-                        $current->y += $_y;
-                    } else {
-                        $current->x = $_x;
-                        $current->y = $_y;
-                    }
-                    $poly[] = transformPoint($matrix,
-                                    (object)array('x'=>$current->x, 'y'=>$current->y));
+                if ($type == 'c') {
+                    $current->x += $points[$i+2][2];
+                    $current->y += $points[$i+2][3];
+                } else {
+                    $current->x = $points[$i+2][2];
+                    $current->y = $points[$i+2][3];
                 }
+                $poly[] = transformPoint($matrix,
+                                    (object)array('x'=>$current->x, 'y'=>$current->y));
+                $i+=2;
                 break;
+            default:
+                echo "Unknown Type:".$type."\n";
+            }
+            if ($points[$i][4]=='z' || $points[$i][4]=='Z') {
+                //close Polygon
+                $poly[] = $poly[0];
+                $polys[] = $poly;
+                $poly = array();
             }
         }
     }
     return $polys;
-}
-
-function consumeWS(&$str, &$pos) {
-    $opos = $pos;
-    $char = $str[$pos];
-    while($char == ' ' || $char == "\n") {
-        ++$pos;
-        $char = $str[$pos];
-    }
-    return $pos - $opos;
-}
-
-function consumeNumber(&$str, &$pos, &$num) {
-    $out = '';
-    $opos = $pos;
-    $ws = consumeWS($str,$pos);
-    $char = $str[$pos];
-    while(($char >= '0' && $char <= '9') || $char == '-') {
-        $out .= $char;
-        ++$pos;
-        $char = $str[$pos];
-    }
-    if ($ws == ($pos - $opos)) {
-        return false;
-    } else {
-        $num = (int)$out;
-        return $pos - $opos;
-    }
 }
 
 function &fastFindPoly($_zone) {
@@ -1194,15 +1164,17 @@ switch ($args->command_name) {
             echo sprintf("Write PBM (%d,%d)\n",$_zone->halfwidth, $_zone->halfheight);
             $_zone->writePBM($file.'.pbm');
             echo "Process PBM\n";
-//            exec(sprintf("potrace -b svg -W%d.pt -o %s.svg %s.pbm", $_zone->halfwidth, $file, $file));
-//            echo "Parse SVG\n";
-//            $polys = parsePolygonsFromSVG($file.'.svg', $_zone->halfbounds);
-            exec(sprintf("potrace -b xfig -W%d.pt -o %s.fig %s.pbm", $_zone->halfwidth, $file, $file));
-            $xf = new XFIGParser($file.'.fig');
-            $xf->parse($_zone->halfbounds);
-            writePolys($_zone, $xf->polys,$file.'.poly');
+            $polys = array();
+            exec(sprintf("potrace -b svg -W%d.pt -O1 -n -c -q -u1 -o %s.svg %s.pbm", $_zone->halfwidth, $file, $file));
+            echo "Parse SVG\n";
+            $polys = parsePolygonsFromSVG($file.'.svg', $_zone->halfbounds);
+//            exec(sprintf("potrace -b xfig -W%d.pt -o %s.fig %s.pbm", $_zone->halfwidth, $file, $file));
+//            $xf = new XFIGParser($file.'.fig');
+//            $xf->parse($_zone->halfbounds);
+//            $polys = $xf->polys;
+            writePolys($_zone, $polys, $file.'.poly');
 
-            foreach ($xf->polys as $_poly) {
+            foreach ($polys as $_poly) {
                 #var_dump($_poly);
                 echo "Rendering Poly for ".$_zid." of size ".count($_poly)."\n";
                 $color = allocateColor($img);
@@ -1278,7 +1250,7 @@ switch ($args->command_name) {
                 throw new Exception("Must specify Table Name");
             }
             $sdb = new SQLite3($args->command->options['spatialite']);
-            $sdb->loadExtension('libspatialite.dylib');
+            $sdb->loadExtension($config->spatialite);
             $insert_final = $sdb->prepare(sprintf("REPLACE INTO %s"
                     ." (zone_id, polygon, realm, region, name)"
                     ." VALUES (:id, CastToMultiPolygon(GeomFromText(:geom,1000)),:realm,:region,:name)",
@@ -1286,7 +1258,7 @@ switch ($args->command_name) {
             ));
         }
         $tdb = new SQLite3(':memory:');
-        $tdb->loadExtension('libspatialite.dylib');
+        $tdb->loadExtension($config->spatialite);
         $tdb->query("CREATE TABLE poly (ID INT NOT NULL PRIMARY KEY, polygon POLYGON NOT NULL, type INT NOT NULL DEFAULT '0')");
         $insert = $tdb->prepare("INSERT INTO poly (ID, polygon) VALUES (:id,PolyFromText(:poly))");
         $update = $tdb->prepare("UPDATE poly SET type = 1 WHERE ID = :id");
@@ -1321,7 +1293,7 @@ switch ($args->command_name) {
             for ($i=1; $i<=$count; ++$i) {
                 $check->bindValue('inner',$i);
                 $res = $check->execute();
-                $row = $res->fetchArray(SQLITE_NUM);
+                $row = $res->fetchArray(SQLITE3_NUM);
                 if ($row[0] > 0) {
                     $update->bindValue('id',$i);
                     $update->execute();
@@ -1334,7 +1306,7 @@ switch ($args->command_name) {
 
             $res = $tdb->query("SELECT ID FROM poly WHERE type = 1");
             $diff->bindValue('outer',$count);
-            while ($row = $res->fetchArray(SQLITE_NUM)) {
+            while ($row = $res->fetchArray(SQLITE3_NUM)) {
                 echo "Diffing ".$row[0]."\n";
                 $diff->bindValue('inner',$row[0]);
                 $diff->execute();

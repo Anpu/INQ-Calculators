@@ -12,8 +12,9 @@ return (object)array(
         'password'=>'',
     ),
     'tables'=>(object)array(
-	'zones'=>'inqtools.zones',
-	'points'=>'test.zone_positions',
+        'zones'=>'inqtools.zones',
+        'points'=>'test.zone_positions',
     ),
+    'spatialite'=>'libspatialite.so',
 );
 ?>
