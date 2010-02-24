@@ -78,13 +78,13 @@ ul.navigation li {
     margin: 0 !important;
 }
 
-ul.navigation li:first-child {
+ul.navigation li.first-item {
     padding-left: 38px;
     background-image: url('../images/menu-left.png') !important;
     background-repeat: no-repeat;
 }
 
-ul.navigation li:last-child {
+ul.navigation li.last-item {
     padding-right: 38px;
     background-image: url('../images/menu-right.png') !important;
     background-repeat: no-repeat;

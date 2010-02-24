@@ -41,6 +41,9 @@ $(function() {
         }
     });
 
+    $('ul.navigation li:first').addClass('first-item');
+    $('ul.navigation li:last').addClass('last-item');
+
     $('a.tablink').live('click',function(e) {
         if (e.button !=0) return;
         $('#main').tabs('select',this.hash);
