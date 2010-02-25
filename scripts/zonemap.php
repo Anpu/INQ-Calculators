@@ -1057,18 +1057,16 @@ Database::setDSN($config->db->dsn, $config->db->user, $config->db->password);
 
 $dbh = Database::get();
 
-$fetchzone = $dbh->prepare("SELECT x,z FROM $pointstable WHERE zone_id = ?");
-
-$zonebounds = $dbh->prepare("SELECT MIN(x) t, MIN(z) l, MAX(x) b, MAX(z) r FROM $pointstable WHERE zone_id = ?");
-$zonepointrange = $dbh->prepare("SELECT x y,MIN(z) minx,MAX(z) maxx FROM $pointstable WHERE zone_id = ? GROUP BY x");
+$zonebounds = $dbh->prepare("SELECT MIN(y) t, MIN(x) l, MAX(y) b, MAX(x) r FROM $pointstable WHERE zone_id = ?");
+$zonepointrange = $dbh->prepare("SELECT y,MIN(x) minx,MAX(x) maxx FROM $pointstable WHERE zone_id = ? GROUP BY y");
 $zonepoly = $dbh->prepare("INSERT IGNORE INTO $polytable (zone_id,polygon) VALUES (?, PolyFromText(?))");
 $zoneinfo = $dbh->prepare("SELECT * FROM $zonestable WHERE zone_id = ?");
-$zonepoints = $dbh->prepare("SELECT x y,z x FROM $pointstable WHERE zone_id = ? ORDER BY z, x");
+$zonepoints = $dbh->prepare("SELECT x, y FROM $pointstable WHERE zone_id = ? ORDER BY x, y");
 
 if (empty($args->command->args['zoneids'])) {
     $bounds = (object)array('l'=>0,'t'=>0,'b'=>6110,'r'=>6130, 'width'=>6132, 'height'=>6112);
 } else {
-    $stmt = $dbh->query("SELECT MIN(x) t, MIN(z) l, MAX(x) b, MAX(z) r FROM $pointstable"
+    $stmt = $dbh->query("SELECT MIN(y) t, MIN(x) l, MAX(y) b, MAX(x) r FROM $pointstable"
             .(empty($args->command->args['zoneids'])?"":" WHERE zone_id IN (".implode(',',$args->command->args['zoneids']).")"));
     $bounds = $stmt->fetchObject();
     $bounds->width = $bounds->r - $bounds->l + 2;
