@@ -22,6 +22,15 @@ if (!Array.prototype.indexOf)
   };
 }
 
+/** For users w/o firebug/a real browser */
+if (window.console == undefined) {
+    window.console = {
+        log: function() {},
+        dir: function() {},
+        error: function() {}
+    };
+}
+
 function prefixNumber(number, prefix, digits) {
     var n = parseInt(number).toString();
     var ret = '';
