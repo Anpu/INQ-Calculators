@@ -466,3 +466,10 @@ ul.legend a {
 .zone-icon.syrtis_warzone {
     background-position: -48px -24px;
 }
+/* Interactive World Map */
+#RO_InteractiveMap {
+    width: 600px;
+    height: 450px;
+    margin: 0 auto;
+    border: 1px solid red;
+}
