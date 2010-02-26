@@ -6,6 +6,7 @@ set_include_path(CLASS_ROOT . PATH_SEPARATOR . get_include_path());
  * Initialize class auto loader
  */
 function AutoLoad($class) {
+    if ($class=='PEAR_Error') $class = 'PEAR';
     $path = strtr($class,'_',DIRECTORY_SEPARATOR).'.php';
     if (file_exists(CLASS_ROOT.$path)) {
         require_once CLASS_ROOT.$path;
