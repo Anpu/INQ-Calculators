@@ -11,11 +11,13 @@
     <![endif]-->
     <link rel="stylesheet" type="text/css" href="css/themes/inquisition/jquery-ui-1.7.2.custom.css"/>
     <link rel="stylesheet" type="text/css" href="css/mapWidget.css"/>
+    <link rel="stylesheet" type="text/css" href="css/interactiveMap.css"/>
     <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
     <script type="text/javascript" src="js/inqtools.js"></script>
     <script type="text/javascript" src="js/mapWidget.js"></script>
     <script type="text/javascript" src="js/Polygon.js"></script>
+    <script type="text/javascript" src="js/interactiveMap.js"></script>
     <script type="text/javascript">
       <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
     </script>
@@ -61,6 +63,7 @@
         <li><a href="#areas" widgets="level,levelrange,region" callback="cbAreas">Areas</a></li>
         <li><a href="#pets" widgets="level,power,region" callback="cbPets">Pets</a></li>
         <li><a href="#npcs" widgets="npc_search,profession,region" callback="cbNPCs">NPCs</a></li>
+        <li><a href="#map">Map</a></li>
         <li><a href="#shops">Shops</a></li>
         <li><a href="#armor">Armor</a></li>
         <li><a href="#trainer">Trainer</a></li>
@@ -223,6 +226,10 @@
           <div id="credits" class="content">
             <h2>Credits</h2>
             Coming soon
+          </div>
+          <div id="map" class="content">
+              <h2>Look at the pretty map!</h2>
+              <div id="RO_InteractiveMap"/>
           </div>
       </div>
     </div>

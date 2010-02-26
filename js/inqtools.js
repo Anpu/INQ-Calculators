@@ -289,6 +289,13 @@ $(function() {
        doSearch();
     });
 
+    /** Interactive Map */
+    $('#RO_InteractiveMap').interactiveMap({
+        map: 'images/map/050',
+        width: 600,
+        height: 450
+    });
+
     // Do this AFTER all widgets are setup to insure they "hide" correctly
     var curpage = '#home';
     if (location.hash.length > 0 && $('#'+location.hash.substr(2)).length > 0) {
