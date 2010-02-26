@@ -14,7 +14,10 @@ $.extend(Point.prototype, {
     toString: function() {
         return '[x='+this.x+',y='+this.y+']';
     },
-    css: function() {
+    toOffset: function() {
+        return {left: this.x, top: this.y};
+    },
+    toBgOffset: function() {
         return this.x+'px '+this.y+'px';
     }
 });
@@ -30,17 +33,79 @@ function Rect(l,t,r,b)
 }
 
 $.extend(Rect.prototype, {
+    toString: function ()
+    {
+        return '[l='+this.l+',t='+this.t+',b='+this.b+',r='+this.r+']';
+    },
+    toCSSRect: function()
+    {
+        return {
+            left: this.l,
+            top: this.t,
+            width: this.r - this.l + 1,
+            height: this.b - this.t + 1
+        };
+    },
+    TL: function()
+    {
+        return new Point(this.l, this.t);
+    },
+    TR: function()
+    {
+        return new Point(this.r, this.t);
+    },
+    BL: function()
+    {
+        return new Point(this.l, this.b);
+    },
+    BR: function()
+    {
+        return new Point(this.r, this.b);
+    },
     extendByPoint: function(point)
     {
         this.l = Math.min(this.l,point.x);
         this.r = Math.max(this.r,point.x);
         this.t = Math.min(this.t,point.y);
         this.b = Math.max(this.b,point.y);
+        return this;
+    },
+    setDimensions: function(width, height)
+    {
+        this.r = this.l + width - 1;
+        this.b = this.t + height -1;
+        return this;
+    },
+    moveTo: function(x, y)
+    {
+        if (x != this.l) {
+            var w = this.r - this.l;
+            this.l = x;
+            this.r = x + w;
+        }
+        if (y != this.t) {
+            var h = this.b - this.t;
+            this.t = y;
+            this.b = y + h;
+        }
+        return this;
     },
     containsPoint: function(point)
     {
         return (point.x >= this.l && point.x <= this.r
             && point.y >= this.t && point.y <= this.b);
+    },
+    containsRect: function(rect)
+    {
+        return (rect.l >= this.l && rect.t >= this.t
+            && rect.b <= this.b && rect.r <= this.r);
+    },
+    intersectsRect: function(rect)
+    {
+        return (this.containsPoint(rect.TL())
+            || this.containsPoint(rect.BL())
+            || this.containsPoint(rect.TR())
+            || this.containsPoint(rect.BR()));
     }
 });
 

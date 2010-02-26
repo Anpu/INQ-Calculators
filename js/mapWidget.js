@@ -33,7 +33,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
             this._maps[m] = $('<div/>')
                         .addClass('mapWidget-overlay '+c.image);
             if (c.bgoffset) {
-                this._maps[m].css('backgroundPosition',c.bgoffset.css());
+                this._maps[m].css('backgroundPosition',c.bgoffset.toBgOffset());
             }
             if (c.position) {
                 this._maps[m].css({
@@ -159,7 +159,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
             this._maps[aMap].show();
             if (r.offset) {
                 // set the background position
-                this._maps[aMap].css('backgroundPosition',r.offset.css());
+                this._maps[aMap].css('backgroundPosition',r.offset.toBgOffset());
             }
             this._value[aMap] = aRegion;
         } else {

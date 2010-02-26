@@ -12,7 +12,6 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
             .appendTo(this._view);
         this._tileCache = $('<div class="tileCache"/>')
             .appendTo(this._container);
-
         this.loadMap();
     },
     destroy: function() {
@@ -24,7 +23,10 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
 
         $.widget.prototype.destroy.apply(this, arguments);
     },
-    loadMap: function() {
+    loadMap: function(map) {
+        if (map) {
+            this._setData('map',map);
+        }
         var self = this;
         $.get(this._getData('map')+'/map.xml',undefined,function(xml) {
             self._loadXML(xml);
@@ -32,67 +34,132 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
     },
     _loadXML: function(xml) {
         var pieces = $(xml).find("piece");
-        this._size = parseInt($(xml).find('map').attr('size'));
+        this._tilesize = parseInt($(xml).find('map').attr('size'));
         this._map = [];
         for (var i=0,l=pieces.length; i<l; ++i) {
             var p = pieces.eq(i);
-            this._map.push({
-                file: p.attr('file'),
-                left: p.attr('left'),
-                top: p.attr('top')
-            });
+            var left = p.attr('left'), top = p.attr('top');
+            if (!this._map[left]) {
+                this._map[left] = [];
+            }
+            this._map[left][top] = this._getData('map')+'/'+p.attr('file');
         }
-        var w = this.element.innerWidth() || this._getData('width') || 400;
-        var h = this.element.innerHeight() || this._getData('height') || 400;
+        this._setupTiles();
+    },
+    _setupTiles: function() {
+        this._mapwidth = this.element.innerWidth() || this._getData('width') || 400;
+        this._mapheight = this.element.innerHeight() || this._getData('height') || 400;
         this._tileCache.empty();
-        var tiles_x = Math.ceil(w / this._size);
-        var tiles_y = Math.ceil(h / this._size);
-        for (var y=0; y<tiles_y; ++y) {
-            for (var x=0; x<tiles_x; ++x) {
+        this._tiles = [];
+        var tiles_x = Math.ceil(this._mapwidth / this._tilesize) + 1;
+        var tiles_y = Math.ceil(this._mapheight / this._tilesize) + 1;
+        this._tileRect = new Rect(0,0,
+            (tiles_x + 1) * this._tilesize,
+            (tiles_y + 1) * this._tilesize
+        );
+        this._container.css({left:0,top:0});
+        for (var y=-2; y< tiles_y; ++y) {
+            for (var x=-2; x< tiles_x; ++x) {
+                var r = new Rect(x * this._tilesize, y * this._tilesize)
+                            .setDimensions(this._tilesize,this._tilesize);
                 $('<div class="tile"/>')
-                    .css({
-                        left: x * this._size,
-                        top: y * this._size,
-                        width: this._size,
-                        height: this._size
-                    })
+                    .css(r.toCSSRect())
                     .appendTo(this._tileCache)
+                    .data('rect',r)
                     .append('<img/>')
                     .children()
-                    .attr('src',this._getData('map')+'/'+(y*this._size)+'_'+(x*this._size)+'.jpg')
+                    .attr('src',this._getImageForTile(r.TL()))
                     .css({
-                        width:this._size,
-                        height: this._size
+                        width:this._tilesize,
+                        height: this._tilesize
                     });
             }
         }
+        this._tiles = this._tileCache.children().get();
+    },
+    _getImageForTile: function(point) {
+        if (this._map[point.x] && this._map[point.x][point.y]) {
+            return this._map[point.x][point.y];
+        }
+        return '';
+    },
+    checkTiles: function(p) {
+        var r = this._tileRect.moveTo(
+                (Math.floor(-p.x / this._tilesize) * this._tilesize) - this._tilesize,
+                (Math.floor(-p.y / this._tilesize) * this._tilesize) - this._tilesize);
+
+        var free = this._checkFreeTiles(r);
+
+        if (free.length) {
+            //figure out where we have no tiles in our map rectangle
+            var needed = [];
+            for (var y=r.t; y < r.b; y+=this._tilesize) {
+                for (var x=r.l; x < r.r; x+=this._tilesize) {
+                    var tp = new Point(x,y);
+                    var t = this._getTileForPoint(tp);
+                    if (t === false) {
+                        needed.push(tp);
+                    }
+                }
+            }
+            if (needed.length > free.length) {
+                console.error('Not Enough Tiles!!! Have',free.length, needed.length);
+            }
+            for (var i=0,l=Math.min(needed.length,free.length); i<l; ++i) {
+                // Update tile Rectangle
+                free[i].data('rect').moveTo(needed[i].x,needed[i].y);
+                // Update Image and Move Tile
+                free[i]
+                    .css(needed[i].toOffset())
+                    .children()
+                    .attr('src',this._getImageForTile(needed[i]));
+            }
+        }
+    },
+    _getTileForPoint: function(p) {
+        for (var i=0,l=this._tiles.length;i<l; ++i) {
+            var t = $(this._tiles[i]);
+            if (t.data('rect').containsPoint(p)) {
+                return t;
+            }
+        }
+        return false;
+    },
+    _checkFreeTiles: function(r) {
+        var ret = [];
+        for (var i=0,l=this._tiles.length;i<l; ++i) {
+            var t = $(this._tiles[i]);
+            if (!r.intersectsRect(t.data('rect'))) {
+                ret.push(t);
+            }
+        }
+        return ret;
     },
     _mouseStart: function(aEvt) {
         this.offset = this.element.offset();
         $.extend(this.offset, {
-            click: { //Where click happened, relative to the element
-                left: aEvt.pageX - this.offset.left,
-                top: aEvt.pageY - this.offset.top
-            },
-            view: {
-                left:this._container[0].offsetLeft,
-                top:this._container[0].offsetTop
-            }
+            click: new Point( //Where click happened, relative to the element
+                aEvt.pageX - this.offset.left,
+                aEvt.pageY - this.offset.top
+            ),
+            view: new Point(
+                this._container[0].offsetLeft,
+                this._container[0].offsetTop
+            )
         });
-        console.log('Start:',this.offset.click.left,this.offset.click.top,
-            'View:',this.offset.view.left, this.offset.view.top);
     },
     _mouseDrag: function(aEvt) {
         if ((this._ctr++ % 20)> 0 ) return;
-        var o = {
-            left: aEvt.pageX - this.offset.left,
-            top: aEvt.pageY - this.offset.top
-        };
-        var p = {
-            left: o.left - this.offset.click.left + this.offset.view.left,
-            top: o.top - this.offset.click.top + this.offset.view.top
-        }
-        this._container.css(p);
+        var o = new Point(
+            aEvt.pageX - this.offset.left,
+            aEvt.pageY - this.offset.top
+        );
+        var p = new Point(
+            o.x - this.offset.click.x + this.offset.view.x,
+            o.y - this.offset.click.y + this.offset.view.y
+        );
+        this._container.css(p.toOffset());
+        this.checkTiles(p);
     },
     _mouseStop: function(aEvt) {
 
