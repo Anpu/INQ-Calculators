@@ -188,6 +188,7 @@ class Map {
                 $size, $size,
                 $full_size, $full_size);
         $map = new SimpleXMLElement("<map/>");
+        $map['size'] = $size;
         for ($_y = 0; $_y < $pieces_y; $_y++) {
             for ($_x = 0; $_x < $pieces_x; $_x++) {
                 $src_rect = new Rect(array($_x * $full_size + $this->bounds->left,
