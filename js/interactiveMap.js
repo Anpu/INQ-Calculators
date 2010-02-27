@@ -58,30 +58,29 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
             (tiles_y + 1) * this._tilesize
         );
         this._container.css({left:0,top:0});
-        for (var y=-2; y< tiles_y; ++y) {
-            for (var x=-2; x< tiles_x; ++x) {
-                var r = new Rect(x * this._tilesize, y * this._tilesize)
-                            .setDimensions(this._tilesize,this._tilesize);
-                $('<div class="tile"/>')
-                    .css(r.toCSSRect())
-                    .appendTo(this._tileCache)
-                    .data('rect',r)
-                    .append('<img/>')
-                    .children()
-                    .attr('src',this._getImageForTile(r.TL()))
-                    .css({
-                        width:this._tilesize,
-                        height: this._tilesize
-                    });
-            }
-        }
-        this._tiles = this._tileCache.children().get();
+        this.checkTiles(this._tileRect.TL());
+    },
+    _createTile: function(x, y) {
+        var r = new Rect(x, y)
+                    .setDimensions(this._tilesize,this._tilesize);
+        var tile = $('<div class="tile"/>')
+            .css(r.toCSSRect())
+            .appendTo(this._tileCache)
+            .data('rect',r);
+        $('<img/>')
+            .attr('src',this._getImageForTile(r.TL()))
+            .css({
+                width:this._tilesize,
+                height: this._tilesize
+            })
+            .appendTo(tile);
+        this._tiles.push(tile);
     },
     _getImageForTile: function(point) {
         if (this._map[point.x] && this._map[point.x][point.y]) {
             return this._map[point.x][point.y];
         }
-        return '';
+        return this._getData('blankImage');
     },
     checkTiles: function(p) {
         var r = this._tileRect.moveTo(
@@ -90,22 +89,19 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
 
         var free = this._checkFreeTiles(r);
 
-        if (free.length) {
-            //figure out where we have no tiles in our map rectangle
-            var needed = [];
-            for (var y=r.t; y < r.b; y+=this._tilesize) {
-                for (var x=r.l; x < r.r; x+=this._tilesize) {
-                    var tp = new Point(x,y);
-                    var t = this._getTileForPoint(tp);
-                    if (t === false) {
-                        needed.push(tp);
-                    }
+        //figure out where we have no tiles in our map rectangle
+        var needed = [];
+        for (var y=r.t; y < r.b; y+=this._tilesize) {
+            for (var x=r.l; x < r.r; x+=this._tilesize) {
+                var tp = new Point(x,y);
+                var t = this._getTileForPoint(tp);
+                if (t === false) {
+                    needed.push(tp);
                 }
             }
-            if (needed.length > free.length) {
-                console.error('Not Enough Tiles!!! Have',free.length, needed.length);
-            }
-            for (var i=0,l=Math.min(needed.length,free.length); i<l; ++i) {
+        }
+        for (var i=0,l=needed.length; i<l; ++i) {
+            if (free[i]) {
                 // Update tile Rectangle
                 free[i].data('rect').moveTo(needed[i].x,needed[i].y);
                 // Update Image and Move Tile
@@ -113,12 +109,15 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
                     .css(needed[i].toOffset())
                     .children()
                     .attr('src',this._getImageForTile(needed[i]));
+            } else {
+                // Create new Tile
+                this._createTile(needed[i].x,needed[i].y);
             }
         }
     },
     _getTileForPoint: function(p) {
         for (var i=0,l=this._tiles.length;i<l; ++i) {
-            var t = $(this._tiles[i]);
+            var t = this._tiles[i];
             if (t.data('rect').containsPoint(p)) {
                 return t;
             }
@@ -128,7 +127,7 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
     _checkFreeTiles: function(r) {
         var ret = [];
         for (var i=0,l=this._tiles.length;i<l; ++i) {
-            var t = $(this._tiles[i]);
+            var t = this._tiles[i];
             if (!r.intersectsRect(t.data('rect'))) {
                 ret.push(t);
             }
@@ -170,7 +169,8 @@ $.extend($.ui.interactiveMap, {
     version: "0.0.1",
     getter: "",
     defaults: $.extend({}, $.ui.mouse.defaults, {
-        map:''
+        map:'',
+        blankImage:'images/blank.gif'
     })
 });
 
