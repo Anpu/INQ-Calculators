@@ -291,7 +291,7 @@ $(function() {
 
     /** Interactive Map */
     $('#RO_InteractiveMap').interactiveMap({
-        map: 'images/map/050',
+        map: 'images/map/map.xml',
         width: 600,
         height: 450
     });

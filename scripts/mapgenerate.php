@@ -12,20 +12,53 @@ define('DEBUG',!empty($config->debug));
 // Load up the class auto loader
 require_once __DIR__."/../classes/Init.php";
 
+class ActionScale extends Console_CommandLine_Action {
+    public function execute($value = false, $params = array()) {
+        $p = explode(':', trim($value));
+        if (count($p) != 2) {
+            throw new Exception(sprintf(
+                'Option "%s" must be 2 integeres separated by a colon (:)',
+                $this->option->name
+            ));
+        }
+        list ($num, $den) = self::simplify($p[0], $p[1]);
+        $this->setResult((object)array('num'=>$num,'den'=>$den));
+    }
+    private static function simplify($num, $den) {
+        $a = $num;
+        $b = $den;
+        for ($r = $a % $b;
+            $r != 0;
+            $a = $b, $b = $r, $r = $a % $b);
+        
+        return array($num / $b, $den / $b);
+    }
+}
+
+Console_CommandLine::registerAction("Scale", "ActionScale");
+
 $parser = new Console_CommandLine();
 $parser->description = "Convers the raw map tiles into smaller slices with different scales";
 $parser->version = "0.0.1";
 $parser->addOption('scale',array(
     'long_name'     => '--scale',
-    'description'   => 'Scale Factor for the image',
-    'default'       => 1,
+    'description'   => 'Scale Factor for the image (numerator:denominator)',
+    'default'       => (object)array('num'=>1,'den'=>1),
     'help_name'     => 'SCALE',
+    'action'        => 'Scale',
 ));
-$parser->addOption('size',array(
-    'long_name'     => '--size',
-    'description'   => 'Image Size',
+$parser->addOption('tilesize',array(
+    'long_name'     => '--tilesize',
+    'description'   => 'Tile Size',
+    'action'        => 'StoreInt',
     'default'       => 256,
     'help_name'     => 'SCALE',
+));
+$parser->addOption('append',array(
+    'long_name'     => '--append',
+    'short_name'    => '-a',
+    'description'   => 'Append a new layer to,instead of overwriting the map in OUTPUTDIR',
+    'action'        => 'StoreTrue',
 ));
 $parser->addArgument('inputmap',array(
     'description'   => 'The input map file to scale/split',
@@ -33,6 +66,7 @@ $parser->addArgument('inputmap',array(
 ));
 $parser->addArgument('outputdir',array(
     'description'   => 'The output directory for the generated map',
+    'optional'      => true,
     'help_name'     => 'OUTPUTDIR',
 ));
 
@@ -83,10 +117,10 @@ class Rect {
     }
 
     public function scale($scale, $origin_x = 0, $origin_y = 0) {
-        $this->left = ($this->left - $origin_x) * $scale + $origin_x;
-        $this->top = ($this->top - $origin_y) * $scale + $origin_y;
-        $this->right = ($this->left + $this->width - $origin_x) * $scale + $origin_x - 1;
-        $this->bottom = ($this->top + $this->height - $origin_y) * $scale + $origin_y - 1;
+        $this->left = ($this->left - $origin_x) * $scale->num / $scale->den + $origin_x;
+        $this->top = ($this->top - $origin_y) * $scale->num / $scale->den + $origin_y;
+        $this->right = ($this->left + $this->width - $origin_x) * $scale->num / $scale->den + $origin_x - 1;
+        $this->bottom = ($this->top + $this->height - $origin_y) * $scale->num / $scale->den + $origin_y - 1;
         $this->updateDimensions();
     }
 
@@ -167,36 +201,37 @@ class Map {
         $this->bounds = $this->calculateBounds($this->pieces);
     }
 
-    public function scale($scale, $size, $outdir) {
+    public function scale($scale, $tilesize, $outdir, SimpleXMLElement $layerXML) {
         $newBounds = clone $this->bounds;
         $newBounds->scale($scale, $newBounds->left, $newBounds->top);
 
         //Check if scale is "even" according to chunk size
-        $pieces_x = $newBounds->width / $size;
+        $pieces_x = $newBounds->width / $tilesize;
         if (floor($pieces_x) != $pieces_x) {
             throw new Exception("Uneven number of horizontal pieces would be created: ".$pieces_x);
         }
-        $pieces_y = $newBounds->height / $size;
+        $pieces_y = $newBounds->height / $tilesize;
         if (floor($pieces_y) != $pieces_y) {
             throw new Exception("Uneven number of vertical pieces would be created: ".$pieces_y);
         }
         $full_size = $this->bounds->width / $pieces_x;
-        echo sprintf("Scaling %d,%d ->(%.3f)-> %d,%d with %dx%d chunks from (%d,%d)\n",
+        echo sprintf("Scaling %d,%d ->(%d/%d)-> %d,%d with %dx%d chunks from (%d,%d)\n",
                 $this->bounds->width, $this->bounds->height,
-                $scale,
+                $scale->num,$scale->den,
                 $newBounds->width, $newBounds->height,
-                $size, $size,
+                $tilesize, $tilesize,
                 $full_size, $full_size);
-        $map = new SimpleXMLElement("<map/>");
-        $map['size'] = $size;
+        $layerXML['width'] = $newBounds->width;
+        $layerXML['height'] = $newBounds->height;
+        $layerXML['tilesize'] = $tilesize;
         for ($_y = 0; $_y < $pieces_y; $_y++) {
             for ($_x = 0; $_x < $pieces_x; $_x++) {
                 $src_rect = new Rect(array($_x * $full_size + $this->bounds->left,
                         $_y * $full_size + $this->bounds->top));
                 $src_rect->setDimensions($full_size, $full_size);
-                $dst_rect = new Rect(array($_x * $size + $this->bounds->left,
-                        $_y * $size + $this->bounds->top));
-                $dst_rect->setDimensions($size, $size);
+                $dst_rect = new Rect(array($_x * $tilesize + $this->bounds->left,
+                        $_y * $tilesize + $this->bounds->top));
+                $dst_rect->setDimensions($tilesize, $tilesize);
                 $file = sprintf("%d_%d.jpg",$dst_rect->top,$dst_rect->left);
                 echo "Building piece ",$file,"\n";
 
@@ -204,13 +239,13 @@ class Map {
                 imagejpeg($img, $outdir.DIRECTORY_SEPARATOR.$file);
                 imagedestroy($img);
                 // Write Map XML
-                $piece = $map->addChild('piece');
+                $piece = $layerXML->addChild('piece');
                 $piece['file'] = $file;
                 $piece['left'] = $dst_rect->left;
                 $piece['top'] = $dst_rect->top;
             }
         }
-        $map->asXML($outdir.DIRECTORY_SEPARATOR.'map.xml');
+        $layerXML->asXML($outdir.DIRECTORY_SEPARATOR.'layer.xml');
     }
 
     public function fetchMapSection(Rect $src, Rect $dst = null) {
@@ -280,6 +315,49 @@ class Map {
 }
 
 // Main Program
-$map = new Map($args->args['inputmap']);
-$map->scale($args->options['scale'], $args->options['size'],$args->args['outputdir']);
+$scale = sprintf('%d:%d',$args->options['scale']->num,
+        $args->options['scale']->den);
+$rpath = sprintf('%d_%d',$args->options['scale']->num,
+        $args->options['scale']->den);
+$outdir = realpath(empty($args->args['outputdir']) ? '.' : $args->args['outputdir']);
+if ($outdir === false || !is_dir($outdir) || !is_writable($outdir)) {
+    throw new Exception('Can not write to output directory');
+}
+echo "Exporting to ".$outdir."\n";
+
+$mapraw = new Map($args->args['inputmap']);
+if (file_exists($outdir."/map.xml") && $args->options['append']) {
+    $mapxml = new SimpleXMLElement($outdir."/map.xml",null,true);
+    if ($mapxml['tilesize'] != $args->options['tilesize']) {
+        throw new Exception('Updating existing map with different tilesize');
+    }
+} else {
+    $mapxml = new SimpleXMLElement('<map/>');
+    $mapxml['width'] = $mapraw->bounds->width;
+    $mapxml['height'] = $mapraw->bounds->height;
+    $mapxml['tilesize'] = $args->options['tilesize'];
+}
+
+$xpath = $mapxml->xpath('//layer[@scale="'.$scale.'"]');
+if (count($xpath)) {
+    // Remove it and recreate
+    $node = dom_import_simplexml($xpath[0]);
+    $node->parentNode->removeChild($node);
+}
+$layerXML = $mapxml->addChild('layer');
+$layerXML['scale'] = $scale;
+$layerXML['path'] = $rpath;
+
+if (file_exists($outdir.'/'.$rpath)) {
+    if (!is_dir($outdir.'/'.$rpath)
+            || !is_writable($outdir.'/'.$rpath)) {
+        throw new Exception('Can not write to output directory');
+    }
+} else {
+    mkdir($outdir.'/'.$rpath);
+}
+
+$mapraw->scale($args->options['scale'], $args->options['tilesize'],
+        $outdir.'/'.$rpath, $layerXML);
+$mapxml->asXML($outdir."/map.xml");
 ?>
