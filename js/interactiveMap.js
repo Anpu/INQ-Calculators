@@ -81,11 +81,27 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         this._setupTiles();
         this.loadLayer(0);
     },
-    loadLayer: function(layer) {
+    loadLayer: function(layer, center) {
+        var cur_scale;
+        if (layer === this._activeLayerNum) return;
+        // Grab current layer scale
+        if (this._activeLayer && center) {
+            cur_scale = this._activeLayer.scale;
+        }
         this._activeLayer = this._map.layers[layer];
         this._activeLayerNum = layer;
-        this.checkTiles(this._elems.container[0].offsetLeft,
-                    this._elems.container[0].offsetTop);
+        var left = this._elems.container[0].offsetLeft;
+        var top = this._elems.container[0].offsetTop;
+        if (cur_scale) {
+            var new_scale = this._activeLayer.scale;
+            var mult = (cur_scale.den * new_scale.num) / (cur_scale.num * new_scale.den);
+            var hw = this._elems.view.width() / 2;
+            var hh = this._elems.view.height() / 2;
+            left = (left - hw) * mult + hw;
+            top = (top - hh) * mult + hh;
+            this._elems.container.css({left:left,top:top});
+        }
+        this.checkTiles(left, top);
     },
     _sortLayers: function(a, b) {
         // Sort Ascending
@@ -219,12 +235,12 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         this.checkTiles(p.x, p.y);
     },
     _mouseWheel: function(event, delta) {
-        var layer = this._activeLayerNum + (delta < 0 ? 1 : -1);
+        var layer = this._activeLayerNum + (delta < 0 ? -1 : 1);
         event.preventDefault();
         if (layer < 0 || layer >= this._map.layers.length) {
             return; // max zoom
         }
-        this.loadLayer(layer);
+        this.loadLayer(layer, true);
     },
     _mouseStop: function(aEvt) {
 
