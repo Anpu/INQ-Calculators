@@ -95,10 +95,8 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         if (cur_scale) {
             var new_scale = this._activeLayer.scale;
             var mult = (cur_scale.den * new_scale.num) / (cur_scale.num * new_scale.den);
-            var hw = this._elems.view.width() / 2;
-            var hh = this._elems.view.height() / 2;
-            left = (left - hw) * mult + hw;
-            top = (top - hh) * mult + hh;
+            left = (left - center.x) * mult + center.x;
+            top = (top - center.y) * mult + center.y;
             this._elems.container.css({left:left,top:top});
         }
         this.checkTiles(left, top);
@@ -240,7 +238,8 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         if (layer < 0 || layer >= this._map.layers.length) {
             return; // max zoom
         }
-        this.loadLayer(layer, true);
+        var offset = this.element.offset();
+        this.loadLayer(layer, {x:event.pageX - offset.left, y:event.pageY - offset.top});
     },
     _mouseStop: function(aEvt) {
 
