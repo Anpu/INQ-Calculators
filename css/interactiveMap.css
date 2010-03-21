@@ -23,6 +23,9 @@
     position: absolute;
     opacity: 0.5;
 }
+.interactiveMap .overlay div {
+    -ms-filter: "Alpha(Opacity=50)"; /* ie8 */
+}
 
 .interactiveMap .tileCache > .tile {
     position: absolute;
