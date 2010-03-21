@@ -56,6 +56,16 @@ function writePolys(Zone $zone, $polys, $file, $filter = 0) {
     fclose($fp);
 }
 
+function ParseLineString($line) {
+    $ret = array();
+    if (preg_match("/LINESTRING\(((?:\d+ \d+(?:,\s*)?)+)\)/", $line, $matches)) {
+        foreach (preg_split("/,\s*/", $matches[1]) as $_point) {
+            $ret[] = preg_split('/\s+/',$_point);
+        }
+    }
+    return $ret;
+}
+
 function parsePolygonsFromSVG($file, $bounds) {
     $xml = simplexml_load_file($file);
     $xml->registerXPathNamespace('svg','http://www.w3.org/2000/svg');
@@ -1042,6 +1052,34 @@ $cmd->addArgument('polyfiles',array(
     'help_name'     => 'zones',
 ));
 
+$cmd = $parser->addCommand('mapoverlay',array(
+    'description'=>'Convert Polygonal data from a spacialite DB into a map overlay file',
+));
+$cmd->addOption('spatialite',array(
+    'short_name'    => '-s',
+    'description'   => 'Spatialite DB',
+    'optional'      => false,
+    'help_name'     => 'FILE',
+));
+$cmd->addOption('table',array(
+    'short_name'    => '-t',
+    'description'   => 'The Table to load the geometry',
+    'optional'      => false,
+    'help_name'     => 'table',
+));
+$cmd->addOption('filter',array(
+    'short_name'    => '-w',
+    'description'   => 'Extra WHERE filter for the main zone query',
+    'optional'      => true,
+    'help_name'     => 'FILTER',
+));
+$cmd->addOption('outputfile',array(
+    'short_name'    => '-o',
+    'description'   => 'Output filename',
+    'default'       => 'overlay.json',
+    'optional'      => true,
+    'help_name'     => 'FILE',
+));
 
 try {
     $args = $parser->parse();
@@ -1321,6 +1359,60 @@ switch ($args->command_name) {
                 $insert_final->execute();
             }
         }
+        break;
+    case 'mapoverlay':
+        if (empty($args->command->options['spatialite'])) {
+            throw new Exception("Must specify spatialite DB");
+        }
+        if (empty($args->command->options['table'])) {
+            throw new Exception("Must specify Table Name");
+        }
+        $sdb = new SQLite3($args->command->options['spatialite']);
+        $sdb->loadExtension($config->spatialite);
+        $allzones = $sdb->prepare(sprintf("SELECT zone_id, NumGeometries(polygon) FROM %s"
+               .(empty($args->command->options['filter']) ? "" : " WHERE %s"),
+            $args->command->options['table'], $args->command->options['filter']));
+        $getPolygon = $sdb->prepare(sprintf("SELECT AsText(ExteriorRing(GeometryN(polygon,:poly))),"
+                ."NumInteriorRings(GeometryN(polygon,:poly)) FROM %s WHERE zone_id = :zone",
+            $args->command->options['table']));
+        $getPolygonHole = $sdb->prepare(sprintf("SELECT AsText(InteriorRingN(GeometryN(polygon,:poly),:hole))"
+                ." FROM %s WHERE zone_id = :zone",
+            $args->command->options['table']));
+
+
+        $res = $allzones->execute();
+        $zones = array();
+        while ($row = $res->fetchArray(SQLITE3_NUM)) {
+            $_zone = new stdClass();
+            $_zone->id = $row[0];
+            $_zone->polygons = array();
+            $getPolygon->bindValue('zone',$row[0],SQLITE3_INTEGER);
+            $getPolygonHole->bindValue('zone',$row[0],SQLITE3_INTEGER);
+            // Iterate Polygons
+            for ($p=1; $p<=$row[1]; ++$p) {
+                $polygon = new stdClass();
+                $getPolygon->bindValue('poly',$p,SQLITE3_INTEGER);
+                $res2 = $getPolygon->execute();
+                $poly = $res2->fetchArray(SQLITE3_NUM);
+                $res2->finalize();
+                $polygon->exterior = ParseLineString($poly[0]);
+                // Iterate Holes
+                $polygon->holes = array();
+                $getPolygonHole->bindValue('poly',$p,SQLITE3_INTEGER);
+                for ($h=1; $h<=$poly[1]; ++$h) {
+                    $getPolygonHole->bindValue('hole',$h,SQLITE3_INTEGER);
+                    $res2 = $getPolygonHole->execute();
+                    $hole = $res2->fetchArray(SQLITE3_NUM);
+                    $res2->finalize();
+                    $polygon->holes[] = ParseLineString($hole[0]);
+                }
+            }
+            $_zone->polygons[] = $polygon;
+            $zones[$_zone->id] = $_zone;
+        }
+        $res->finalize();
+        echo "Exported ".count($zones)." to ".$args->command->options['outputfile']."\n";
+        file_put_contents($args->command->options['outputfile'], json_encode($zones));
         break;
     default:
         $parser->displayUsage();
