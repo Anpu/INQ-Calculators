@@ -13,6 +13,83 @@ function dirname (path) {
     return path.replace(/\/[^\/]*\/?$/, '');
 }
 
+function OverlayContainer(elem) {
+    this.element = elem;
+    // The starting scale
+    this._scale = { num: 1, den: 1 };
+    // List of jsGraphics wrappers
+    this._elems = [];
+    this._toDraw = [];
+}
+$.extend(OverlayContainer.prototype, {
+    setScale: function(scale) {
+        if (this._scale.num != scale.num || this._scale.den != scale.den) {
+            this._scale.num = scale.num;
+            this._scale.den = scale.den;
+        }
+        return this;
+    },
+    draw: function(force) {
+        if (force) {
+            this._toDraw = [];
+            for (var i=0,l=this._elems.length; i<l; ++i) {
+                var o = this._elems[i];
+                var f = this['_draw_'+o.type];
+                if ($.isFunction(f)) {
+                    f.call(this,o);
+                }
+            }
+        } else {
+            while (this._toDraw.length) {
+                var o = this._elems[this._toDraw.shift()];
+                var f = this['_draw_'+o.type];
+                if ($.isFunction(f)) {
+                    f.call(this,o);
+                }
+            }
+        }
+        return this;
+    },
+    _draw_polygon: function(o) {
+        if (!o.wrapper) {
+            o.wrapper = $('<div/>').appendTo(this.element);
+        }
+        o.wrapper.empty();
+        o.data.draw(o.wrapper, this._scale, this.nextColor());
+    },
+    colors: [
+        '#ffffff',
+        '#ff00ff',
+        '#00ffff',
+        '#ffff00',
+        '#ff0000',
+        '#00ff00',
+        '#0000ff',
+        '#000000',
+    ],
+    nextColor: function() {
+        this.color = ((this.color || 0) + 1) % this.colors.length;
+        return this.colors[this.color];
+    },
+    addPolygon: function(polygon, offset) {
+        var id = this._addObject('polygon', polygon, offset, true);
+        return id;
+    },
+    _addObject: function(type, data, offset, toDraw) {
+        var o = {
+            type: type,
+            data: data,
+            offset: offset
+        };
+        this._elems.push(o);
+        var id = this._elems.length-1;
+        if (toDraw) {
+            this._toDraw.push(id);
+        }
+        return id;
+    }
+});
+
 $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
     _init: function() {
         this._mouseInit();
@@ -21,14 +98,39 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         this.element
             .addClass('interactiveMap')
             .disableSelection()
-            .mousewheel(function(event,delta) { self._mouseWheel(event,delta); });
+            .mousewheel(function(event,delta) {self._mouseWheel(event,delta);});
         this._elems.view = $('<div class="viewPort"/>')
             .appendTo(this.element);
         this._elems.container = $('<div class="container"/>')
             .appendTo(this._elems.view);
         this._elems.tileCache = $('<div class="tileCache"/>')
             .appendTo(this._elems.container);
+        this._elems.overlay = $('<div class="overlay"/>')
+            .appendTo(this._elems.container);
         this.loadMap();
+    },
+    render: function() {
+        if (this.element.is(':hidden') || !this._map) {
+            // nothing to see here move along
+            return;
+        }
+        // Called when the display needs to be recalculated (resize or show when previously hidden)
+        var _viewwidth = this.element.innerWidth()
+            || this._getData('width') || 400;
+        var _viewheight = this.element.innerHeight()
+            || this._getData('height') || 400;
+        var tiles_x = Math.ceil(_viewwidth / this._map.tilesize) + 1;
+        var tiles_y = Math.ceil(_viewheight / this._map.tilesize) + 1;
+        this._view = {
+            w: (tiles_x + 1) * this._map.tilesize,
+            h: (tiles_y + 1) * this._map.tilesize
+        };
+        if (this._activeLayerNum !== undefined) {
+            var left = this._elems.container[0].offsetLeft;
+            var top = this._elems.container[0].offsetTop;
+            this.checkTiles(left, top);
+            this.overlay().draw();
+        }
     },
     destroy: function() {
         this._mouseDestroy();
@@ -60,6 +162,8 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
                 ++layer_itr) {
             var _l = layers.eq(layer_itr);
             var _ll = {
+                width: parseInt(_l.attr('width')),
+                height: parseInt(_l.attr('height')),
                 scale: parseScale(_l.attr('scale')),
                 path: dirname(this._getData('map'))+'/'+_l.attr('path')+'/',
                 pieces: {}
@@ -79,8 +183,8 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         }
         this._map.layers.sort(this._sortLayers);
         this._setupTiles();
-        this.loadLayer(0);
     },
+    /** Need to toggle a Loading/notile graphic when changing zoom levels */
     loadLayer: function(layer, center) {
         var cur_scale;
         if (layer === this._activeLayerNum) return;
@@ -100,26 +204,36 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
             this._elems.container.css({left:left,top:top});
         }
         this.checkTiles(left, top);
+        this._elems.overlay.css({width:this._activeLayer.width,height:this._activeLayer.height});
+        this.overlay()
+            .setScale(this._activeLayer.scale)
+            .draw(true);
+    },
+    /** Overlays */
+    overlay: function(cmd) {
+        if (!this._overlay) {
+            this._overlay = new OverlayContainer(this._elems.overlay);
+            if (this._activeLayer) {
+                this._overlay.setScale(this._activeLayer.scale);
+            }
+        }
+        if (cmd) {
+            if ($.isFunction(this._overlay[cmd])) {
+                return this._overlay[cmd].apply(this._overlay, Array.prototype.slice.call(arguments, 1));
+            }
+        }
+        return this._overlay;
     },
     _sortLayers: function(a, b) {
         // Sort Ascending
         return (a.scale.num / a.scale.den) - (b.scale.num / b.scale.den);
     },
     _setupTiles: function() {
-        var _viewwidth = this.element.innerWidth()
-            || this._getData('width') || 400;
-        var _viewheight = this.element.innerHeight()
-            || this._getData('height') || 400;
         this._elems.tileCache.empty();
         this._tileCache = {};
         this._tiles = [];
-        var tiles_x = Math.ceil(_viewwidth / this._map.tilesize) + 1;
-        var tiles_y = Math.ceil(_viewheight / this._map.tilesize) + 1;
-        this._view = {
-            w: (tiles_x + 1) * this._map.tilesize,
-            h: (tiles_y + 1) * this._map.tilesize
-        };
         this._elems.container.css({left:0,top:0});
+        this.loadLayer(0);
     },
     _createTile: function(x, y) {
         var tile = $('<div class="tile"/>')
@@ -170,6 +284,12 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         return this._getData('blankImage');
     },
     checkTiles: function(aX, aY) {
+        if (this.element.is(':hidden')) {
+            return;
+        } else if (this._view === undefined) {
+            this.render();
+            return;
+        }
         var l = (Math.floor(-aX / this._map.tilesize) * this._map.tilesize)
                 - this._map.tilesize,
             t = (Math.floor(-aY / this._map.tilesize) * this._map.tilesize)
@@ -248,7 +368,7 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
 
 $.extend($.ui.interactiveMap, {
     version: "0.0.1",
-    getter: "",
+    getter: "overlay",
     defaults: $.extend({}, $.ui.mouse.defaults, {
         map:'',
         blankImage:'images/blank.gif'

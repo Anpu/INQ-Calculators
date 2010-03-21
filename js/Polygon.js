@@ -4,6 +4,20 @@
 
 (function($) {
 
+//shared utility functions
+function _drawRect(x, y, w, h)
+{
+    var div = $('<div/>')
+        .css({
+            position: 'absolute',
+            left: x,
+            top: y,
+            width: w,
+            height: h
+        });
+    return div;
+}
+
 function Point(x, y)
 {
     this.x = x;
@@ -114,9 +128,13 @@ window.Rect = Rect;
 /**
  * points is an array of 2 member x,y arrays
  */
-function Polygon(points)
+function Polygon(points, hole/*, holeN...*/)
 {
-   this.setPoints(points);
+    this.setPoints(points);
+    this.holes = [];
+    for (var i=1,len=arguments.length; i<len; ++i) {
+        this.addHole(arguments[i]);
+    }
 }
 
 $.extend(Polygon.prototype, {
@@ -134,6 +152,20 @@ $.extend(Polygon.prototype, {
 
         for (var i=1, len=points.length; i<len; i++) {
             this.addPoint(points[i]);
+        }
+    },
+    addHole: function(points)
+    {
+        if (!points || !points.length) {
+            return;
+        }
+        var o = new Polygon(points);
+        this.holes.push(o);
+    },
+    addHoles: function(holes)
+    {
+        for (var i=0,len=holes.length; i<len; ++i) {
+            this.addHole(holes[i]);
         }
     },
     addPoint: function(point)
@@ -160,15 +192,74 @@ $.extend(Polygon.prototype, {
     {
         return this.points[index];
     },
+    getPointScaled: function(index, scale, round)
+    {
+        if (scale.num == scale.den) {
+            return this.points[index];
+        }
+        if (round) {
+            return new Point(
+                Math.round(this.points[index].x * scale.num / scale.den),
+                Math.round(this.points[index].y * scale.num / scale.den)
+            );
+        } else {
+            return new Point(
+                this.points[index].x * scale.num / scale.den,
+                this.points[index].y * scale.num / scale.den
+            );
+        }
+    },
+    getHolesCount: function()
+    {
+        return this.holes.length;
+    },
+    getHole: function(index)
+    {
+        return this.holes[index];
+    },
+    HolesToArray: function(round)
+    {
+        var ret = [];
+        for (var i=0,l=this.getHolesCount(); i<l; ++i) {
+            ret.push(this.getHole(i).toArray(round));
+        }
+        return ret;
+    },
     toArray: function(round)
     {
         var ret = [];
-        for (var i=0,l=this.getPointCount(); i<l; i++) {
+        for (var i=0,l=this.getPointCount(); i<l; ++i) {
             var p = this.getPoint(i);
             if (round===undefined) {
                 ret.push([p.x,p.y]);
             } else {
                 ret.push([parseFloat(p.x.toFixed(round)),parseFloat(p.y.toFixed(round))]);
+            }
+        }
+        return ret;
+    },
+    toArrayX: function(round)
+    {
+        var ret = [];
+        for (var i=0,l=this.getPointCount(); i<l; ++i) {
+            var p = this.getPoint(i);
+            if (round===undefined) {
+                ret.push(p.x);
+            } else {
+                ret.push(parseFloat(p.x.toFixed(round)));
+            }
+        }
+        return ret;
+    },
+    toArrayY: function(round)
+    {
+        var ret = [];
+        for (var i=0,l=this.getPointCount(); i<l; ++i) {
+            var p = this.getPoint(i);
+            if (round===undefined) {
+                ret.push(p.y);
+            } else {
+                ret.push(parseFloat(p.y.toFixed(round)));
             }
         }
         return ret;
@@ -185,11 +276,17 @@ $.extend(Polygon.prototype, {
         if (!this.getBounds().containsPoint(point)) {
             return false;
         }
-
+        var i,l,j;
+        // Check Holes FIRST
+        for (i=0,l=this.getHolesCount(); i<l; ++i) {
+            if (this.getHole(i).containsPoint(point)) {
+                return false;
+            }
+        }
         var inPoly = false;
 
-        for(var i=0,numPoints = this.getPointCount(),j=numPoints-1;
-                i < numPoints;
+        for(i=0,l = this.getPointCount(),j=l-1;
+                i < l;
                 j=i,i++) {
             var vertex1 = this.getPoint(i);
             var vertex2 = this.getPoint(j);
@@ -204,6 +301,89 @@ $.extend(Polygon.prototype, {
         }
 
         return inPoly;
+    },
+    // retrieves all the edges of this polygon
+    getEdges: function(noHoriz, aScale)
+    {
+        var ret = [];
+        for (var i=0,l=this.getPointCount(); i<l; ++i) {
+            var edge = {};
+            var p1 = this.getPointScaled(i, aScale, true),
+                p2 = this.getPointScaled((i==(l-1))?0:i+1, aScale, true);
+            edge.iM = (p2.x - p1.x) / (p2.y - p1.y);
+            if (!noHoriz || isFinite(edge.iM)) {
+                if (p1.y < p2.y) {
+                    edge.minY = p1.y;
+                    edge.maxY = p2.y;
+                    edge.X = p1.x;
+                } else {
+                    edge.minY = p2.y;
+                    edge.maxY = p1.y;
+                    edge.X = p2.x;
+                }
+                ret.push(edge);
+            }
+        }
+        return ret;
+    },
+    _edgeSortYX: function(a, b) {
+        var ret = a.minY - b.minY;
+        if (ret == 0) {
+            ret = a.X - b.X;
+        }
+        return ret;
+    },
+    _edgeSortX: function(a, b) {
+        return a.X - b.X;
+    },
+    draw: function(aDiv, aScale, aColor)
+    {
+        var color = aColor || '#000000';
+        // calculate edges
+        var global_edges = [],
+            active_edges = [];
+        var i,l;
+
+        global_edges = this.getEdges(true, aScale);
+        for (i=0,l=this.holes.length; i<l; ++i) {
+            var t = this.getHole(i).getEdges(true,aScale);
+            for (var ai=0,al=t.length; ai<al; ++ai) {
+                global_edges.push(t[ai]);
+            }
+        }
+        global_edges.sort(this._edgeSortYX);
+        var scanline = Math.round(this.getBounds().t * aScale.num / aScale.den);
+        while (global_edges.length || active_edges.length) {
+            //var parity = 0; // Even
+            while (global_edges.length) {
+                if (global_edges[0].minY == scanline) {
+                    active_edges.push(global_edges.shift());
+                } else {
+                    break;
+                }
+            }
+            active_edges.sort(this._edgeSortX);
+            //console.log('Edges',active_edges,',',global_edges);
+            // Find "inside" areas
+            var polyInts = [];
+            var active_temp = [];
+            for (i=0,l=active_edges.length; i<l; ++i) {
+                var edge = active_edges[i];
+                polyInts.push(edge.X);
+
+                if (edge.maxY > (scanline+1)) {
+                    // Increase X by slope
+                    edge.X += edge.iM;
+                    active_temp.push(edge);
+                }
+            }
+            for(i = 0,l=polyInts.length; i < l; i+=2)
+                $(aDiv).append(_drawRect(polyInts[i], scanline,
+                    polyInts[i+1]-polyInts[i]+1, 1).css({backgroundColor:color}));
+
+            active_edges = active_temp;
+            ++scanline;
+        }
     }
 });
 

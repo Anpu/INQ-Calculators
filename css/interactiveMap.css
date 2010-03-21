@@ -19,6 +19,11 @@
     height: 100%;
 }
 
+.interactiveMap .overlay {
+    position: absolute;
+    opacity: 0.5;
+}
+
 .interactiveMap .tileCache > .tile {
     position: absolute;
     overflow: hidden;
