@@ -42,11 +42,16 @@ function prefixNumber(number, prefix, digits) {
 
 // JQuery on ready event
 $(function() {
-    $("#main").tabs().bind('tabsselect',function (event, ui) {
-        var o = $(ui.tab);
-        switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
-        if (ui.tab.hash.length > 0) {
-            location.hash = '/'+ui.tab.hash.substr(1);
+    $("#main").tabs({
+        show: function(event, ui) {
+            $('#RO_InteractiveMap').interactiveMap('render');
+        },
+        select:function (event, ui) {
+            var o = $(ui.tab);
+            switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
+            if (ui.tab.hash.length > 0) {
+                location.hash = '/'+ui.tab.hash.substr(1);
+            }
         }
     });
 
@@ -291,9 +296,7 @@ $(function() {
 
     /** Interactive Map */
     $('#RO_InteractiveMap').interactiveMap({
-        map: 'images/map/map.xml',
-        width: 600,
-        height: 450
+        map: 'images/map/map.xml'
     });
 
     // Do this AFTER all widgets are setup to insure they "hide" correctly
