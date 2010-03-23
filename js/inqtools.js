@@ -44,11 +44,14 @@ function prefixNumber(number, prefix, digits) {
 $(function() {
     $("#main").tabs({
         show: function(event, ui) {
-            $('#RO_InteractiveMap').interactiveMap('render');
+            var loadcb = $(ui.tab).attr('load') || '';
+            if ($.isFunction(window[loadcb])) {
+                window[loadcb]();
+            }
         },
         select:function (event, ui) {
             var o = $(ui.tab);
-            switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
+            switchTool(o, false);
             if (ui.tab.hash.length > 0) {
                 location.hash = '/'+ui.tab.hash.substr(1);
             }
@@ -306,7 +309,7 @@ $(function() {
     }
     $('#main').tabs('select',curpage);
     var o = $('#main li > a[href="'+curpage+'"]');
-    switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
+    switchTool(o, false);
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
 });
@@ -353,8 +356,9 @@ locationLabel.labels = {
     0x744: "Syrtis + WZ"
 }
 
-function switchTool(aCallback, aWidgets, animate) {
+function switchTool(optObj, animate) {
     animate = (animate === false) ? false : true;
+    var aWidgets = optObj.attr('widgets') || '';
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
     if (aWidgets.length > 0) w.push('go');
     $('.tool_popup_wrapper').stop(true,true).slideUp({queue:false});
@@ -374,7 +378,12 @@ function switchTool(aCallback, aWidgets, animate) {
             }
         }
     });
-    $('#tool_options').data('callback',aCallback);
+    var unloadcb = $('#tool_options').data('unloadcb');
+    if ($.isFunction(window[unloadcb])) {
+        window[unloadcb]();
+    }
+    $('#tool_options').data('unloadcb',optObj.attr('unload') || '');
+    $('#tool_options').data('callback',optObj.attr('callback') || '');
 }
 
 function doSearch() {
@@ -500,6 +509,10 @@ function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, re
         offset: offset || 0
     };
     $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#areas_results'));
+}
+
+function refreshMaps() {
+    $('#RO_InteractiveMap').interactiveMap('render');
 }
 
 function loadIntoDIV(aDiv) {
