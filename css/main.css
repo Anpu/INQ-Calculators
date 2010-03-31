@@ -180,7 +180,7 @@ ul.legend a {
   background: #333333;
 }
 
-.search_result_row, .search_result_detail {
+.search_result_row, .search_result_detail, .pointer {
   cursor: url('../images/links.cur'), pointer;
 }
 
