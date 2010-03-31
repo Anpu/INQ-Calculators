@@ -314,6 +314,20 @@ $(function() {
         map: 'images/map/map.xml'
     });
 
+    $('#errorDialog').dialog({
+        autoOpen: false,
+        modal: true,
+        open: function(event, ui) {
+            var p = $(this).data('error');
+            $(this).find('.message').text(p.message);
+        },
+        buttons:{
+            'Ok':function(event,ui) {
+                $(this).dialog('close');
+            }
+        }
+    }).prev().addClass('ui-state-error');
+
     // Do this AFTER all widgets are setup to insure they "hide" correctly
     var curpage = '#home';
     if (location.hash.length > 0 && $('#'+location.hash.substr(2)).length > 0) {
@@ -541,4 +555,10 @@ function loadIntoDIV(aDiv) {
     return loadIntoDIV.funcs[aDiv];
 }
 loadIntoDIV.funcs = {};
+
+function ShowError(msg) {
+    $('#errorDialog')
+        .data('error',{message:msg})
+        .dialog('open');
+}
 
