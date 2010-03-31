@@ -22,6 +22,18 @@ if (!Array.prototype.indexOf)
   };
 }
 
+if (!Object.keys)
+{
+  Object.keys = function(obj)
+  {
+      var ret = [];
+      for (var a in obj) {
+          ret.push(a);
+      }
+      return ret;
+  }
+}
+
 /** For users w/o firebug/a real browser */
 if (window.console == undefined) {
     window.console = {
