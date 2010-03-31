@@ -11,6 +11,10 @@ body {
     cursor: url('../images/normal.cur'), default;
 }
 
+label {
+    cursor: url('../images/normal.cur'), default;
+}
+
 a { 
     text-decoration: none;
     color: #EFC325;
@@ -472,4 +476,117 @@ ul.legend a {
     height: 450px;
     margin: 0 auto;
     border: 1px solid red;
+}
+
+/** Trainer */
+#trainer_tool .discipline {
+    margin: 5px 0px;
+}
+#trainer_tool label {
+    float: left;
+    width: 8em;
+    line-height: 48px;
+}
+#trainer_tool .info {
+    float: left;
+    width: 8em;
+    display: inline-block;
+    line-height: 48px;
+}
+#trainer_tool .power {
+    position: absolute;
+    width: 50%;
+    top: 50%;
+    left: 0;
+    line-height: 24px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    -moz-border-radius: 12px 12px 12px 0;
+    -webkit-border-radius: 12px 12px 12px 0;
+    background-color: #F5DEB3;
+    color: #111111;
+    opacity: 0.7;
+}
+#trainer_tool .powerbutton {
+    position: absolute;
+    background-image: url(../images/arrows-half.png);
+    width: 16px;
+    height: 48px;
+    left: 32px;
+    top: 0px;
+}
+#trainer_tool .spell_wrapper {
+    position: relative;
+    float: left;
+    margin: 0px 5px;
+    background-color: gray;
+}
+#trainer_tool .spell {
+    width: 48px;
+    height: 48px;
+    opacity: 0.3;
+    filter: alpha(opacity=30);
+}
+#trainer_tool .active {
+    opacity: 1;
+}
+#trainer_tool .discipline_ShortBows .spell { background-image: url(../images/trainer/ShortBows.png); }
+#trainer_tool .discipline_LongBows .spell { background-image: url(../images/trainer/LongBows.png); }
+#trainer_tool .discipline_Tricks .spell { background-image: url(../images/trainer/Tricks.png); }
+#trainer_tool .discipline_Evasion .spell { background-image: url(../images/trainer/Evasion.png); }
+
+#trainer_tool .discipline_Scouting .spell { background-image: url(../images/trainer/Scouting.png); }
+#trainer_tool .discipline_Pets .spell { background-image: url(../images/trainer/Pets.png); }
+
+#trainer_tool .discipline_AimingMastery .spell { background-image: url(../images/trainer/AimingMastery.png); }
+#trainer_tool .discipline_ArrowMastery .spell { background-image: url(../images/trainer/ArrowMastery.png); }
+
+#trainer_tool .discipline_Mental .spell { background-image: url(../images/trainer/Mental.png); }
+#trainer_tool .discipline_ManaControl .spell { background-image: url(../images/trainer/ManaControl.png); }
+#trainer_tool .discipline_StaffMastery .spell { background-image: url(../images/trainer/StaffMastery.png); }
+#trainer_tool .discipline_Enchantments .spell { background-image: url(../images/trainer/Enchantments.png); }
+
+#trainer_tool .discipline_Life .spell { background-image: url(../images/trainer/Life.png); }
+#trainer_tool .discipline_Summon .spell { background-image: url(../images/trainer/Summon.png); }
+#trainer_tool .discipline_Sorcery .spell { background-image: url(../images/trainer/Sorcery.png); }
+
+#trainer_tool .discipline_Arcania .spell { background-image: url(../images/trainer/Arcania.png); }
+#trainer_tool .discipline_Necromancy .spell { background-image: url(../images/trainer/Necromancy.png); }
+#trainer_tool .discipline_Elements .spell { background-image: url(../images/trainer/Elements.png); }
+
+#trainer_tool .discipline_SlashingWeapons .spell { background-image: url(../images/trainer/SlashingWeapons.png); }
+#trainer_tool .discipline_BluntWeapons .spell { background-image: url(../images/trainer/BluntWeapons.png); }
+#trainer_tool .discipline_PiercingWeapons .spell { background-image: url(../images/trainer/PiercingWeapons.png); }
+#trainer_tool .discipline_Tactics .spell { background-image: url(../images/trainer/Tactics.png); }
+
+#trainer_tool .discipline_Warcries .spell { background-image: url(../images/trainer/Warcries.png); }
+#trainer_tool .discipline_TwoHandedMastery .spell { background-image: url(../images/trainer/TwoHandedMastery.png); }
+
+#trainer_tool .discipline_Vanguard .spell { background-image: url(../images/trainer/Vanguard.png); }
+#trainer_tool .discipline_Shields .spell { background-image: url(../images/trainer/Shields.png); }
+
+/** Spell Qtip */
+.qtip-TrainerSpell div.wrapper .description {
+    line-height: 1em;
+    white-space: pre-wrap;
+    color: #cccccc;
+    margin-bottom:0.5em;
+}
+.qtip-TrainerSpell div.wrapper div {
+    line-height: 1.2em;
+    white-space: nowrap;
+}
+.qtip-TrainerSpell .damage {
+    color: #F2F273;
+}
+.qtip-TrainerSpell .buffs {
+    color: #4093E6;
+}
+.qtip-TrainerSpell .debuffs {
+    color: #F19999;
+}
+.qtip-TrainerSpell .active {
+    color: blue;
+    font-weight: bold;
 }

@@ -54,11 +54,14 @@ function prefixNumber(number, prefix, digits) {
 
 // JQuery on ready event
 $(function() {
+    var tool_args = [];
     $("#main").tabs({
         show: function(event, ui) {
             var loadcb = $(ui.tab).attr('load') || '';
             if ($.isFunction(window[loadcb])) {
-                window[loadcb]();
+                window[loadcb].apply($(ui.tab),tool_args);
+                // Only load tool args ONCE
+                tool_args = [];
             }
         },
         select:function (event, ui) {
@@ -328,10 +331,16 @@ $(function() {
         }
     }).prev().addClass('ui-state-error');
 
+    window.Trainer = new cTrainer('#trainer_tool');
+
     // Do this AFTER all widgets are setup to insure they "hide" correctly
     var curpage = '#home';
-    if (location.hash.length > 0 && $('#'+location.hash.substr(2)).length > 0) {
-        curpage = '#'+location.hash.substr(2);
+    if (location.hash.length > 0) {
+        var parts = location.hash.substr(2).split('/');
+        if (parts.length && $('#'+parts[0]).length > 0) {
+            curpage = '#'+parts[0];
+        }
+        tool_args = parts.slice(1);
     }
     $('#main').tabs('select',curpage);
     var o = $('#main li > a[href="'+curpage+'"]');
@@ -406,7 +415,7 @@ function switchTool(optObj, animate) {
     });
     var unloadcb = $('#tool_options').data('unloadcb');
     if ($.isFunction(window[unloadcb])) {
-        window[unloadcb]();
+        window[unloadcb].call(optObj);
     }
     $('#tool_options').data('unloadcb',optObj.attr('unload') || '');
     $('#tool_options').data('callback',optObj.attr('callback') || '');
@@ -537,6 +546,22 @@ function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, re
     $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#areas_results'));
 }
 
+function cbTrainer() {
+    var v = $('#char_class').val();
+    Trainer.characterClass(v);
+}
+
+function cbInitTrainer(loadSetup) {
+    var temp;
+    if (loadSetup) {
+        temp = function() {
+            Trainer.decode(loadSetup, function(trainer) {
+                $('#char_class').val(trainer.characterClass());
+            });
+        };
+    }
+    Trainer.loadData(temp);
+}
 function refreshMaps() {
     $('#RO_InteractiveMap').interactiveMap('render');
 }
@@ -561,4 +586,3 @@ function ShowError(msg) {
         .data('error',{message:msg})
         .dialog('open');
 }
-
