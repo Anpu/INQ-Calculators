@@ -14,8 +14,11 @@
     <link rel="stylesheet" type="text/css" href="css/interactiveMap.css"/>
     <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="js/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="js/jquery.timers-1.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.qtip-1.0.min.js"></script>
     <script type="text/javascript" src="js/inqtools.js"></script>
+    <script type="text/javascript" src="js/Trainer.js"></script>
     <script type="text/javascript" src="js/mapWidget.js"></script>
     <script type="text/javascript" src="js/Polygon.js"></script>
     <script type="text/javascript" src="js/interactiveMap.js"></script>
@@ -52,6 +55,9 @@
             </ul>
             <a id="realm_wz">Warzone</a>
         </div>
+        <div id="errorDialog" title="Error">
+            <div class="message"/>
+        </div>
     <!-- End The Tools -->
     <div id="header">
       <img src="images/header.png" alt="Inquisition Clan Database" />
@@ -64,10 +70,10 @@
         <li><a href="#areas" widgets="level,levelrange,region" callback="cbAreas">Areas</a></li>
         <li><a href="#pets" widgets="level,power,region" callback="cbPets">Pets</a></li>
         <li><a href="#npcs" widgets="npc_search,profession,region" callback="cbNPCs">NPCs</a></li>
-        <li><a href="#map">Map</a></li>
+        <li><a href="#map" load="refreshMaps">Map</a></li>
         <li><a href="#shops">Shops</a></li>
         <li><a href="#armor">Armor</a></li>
-        <li><a href="#trainer">Trainer</a></li>
+        <li><a href="#trainer" widgets="class" callback="cbTrainer" load="cbInitTrainer">Trainer</a></li>
         <li><a href="#credits">Credits</a></li>
       </ul>
       <div id="tool_options">
@@ -146,6 +152,21 @@
                   </optgroup>
               </select>
           </li>
+          <li class="tool_option" widget="class">
+              <label>Class:</label>
+              <select id="char_class">
+                    <option value="">-- Class --</option>
+                    <option>Archer</option>
+                    <option value="Hunter">&raquo; Hunter</option>
+                    <option value="Marksman">&raquo; Marksman</option>
+                    <option>Mage</option>
+                    <option value="Conjurer">&raquo; Conjurer</option>
+                    <option value="Warlock">&raquo; Warlock</option>
+                    <option>Warrior</option>
+                    <option value="Barbarian">&raquo; Barbarian</option>
+                    <option value="Knight">&raquo; Knight</option>
+              </select>
+          </li>
           <li class="tool_option" widget="region">
             <label>Location:</label>
             <span class="tool_popup_button" popup="location_map">
@@ -222,7 +243,8 @@
           </div>
           <div id="trainer" class="content">
             <h2>Trainer</h2>
-            Coming soon
+            <p>Trying to find that sweet spell setup? Let me help.</p>
+            <div id="trainer_tool"/>
           </div>
           <div id="credits" class="content">
             <h2>Credits</h2>

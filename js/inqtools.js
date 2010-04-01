@@ -22,6 +22,18 @@ if (!Array.prototype.indexOf)
   };
 }
 
+if (!Object.keys)
+{
+  Object.keys = function(obj)
+  {
+      var ret = [];
+      for (var a in obj) {
+          ret.push(a);
+      }
+      return ret;
+  }
+}
+
 /** For users w/o firebug/a real browser */
 if (window.console == undefined) {
     window.console = {
@@ -42,13 +54,19 @@ function prefixNumber(number, prefix, digits) {
 
 // JQuery on ready event
 $(function() {
+    var tool_args = [];
     $("#main").tabs({
         show: function(event, ui) {
-            $('#RO_InteractiveMap').interactiveMap('render');
+            var loadcb = $(ui.tab).attr('load') || '';
+            if ($.isFunction(window[loadcb])) {
+                window[loadcb].apply($(ui.tab),tool_args);
+                // Only load tool args ONCE
+                tool_args = [];
+            }
         },
         select:function (event, ui) {
             var o = $(ui.tab);
-            switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
+            switchTool(o, false);
             if (ui.tab.hash.length > 0) {
                 location.hash = '/'+ui.tab.hash.substr(1);
             }
@@ -299,14 +317,34 @@ $(function() {
         map: 'images/map/map.xml'
     });
 
+    $('#errorDialog').dialog({
+        autoOpen: false,
+        modal: true,
+        open: function(event, ui) {
+            var p = $(this).data('error');
+            $(this).find('.message').text(p.message);
+        },
+        buttons:{
+            'Ok':function(event,ui) {
+                $(this).dialog('close');
+            }
+        }
+    }).prev().addClass('ui-state-error');
+
+    window.Trainer = new cTrainer('#trainer_tool');
+
     // Do this AFTER all widgets are setup to insure they "hide" correctly
     var curpage = '#home';
-    if (location.hash.length > 0 && $('#'+location.hash.substr(2)).length > 0) {
-        curpage = '#'+location.hash.substr(2);
+    if (location.hash.length > 0) {
+        var parts = location.hash.substr(2).split('/');
+        if (parts.length && $('#'+parts[0]).length > 0) {
+            curpage = '#'+parts[0];
+        }
+        tool_args = parts.slice(1);
     }
     $('#main').tabs('select',curpage);
     var o = $('#main li > a[href="'+curpage+'"]');
-    switchTool(o.attr('callback') || '', o.attr('widgets') || '', false);
+    switchTool(o, false);
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
 });
@@ -353,8 +391,9 @@ locationLabel.labels = {
     0x744: "Syrtis + WZ"
 }
 
-function switchTool(aCallback, aWidgets, animate) {
+function switchTool(optObj, animate) {
     animate = (animate === false) ? false : true;
+    var aWidgets = optObj.attr('widgets') || '';
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
     if (aWidgets.length > 0) w.push('go');
     $('.tool_popup_wrapper').stop(true,true).slideUp({queue:false});
@@ -374,7 +413,12 @@ function switchTool(aCallback, aWidgets, animate) {
             }
         }
     });
-    $('#tool_options').data('callback',aCallback);
+    var unloadcb = $('#tool_options').data('unloadcb');
+    if ($.isFunction(window[unloadcb])) {
+        window[unloadcb].call(optObj);
+    }
+    $('#tool_options').data('unloadcb',optObj.attr('unload') || '');
+    $('#tool_options').data('callback',optObj.attr('callback') || '');
 }
 
 function doSearch() {
@@ -502,6 +546,26 @@ function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, re
     $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#areas_results'));
 }
 
+function cbTrainer() {
+    var v = $('#char_class').val();
+    Trainer.characterClass(v);
+}
+
+function cbInitTrainer(loadSetup) {
+    var temp;
+    if (loadSetup) {
+        temp = function() {
+            Trainer.decode(loadSetup, function(trainer) {
+                $('#char_class').val(trainer.characterClass());
+            });
+        };
+    }
+    Trainer.loadData(temp);
+}
+function refreshMaps() {
+    $('#RO_InteractiveMap').interactiveMap('render');
+}
+
 function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
@@ -517,3 +581,8 @@ function loadIntoDIV(aDiv) {
 }
 loadIntoDIV.funcs = {};
 
+function ShowError(msg) {
+    $('#errorDialog')
+        .data('error',{message:msg})
+        .dialog('open');
+}
