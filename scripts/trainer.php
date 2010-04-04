@@ -77,9 +77,10 @@ foreach ($map as $discipline=>$spells) {
         $offset += $size;
         imagedestroy($src);
     }
-    $file = $args->args['outputdir'].DIRECTORY_SEPARATOR.$args->options['prefix'].str_replace(" ","",$discipline).'.png';
+    $file = $args->args['outputdir'].DIRECTORY_SEPARATOR.$args->options['prefix'].str_replace(" ","",$discipline).'.jpg';
     echo "Writing $file\n";
-    imagepng($gd, $file);
+    imageinterlace($gd, true);
+    imagejpeg($gd, $file);
 }
 
 $d = dir($imagedir);

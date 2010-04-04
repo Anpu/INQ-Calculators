@@ -213,6 +213,7 @@ class Map {
                 echo "Building piece ",$file,"\n";
 
                 $img = $this->fetchMapSection($src_rect, $dst_rect);
+                imageinterlace($img, true);
                 imagejpeg($img, $outdir.DIRECTORY_SEPARATOR.$file);
                 imagedestroy($img);
                 // Write Map XML
