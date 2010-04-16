@@ -8,7 +8,10 @@ define('DEBUG',!empty($config->debug));
 // Load up the class auto loader
 require_once "classes/Init.php";
 
-Template::addTemplatePath(dirname(__FILE__).'/templates');
+if (!defined('__DIR__')) {
+    define('__DIR__',dirname(__FILE__));
+}
+Template::addTemplatePath(__DIR__.'/templates');
 Database::setDSN($config->db->dsn, $config->db->user, $config->db->password);
 
 if (empty($_SERVER['PATH_INFO'])) {
@@ -28,7 +31,7 @@ if (empty($_SERVER['PATH_INFO'])) {
         if ($path_info[0]=='ajax' && !empty($path_info[1])
                 && preg_match("/^[a-zA-Z]+$/",$path_info[1])) {
             // Process Ajax request
-            require_once(dirname(__FILE__).'/ajax/'.$path_info[1].'.php');
+            require_once(__DIR__.'/ajax/'.$path_info[1].'.php');
             $class = 'ajax_'.$path_info[1];
             $data = call_user_func(array($class,'request'), array_slice($path_info,2));
 
