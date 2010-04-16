@@ -14,7 +14,7 @@ if (!defined('__DIR__')) {
 Template::addTemplatePath(__DIR__.'/templates');
 Database::setDSN($config->db->dsn, $config->db->user, $config->db->password);
 
-if (empty($_SERVER['PATH_INFO'])) {
+if (empty($_GET['PATH_INFO'])) {
     try {
         $tpl = new Template("index.xhtml");
         $tpl->js = array(
@@ -26,7 +26,7 @@ if (empty($_SERVER['PATH_INFO'])) {
     }
 } else {
     try {
-        $path_info = explode("/",trim($_SERVER['PATH_INFO'],'/'));
+        $path_info = explode("/",trim($_GET['PATH_INFO'],'/'));
         header("Content-Type: application/json");
         if ($path_info[0]=='ajax' && !empty($path_info[1])
                 && preg_match("/^[a-zA-Z]+$/",$path_info[1])) {
