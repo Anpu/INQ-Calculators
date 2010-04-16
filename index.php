@@ -31,6 +31,9 @@ if (empty($_SERVER['PATH_INFO'])) {
         if ($path_info[0]=='ajax' && !empty($path_info[1])
                 && preg_match("/^[a-zA-Z]+$/",$path_info[1])) {
             // Process Ajax request
+            if (!is_readable(__DIR__.'/ajax/'.$path_info[1].'.php')) {
+                throw new Exception('Invalid Request');
+            }
             require_once(__DIR__.'/ajax/'.$path_info[1].'.php');
             $class = 'ajax_'.$path_info[1];
             $data = call_user_func(array($class,'request'), array_slice($path_info,2));
