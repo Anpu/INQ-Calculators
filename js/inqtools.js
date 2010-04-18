@@ -342,9 +342,9 @@ $(function() {
         }
         tool_args = parts.slice(1);
     }
-    $('#main').tabs('select',curpage);
     var o = $('#main li > a[href="'+curpage+'"]');
     switchTool(o, false);
+    $('#main').tabs('select',curpage);
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
 });
