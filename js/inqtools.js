@@ -606,7 +606,7 @@ function CreditsAnimation() {
         })
         .animate({top: 0},1500)
         .delay(1500)
-        .animate({left: -600},1000);
+        .animate({left: "-100%"},1000);
 
     ++data.position;
     if (data.position >= credits.length) {
