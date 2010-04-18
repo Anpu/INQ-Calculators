@@ -1,3 +1,10 @@
 INQ Calculators is a project of members of Clan Inquisition. 
 This project have purpose to upgrade existing version 1.0 with new features, better UI and much more.
 Project is related with game Regnum Online.
+
+Licensing
+---------
+
+All code is covered under the GNU Affero General Public License (GPL) Version 3
+except included external libraries documented in NOTICE.   Please read COPYING
+for the Affero General Public License.
