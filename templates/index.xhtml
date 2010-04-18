@@ -249,29 +249,9 @@
           <div id="credits" class="content">
             <h2>Credits</h2>
             <div id="credit_scroller">
-                <div class="credit">
-                    <div class="name">Xia</div>
-                    <div class="job">Stuf Stuff and More Stuff</div>
-                </div>
-                <div class="credit">
-                    <div class="name">Anpu</div>
-                    <div class="job">Stuf Stuff and More Stuff</div>
-                </div>
-                <div class="credit">
-                    <div class="name">Jeka</div>
-                    <div class="job">Stuf Stuff and More Stuff</div>
-                </div>
-                <div class="credit">
-                    <div class="name">Urkle</div>
-                    <div class="job">Stuf Stuff and More Stuff</div>
-                </div>
-                <div class="credit">
-                    <div class="name">Nams</div>
-                    <div class="job">Stuf Stuff and More Stuff</div>
-                </div>
-                <div class="credit">
-                    <div class="name">Miraculix_</div>
-                    <div class="job">Stuf Stuff and More Stuff</div>
+                <div class="credit" tal:repeat="credit credits">
+                    <div class="name" tal:content="credit/name | default">User Name</div>
+                    <div class="job" tal:content="credit/job | default">Stuf Stuff and More Stuff</div>
                 </div>
             </div>
           </div>

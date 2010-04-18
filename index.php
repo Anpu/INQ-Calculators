@@ -42,6 +42,9 @@ if (empty($_GET['PATH_INFO'])) {
         $tpl->js = array(
             'ajaxRoot'=>json_encode(Util::AjaxBaseURI())
         );
+        $tpl->credits = is_array($config->credits)
+                ? $config->credits
+                : array(array('name'=>'Anonymous','job'=>'I did something?'));
         $tpl->echoExecute();
     } catch (Exception $ex) {
         die ((string)$ex);
