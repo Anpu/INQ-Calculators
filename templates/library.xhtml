@@ -16,7 +16,7 @@
     <td tal:attributes="colspan colspan">
         <div class="detail_content" style="padding-left:4em;">
             <tal:block tal:repeat="mob zone/mobs">
-                <span>${mob/name}</span><span tal:condition="not: repeat/mob/end">,</span>
+                <span>${mob/name} (${mob/level})</span><span tal:condition="not: repeat/mob/end">,</span>
             </tal:block>
         </div>
     </td>
