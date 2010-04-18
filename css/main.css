@@ -590,3 +590,25 @@ ul.legend a {
     color: blue;
     font-weight: bold;
 }
+
+/** Credits Scroller */
+#credit_scroller {
+    height: 8em;
+    position: relative;
+    overflow: hidden;
+}
+.credit {
+    display: none;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+.credit .name {
+    color: blue;
+    font-weight: bold;
+}
+.credit .job {
+    color: white;
+    font-size: 75%;
+    font-weight: lighter;
+}

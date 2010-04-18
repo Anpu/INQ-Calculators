@@ -564,6 +564,45 @@ function refreshMaps() {
     $('#RO_InteractiveMap').interactiveMap('render');
 }
 
+function CreditsAnimation() {
+    var credits = $(this).children('.credit');
+    var data = $(this).data('credits');
+    if (!data) {
+        data = {
+            position: 0
+        };
+        $(this).data('credits',data);
+    }
+    // queue up the credits
+    var topstart = $(this).height();
+    credits.eq(data.position)
+        .queue(function() {
+            $(this)
+                .css({top: topstart, left: 0})
+                .show()
+                .dequeue();
+        })
+        .animate({top: 0},1500)
+        .delay(1500)
+        .animate({left: -600},1000);
+
+    ++data.position;
+    if (data.position >= credits.length) {
+        data.position = 0;
+    }
+    $(this)
+        .dequeue()
+        .delay(5000)
+        .queue(CreditsAnimation);
+}
+function cbStartCredits() {
+    $('#credit_scroller').queue(CreditsAnimation);
+}
+
+function cbStopCredits() {
+    $('#credit_scroller').stop(true,true);
+}
+
 function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
