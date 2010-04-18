@@ -294,8 +294,6 @@ $(function() {
             }
         },
         click:function(e, hit) {
-            var v = $(this).mapWidget('value');
-            var r = hit.map.substr(0,hit.map.length-3);
             updateQuickMap();
             locationLabel();
         }
