@@ -1,3 +1,11 @@
+/**
+ * @copyright Copyright 2010
+ * @author Xia
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
+/*
+ * This file is part of INQ Calculators and is covered under the AGPL v3
+ */
 html {
     margin: 0;
     padding: 0;
@@ -589,4 +597,26 @@ ul.legend a {
 .qtip-TrainerSpell .active {
     color: blue;
     font-weight: bold;
+}
+
+/** Credits Scroller */
+#credit_scroller {
+    height: 8em;
+    position: relative;
+    overflow: hidden;
+}
+.credit {
+    display: none;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+.credit .name {
+    color: blue;
+    font-weight: bold;
+}
+.credit .job {
+    color: white;
+    font-size: 75%;
+    font-weight: lighter;
 }

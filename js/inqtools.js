@@ -1,3 +1,25 @@
+/*
+ * Main Javascript code
+ * @copyright Copyright 2010
+ * @author Xia
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
+/*
+ * This file is part of INQ Calculators.
+ *
+ * INQ Calculators is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * INQ Calculators is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
+ */
 // Compatibility for "older browsers"
 if (!Array.prototype.indexOf)
 {
@@ -294,8 +316,6 @@ $(function() {
             }
         },
         click:function(e, hit) {
-            var v = $(this).mapWidget('value');
-            var r = hit.map.substr(0,hit.map.length-3);
             updateQuickMap();
             locationLabel();
         }
@@ -342,9 +362,9 @@ $(function() {
         }
         tool_args = parts.slice(1);
     }
-    $('#main').tabs('select',curpage);
     var o = $('#main li > a[href="'+curpage+'"]');
     switchTool(o, false);
+    $('#main').tabs('select',curpage);
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
 });
@@ -564,6 +584,45 @@ function cbInitTrainer(loadSetup) {
 }
 function refreshMaps() {
     $('#RO_InteractiveMap').interactiveMap('render');
+}
+
+function CreditsAnimation() {
+    var credits = $(this).children('.credit');
+    var data = $(this).data('credits');
+    if (!data) {
+        data = {
+            position: 0
+        };
+        $(this).data('credits',data);
+    }
+    // queue up the credits
+    var topstart = $(this).height();
+    credits.eq(data.position)
+        .queue(function() {
+            $(this)
+                .css({top: topstart, left: 0})
+                .show()
+                .dequeue();
+        })
+        .animate({top: 0},1500)
+        .delay(1500)
+        .animate({left: "-100%"},1000);
+
+    ++data.position;
+    if (data.position >= credits.length) {
+        data.position = 0;
+    }
+    $(this)
+        .dequeue()
+        .delay(5000)
+        .queue(CreditsAnimation);
+}
+function cbStartCredits() {
+    $('#credit_scroller').queue(CreditsAnimation);
+}
+
+function cbStopCredits() {
+    $('#credit_scroller').stop(true,true);
 }
 
 function loadIntoDIV(aDiv) {

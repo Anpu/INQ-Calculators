@@ -42,6 +42,9 @@ class Database {
     public static function get()
     {
         if (empty(self::$dbh)) {
+            if (!extension_loaded('PDO')) {
+                throw new Exception("Missing PDO Extension");
+            }
             self::$dbh = new PDO(self::$dsn, self::$user, self::$pass);
             self::$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $driver = self::$dbh->getAttribute(PDO::ATTR_DRIVER_NAME);

@@ -11,5 +11,11 @@ return (object)array(
         'user'=>'username',
         'password'=>'password',
     ),
+    'credits'=>array(
+        array(
+            'name'=>'Someones Name',
+            'job'=>'What they contributed'
+        )
+    )
 );
 ?>
