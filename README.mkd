@@ -1,9 +1,9 @@
 About
 -----
 
-INQ Calculators is a project of members of [Clan Inquisition][1] on [Regnum
-Online][2].  We are upgrading existing version 1.0 with new features, better UI
-and much more.
+INQ Calculators is a project of members of [Clan Inquisition] [1] on [Regnum
+Online] [2].  We are upgrading existing version 1.0 with new features, better
+UI and much more.
 
 [1] http://www.claninquisition.org/
 [2] http://regnumonline.com.ar/
