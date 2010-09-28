@@ -14,7 +14,7 @@
             <td>${record/mob/name}</td>
             <td>${record/mob/level}</td>
             <td>${record/base_xp} + ${record/chg_xp}</td>
-            <td>${record/kills}</td>
+            <td tal:content="record/kills | default">You've Graduated</td>
         </tr>
         <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:5; mob record/mob"/>
     </tbody>
