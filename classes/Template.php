@@ -52,7 +52,13 @@ class Template_Tales implements PHPTAL_Tales {
             throw new PHPTAL_InvalidVariableNameException("Incorrect usage of limit modifier.  Usage: limit: [offset] limit TALES");
         }
     }
+
+    public static function _empty($src, $nothrow)
+    {
+        return "phptal_isempty(".phptal_tale($src,true).")";
+    }
 }
 
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("limit", array('Template_Tales','limit'));
+PHPTAL_TalesRegistry::getInstance()->registerPrefix("empty", array('Template_Tales','_empty'));
 ?>

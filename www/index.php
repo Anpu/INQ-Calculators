@@ -41,6 +41,8 @@ if (empty($_GET['PATH_INFO'])) {
         $tpl->js = array(
             'ajaxRoot'=>json_encode(Util::AjaxBaseURI())
         );
+        // Load enablement of tools
+        $tpl->tools = $config->tools;
         $tpl->credits = is_array($config->credits)
                 ? $config->credits
                 : array(array('name'=>'Anonymous','job'=>'I did something?'));

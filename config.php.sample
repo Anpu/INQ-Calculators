@@ -15,9 +15,19 @@ return (object)array(
   'credits' => array(
     array(
       'name' => 'Someones Name',
-      'job' => 'What they contributed'
-    )
-  )
+      'job' => 'What they contributed',
+    ),
+  ),
+  'tools' => array(
+    'grinding'=>true,
+    'mobs'=>true,
+    'pets'=>true,
+    'npcs'=>true,
+    'map'=>true,
+    'shops'=>true,
+    'armor'=>true,
+    'trainer'=>true,
+  ),
 );
 
 /* vi: set ft=php: */
