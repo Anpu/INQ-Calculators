@@ -328,8 +328,11 @@ $(function() {
         }
     });
 
-    $('#go').click(function() {
+    $('#tool_options button.go').click(function() {
        doSearch();
+    });
+    $('#tool_options button.goalt').click(function() {
+       doSearch(true);
     });
 
     /** Interactive Map */
@@ -415,7 +418,7 @@ function switchTool(optObj, animate) {
     animate = (animate === false) ? false : true;
     var aWidgets = optObj.attr('widgets') || '';
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
-    if (aWidgets.length > 0) w.push('go');
+    //if (aWidgets.length > 0) w.push('go');
     $('.tool_popup_wrapper').stop(true,true).slideUp({queue:false});
     $('#tool_options *[widget]').each(function() {
         var o = $(this);
@@ -441,10 +444,10 @@ function switchTool(optObj, animate) {
     $('#tool_options').data('callback',optObj.attr('callback') || '');
 }
 
-function doSearch() {
+function doSearch(alt) {
     var cb = $('#tool_options').data('callback');
     if ($.isFunction(window[cb])) {
-        window[cb]();
+        window[cb](alt);
     }
 }
 
@@ -514,15 +517,25 @@ function findMobs(name, regions, offset) {
     $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
 }
 
-function cbLevels() {
+function cbGrinding(alt) {
     var v = $('#level_range').slider('values');
-    getKillsToLevel(
-        $('#player_level').slider('value'),
-        0,
-        v[0],
-        v[1],
-        regionsFromMap()
-    );
+    if (alt) {
+        getKillsToLevelByArea(
+            $('#player_level').slider('value'),
+            0,
+            v[0],
+            v[1],
+            regionsFromMap()
+        );
+    } else {
+        getKillsToLevel(
+            $('#player_level').slider('value'),
+            0,
+            v[0],
+            v[1],
+            regionsFromMap()
+        );
+    }
 }
 
 function getKillsToLevel(player_level, player_xp, min_level, max_level, regions, offset) {
@@ -537,18 +550,7 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'getKillsToLevel', args, loadIntoDIV('#levels_results'));
-}
-
-function cbAreas() {
-    var v = $('#level_range').slider('values');
-    getKillsToLevelByArea(
-        $('#player_level').slider('value'),
-        0,
-        v[0],
-        v[1],
-        regionsFromMap()
-    );
+    $.getJSON(ajaxRoot + 'getKillsToLevel', args, loadIntoDIV('#grinding_results'));
 }
 
 function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, regions, offset) {
@@ -563,7 +565,7 @@ function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, re
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
-    $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#areas_results'));
+    $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#grinding_results'));
 }
 
 function cbTrainer() {

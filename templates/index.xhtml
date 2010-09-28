@@ -66,15 +66,14 @@
     <div id="main">
       <ul class="navigation">
         <li><a href="#home">Home</a></li>
-        <li><a href="#levels" widgets="level,levelrange,region" callback="cbLevels">Levels</a></li>
-        <li><a href="#mobs" widgets="mob_search,region" callback="cbMobs">Mobs</a></li>
-        <li><a href="#areas" widgets="level,levelrange,region" callback="cbAreas">Areas</a></li>
-        <li><a href="#pets" widgets="level,power,region" callback="cbPets">Pets</a></li>
-        <li><a href="#npcs" widgets="npc_search,profession,region" callback="cbNPCs">NPCs</a></li>
+        <li><a href="#grinding" widgets="level,levelrange,region,gogrind" callback="cbGrinding">Grinding</a></li>
+        <li><a href="#mobs" widgets="mob_search,region,go" callback="cbMobs">Mobs</a></li>
+        <li><a href="#pets" widgets="level,power,region,go" callback="cbPets">Pets</a></li>
+        <li><a href="#npcs" widgets="npc_search,profession,region,go" callback="cbNPCs">NPCs</a></li>
         <li><a href="#map" load="refreshMaps">Map</a></li>
         <li><a href="#shops">Shops</a></li>
         <li><a href="#armor">Armor</a></li>
-        <li><a href="#trainer" widgets="class" callback="cbTrainer" load="cbInitTrainer">Trainer</a></li>
+        <li><a href="#trainer" widgets="class,go" callback="cbTrainer" load="cbInitTrainer">Trainer</a></li>
         <li><a href="#credits" load="cbStartCredits" unload="cbStopCredits">Credits</a></li>
       </ul>
       <div id="tool_options">
@@ -175,7 +174,11 @@
               <span style="display:inline-block;" class="ui-icon ui-icon-arrowthickstop-1-s"/></span>
           </li>
           <li class="tool_option" widget="go">
-              <button id="go">Go</button>
+              <button class="go">Go</button>
+          </li>
+          <li class="tool_option" widget="gogrind">
+              <button class="go">By Mob</button>
+              <button class="goalt">By Area</button>
           </li>
         </ul>
       </div>
@@ -185,9 +188,8 @@
             Here you can find some useful tools to help you in Regnum Online.<br />
             List of the tools:<br />
             <ul class="legend">
-              <li><a class="tablink" href="#levels">Levels</a> - calculate the number of mob kills till you level up.</li>
+              <li><a class="tablink" href="#grinding">Grinding</a> - calculate the number of mob kills till you level up as well as the best areas.</li>
               <li><a class="tablink" href="#mobs">Mobs</a> - search for the mobs by name.</li>
-              <li><a class="tablink" href="#areas">Areas</a> - find the best area for a grind.</li>
               <li><a class="tablink" href="#pets">Pets</a> - find the pet for your hunter.</li>
               <li><a class="tablink" href="#npcs">NPCs</a> - search for the quest NPCs.</li>
               <li><a class="tablink" href="#shops">Shops</a> - find out which merchants sell stuff for your class.</li>
@@ -196,40 +198,33 @@
               <li><a class="tablink" href="#credits">Credits</a> - list who provided you all this.</li>
             </ul>
           </div>
-          <div id="levels" class="content">
-            <h2>Levels</h2>
-            <p>
-                Trying to find that <em>perfect</em> mob to get you to the next level?
-                Ask me, I'll tell you the <em>best</em> mob to go after.
+          <div id="grinding" class="content">
+            <h2>Grinding</h2>
+            <p class="help">
+                Trying to find that <em>perfect</em> mob to get you to the next level?<br/>
+                Trying to find that <em>sweet</em> area to grind without stopping?<br/>
+                Ask me, and I'll help you locate the <em>best</em> place to grind.
             </p>
-            <div id="levels_results" class="results"/>
+            <div id="grinding_results" class="results"/>
           </div>
           <div id="mobs" class="content">
             <h2>Mobs</h2>
-            <p>
+            <p class="help">
             Having trouble finding that beast or monster to finish a quest?
             Ask me, I'll help you locate them.
             </p>
             <div id="mobs_results" class="results"/>
           </div>
-          <div id="areas" class="content">
-            <h2>Areas</h2>
-            <p>
-            Trying to find that <em>sweet</em> area to grind without stopping?
-            Ask me, I'll help you locate the best one for your level.
-            </p>
-            <div id="areas_results" class="results"/>
-          </div>
           <div id="pets" class="content">
             <h2>Pets</h2>
-            <p>
+            <p class="help">
             Let me find the best pet for you.
             </p>
             <div id="pets_results" class="results"/>
           </div>
           <div id="npcs" class="content">
             <h2>NPCs</h2>
-            <p>Having trouble finding that NPC to finish a quest?
+            <p class="help">Having trouble finding that NPC to finish a quest?
             Ask me, I'll help you locate them.</p>
             <div id="npcs_results" class="results"/>
           </div>
@@ -243,7 +238,7 @@
           </div>
           <div id="trainer" class="content">
             <h2>Trainer</h2>
-            <p>Trying to find that sweet spell setup? Let me help.</p>
+            <p class="help">Trying to find that sweet spell setup? Let me help.</p>
             <div id="trainer_tool"/>
           </div>
           <div id="credits" class="content">
