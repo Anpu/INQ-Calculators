@@ -185,15 +185,13 @@ $(function() {
             $('#player_level_display').text(prefixNumber(ui.value,'0',2));
             var o = $('#level_range');
             var v = o.slider('values');
-            if (v[0] < ui.value) {
-                var d = ui.value - v[0];
-                var n = v[0]+d;
-                if (n > 58) n = 58;
-                o.slider('values',0,n);
-                n = v[1]+d;
-                if (n > 58) n = 58;
-                o.slider('values',1,n);
-            }
+            var d = ui.value - v[0];
+            var n = v[0]+d;
+            if (n > 58) n = 58;
+            o.slider('values',0,n);
+            n = v[1]+d;
+            if (n > 58) n = 58;
+            o.slider('values',1,n);
         }
     });
     $('#player_level_display').text('01');
