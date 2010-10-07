@@ -43,14 +43,19 @@ class Template_Tales implements PHPTAL_Tales {
         $p = preg_split("/\s+/", $src, null, PREG_SPLIT_NO_EMPTY);
         if (count($p)==2) {
             $limit = is_numeric($p[0]) ? (int)$p[0] : phptal_tale($p[0]);
-            return 'new LimitIterator('.phptal_tales($p[1],$nothrow).',0,'.$limit.')';
+            return 'new LimitIterator('.phptal_tale($p[1],$nothrow).',0,'.$limit.')';
         } elseif (count($p)==3) {
             $offset = is_numeric($p[0]) ? (int)$p[0] : phptal_tale($p[0]);
             $limit = is_numeric($p[1]) ? (int)$p[1] : phptal_tale($p[1]);
-            return 'new LimitIterator('.phptal_tales($p[2],$nothrow).','.$offset.','.$limit.')';
+            return 'new LimitIterator('.phptal_tale($p[2],$nothrow).','.$offset.','.$limit.')';
         } else {
             throw new PHPTAL_InvalidVariableNameException("Incorrect usage of limit modifier.  Usage: limit: [offset] limit TALES");
         }
+    }
+
+    public static function count($src, $nothrow)
+    {
+        return 'count('.phptal_tale($src,$nothrow).')';
     }
 
     public static function _empty($src, $nothrow)
@@ -61,4 +66,5 @@ class Template_Tales implements PHPTAL_Tales {
 
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("limit", array('Template_Tales','limit'));
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("empty", array('Template_Tales','_empty'));
+PHPTAL_TalesRegistry::getInstance()->registerPrefix("count", array('Template_Tales','count'));
 ?>
