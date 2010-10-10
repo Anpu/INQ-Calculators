@@ -80,6 +80,10 @@ $(function() {
     $("#main").tabs({
         show: function(event, ui) {
             var loadcb = $(ui.tab).attr('load') || '';
+            // Magic to allow scrolling to get more results
+            $('#main').data('results',$(ui.panel).find('div.results'));
+            $(window).scroll();
+            // Trigger the on-load callback if set
             if ($.isFunction(window[loadcb])) {
                 window[loadcb].apply($(ui.tab),tool_args);
                 // Only load tool args ONCE
@@ -117,6 +121,8 @@ $(function() {
     $('table.search_results > .moreresults > tr').live('click', function(e) {
        var fetchCall = $(this).closest('div.results').data('fetchCall');
        if (fetchCall && $.isFunction(fetchCall.func)) {
+           if ($(this).data('isLoading')) return;
+           $(this).data('isLoading',true);
            showLoading($(this).find('td'));
            var offset = parseInt($(this).closest('tbody').attr('offset')) || 0;
            fetchCall.args.push(offset);
@@ -378,6 +384,14 @@ $(function() {
     $('#main').tabs('select',curpage);
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() >= ($(document).height() - $(window).height() - 5)) {
+            if ($('#main').data('results').length) {
+                $('#main').data('results').find('.moreresults tr').click();
+            }
+        }
+    })
 });
 
 function updateQuickMap() {
