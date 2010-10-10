@@ -1,6 +1,17 @@
-<table class="search_results">
-    <caption>Found ${count: results} Areas</caption>
-    <thead>
+<tal:block metal:define-macro="entry">
+    <tr class="search_result_row">
+        <td><span class="toggle_icon" /></td>
+        <td>${entry/zone/name} in the ${entry/zone/realm} ${entry/zone/region}</td>
+        <td>${entry/mob_types}</td>
+        <td>${entry/avg_xp}</td>
+        <td tal:content="entry/kills | default">You have Graduated</td>
+    </tr>
+    <tal:block metal:use-macro="library.xhtml/zone_mob_list"
+               tal:define="colspan string:5; zone entry/zone"/>
+</tal:block>
+<tal:block tal:define="item_name string:Areas; colspan string:5; entry_macro string:getKillsToLevelByArea.xhtml/entry"
+           metal:use-macro="library.xhtml/resultiterator">
+    <thead metal:fill-slot="header">
         <tr>
             <th></th>
             <th>Area</th>
@@ -9,14 +20,4 @@
             <th># of Kills</th>
         </tr>
     </thead>
-    <tbody tal:repeat="record limit: offset limit results">
-        <tr class="search_result_row">
-            <td><span class="toggle_icon" /></td>
-            <td>${record/zone/name} in the ${record/zone/realm} ${record/zone/region}</td>
-            <td>${record/mob_types}</td>
-            <td>${record/avg_xp}</td>
-            <td tal:content="record/kills | default">You've Graduated</td>
-        </tr>
-        <tal:block metal:use-macro="library.xhtml/zone_mob_list" tal:define="colspan string:5; zone record/zone"/>
-    </tbody>
-</table>
+</tal:block>

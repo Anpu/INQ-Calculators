@@ -1,6 +1,17 @@
-<table class="search_results">
-    <caption>Found ${count: mobs} Pets</caption>
-    <thead>
+<tal:block metal:define-macro="entry">
+    <tr class="search_result_row">
+        <td><span class="toggle_icon"></span></td>
+        <td>${entry/name}</td>
+        <td>${entry/level}</td>
+        <td>${entry/tameSpell}(${entry/tameable})</td>
+        <td metal:use-macro="library.xhtml/zone_shields" tal:define="zones entry/zoneOverview"/>
+    </tr>
+    <tal:block metal:use-macro="library.xhtml/zone_list"
+               tal:define="zones entry/zones; colspan string:5"/>
+</tal:block>
+<tal:block tal:define="item_name string:Pets; colspan string:5; entry_macro string:getTameable.xhtml/entry"
+           metal:use-macro="library.xhtml/resultiterator">
+    <thead metal:fill-slot="header">
         <tr>
             <th></th>
             <th>Name</th>
@@ -9,14 +20,4 @@
             <th>Found In</th>
         </tr>
     </thead>
-    <tbody tal:repeat="mob limit: offset limit mobs">
-        <tr class="search_result_row">
-            <td><span class="toggle_icon"></span></td>
-            <td>${mob/name}</td>
-            <td>${mob/level}</td>
-            <td>${mob/tameSpell}(${mob/tameable})</td>
-            <td metal:use-macro="library.xhtml/mob_zone_shields" />
-        </tr>
-        <tal:block metal:use-macro="library.xhtml/mob_zone_list" tal:define="colspan string:5"/>
-    </tbody>
-</table>
+</tal:block>

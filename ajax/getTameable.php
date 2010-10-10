@@ -25,14 +25,20 @@ class ajax_getTameable implements AjaxRequest {
     public static function request($path_args) {
         $tpl = new Template("getTameable.xhtml");
 
-        $tpl->limit = 10;
-        $tpl->offset = Util::GetInt('offset',0);
-        $tpl->mobs = RO_Mob::findTameable(
+        $tpl->limit = $limit = 20;
+        $tpl->offset = $offset = Util::GetInt('offset',0);
+        $tpl->results = $results = RO_Mob::findTameable(
                 Util::GetInt('player_level',1),
                 Util::GetInt('max_power',5),
                 RO_Realm::mapRegions(explode(',',Util::GetString('regions','')))
             );
-        return $tpl->execute();
+        $tpl->moreresults = (count($results) > ($offset + $limit));
+        return array(
+            'offset'=>$offset,
+            'limit'=>$limit,
+            'total'=>count($results),
+            'html'=>$tpl->execute()
+        );
     }
 }
 ?>

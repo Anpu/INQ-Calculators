@@ -25,13 +25,19 @@ class ajax_findMobs implements AjaxRequest {
     public static function request($path_args) {
         $tpl = new Template("findMobs.xhtml");
 
-        $tpl->limit = 20;
-        $tpl->offset = Util::GetInt('offset',0);;
-        $tpl->mobs = RO_Mob::findByName(
+        $tpl->limit = $limit = 20;
+        $tpl->offset = $offset = Util::GetInt('offset',0);;
+        $tpl->results = $results = RO_Mob::findByName(
                 Util::GetString('name',''),
                 RO_Realm::mapRegions(explode(',',Util::GetString('regions','')))
             );
-        return $tpl->execute();
+        $tpl->moreresults = (count($results) > ($offset + $limit));
+        return array(
+            'offset'=>$offset,
+            'limit'=>$limit,
+            'total'=>count($results),
+            'html'=>$tpl->execute()
+        );
     }
 }
 ?>

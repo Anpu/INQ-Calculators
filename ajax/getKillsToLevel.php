@@ -26,17 +26,23 @@ class ajax_getKillsToLevel implements AjaxRequest {
     {
         $tpl = new Template("getKillsToLevel.xhtml");
 
-        $tpl->limit = 10;
-        $tpl->offset = Util::GetInt('offset',0);
+        $tpl->limit = $limit = 20;
+        $tpl->offset = $offset = Util::GetInt('offset',0);
 
-        $tpl->results = RO_Mob::findKillsToLevel(
+        $tpl->results = $results = RO_Mob::findKillsToLevel(
                 Util::GetInt('player_level',1),
                 Util::GetInt('player_xp',0),
                 Util::GetInt('min_level',1),
                 Util::GetInt('max_level',3),
                 RO_Realm::mapRegions(explode(',',Util::GetString('regions','')))
             );
-        return $tpl->execute();
+        $tpl->moreresults = (count($results) > ($offset + $limit));
+        return array(
+            'offset'=>$offset,
+            'limit'=>$limit,
+            'total'=>count($results),
+            'html'=>$tpl->execute()
+        );
     }
 }
 ?>

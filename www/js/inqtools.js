@@ -113,6 +113,14 @@ $(function() {
         $(this).prev('.search_result_row').toggleClass('expanded');
         $(this).find('div.detail_content').slideToggle('fast');
         });
+    $('table.search_results > .moreresults > tr').live('click', function(e) {
+       var fetchCall = $(this).closest('div.results').data('fetchCall');
+       if (fetchCall && $.isFunction(fetchCall.func)) {
+           var offset = parseInt($(this).closest('tbody').attr('offset')) || 0;
+           fetchCall.args.push(offset);
+           fetchCall.func.apply(window,fetchCall.args);
+       }
+    });
 
     function toolPopupGlobalClick(e) {
         var test = $(e.target).closest('.tool_popup_wrapper,.tool_popup_button, .tool_option > label').length;
@@ -475,6 +483,10 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    $('#pets_results').data('fetchCall',{
+        func: getTameableMobs,
+        args: [player_level, maxpower, regions]
+    });
     $.getJSON(ajaxRoot + 'getTameable', args, loadIntoDIV('#pets_results'));
 }
 
@@ -496,6 +508,10 @@ function findNPCs(name, behavior, profession, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    $('#npcs_results').data('fetchCall',{
+        func: findNPCs,
+        args: [name, behavior, profession, regions]
+    });
     $.getJSON(ajaxRoot + 'findNPCs',args, loadIntoDIV('#npcs_results'));
 }
 
@@ -512,6 +528,10 @@ function findMobs(name, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    $('#mobs_results').data('fetchCall',{
+        func: findMobs,
+        args: [name, regions]
+    });
     $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
 }
 
@@ -548,6 +568,10 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    $('#grinding_results').data('fetchCall',{
+        func: getKillsToLevel,
+        args: [player_level, player_xp, min_level, max_level, regions]
+    });
     $.getJSON(ajaxRoot + 'getKillsToLevel', args, loadIntoDIV('#grinding_results'));
 }
 
@@ -563,6 +587,10 @@ function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, re
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    $('#grinding_results').data('fetchCall',{
+        func: getKillsToLevelByArea,
+        args: [player_level, player_xp, min_level, max_level, regions]
+    });
     $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#grinding_results'));
 }
 
@@ -628,7 +656,22 @@ function cbStopCredits() {
 function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
-            $(aDiv).html(json.data);
+            if (json.data.offset) {
+                // find the first table
+                var table = $(aDiv).find('table');
+                var tbody = table.find('tbody[offset="'+json.data.offset+'"]');
+                if (tbody.length) {
+                    tbody.replaceWith(json.data.html);
+                } else {
+                    table.append(json.data.html);
+                }
+            } else {
+                $(aDiv).html(json.data.html);
+            }
+            /** @todo
+             * Could optimize and only update recently added rows instead of ALL
+             * OR move this logic into the template on the server side
+             */
             $(aDiv).find('div.detail_content').hide();
             $(aDiv).find('.search_result_row:odd').addClass('odd');
             $(aDiv).find('.search_result_row:even').addClass('even');

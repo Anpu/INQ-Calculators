@@ -1,6 +1,15 @@
-<table class="search_results">
-    <caption>Found ${count: npcs} NPCs</caption>
-    <thead>
+<tal:block metal:define-macro="entry">
+    <tr class="search_result_row">
+        <td>${entry/name}</td>
+        <td>${entry/profession}</td>
+        <td>${entry/zone/realm}</td>
+        <td>${entry/zone/name}</td>
+        <td>${entry/x}, ${entry/z}</td>
+    </tr>
+</tal:block>
+<tal:block tal:define="item_name string:NPCs; colspan string:5; entry_macro string:findNPCs.xhtml/entry"
+           metal:use-macro="library.xhtml/resultiterator">
+    <thead metal:fill-slot="header">
         <tr>
             <th>Name</th>
             <th>Profession</th>
@@ -9,13 +18,4 @@
             <th>Location</th>
         </tr>
     </thead>
-    <tbody tal:repeat="npc limit: offset limit npcs">
-        <tr class="search_result_row">
-            <td>${npc/name}</td>
-            <td>${npc/profession}</td>
-            <td>${npc/zone/realm}</td>
-            <td>${npc/zone/name}</td>
-            <td>${npc/x}, ${npc/z}</td>
-        </tr>
-    </tbody>
-</table>
+</tal:block>
