@@ -113,9 +113,11 @@ $(function() {
         $(this).prev('.search_result_row').toggleClass('expanded');
         $(this).find('div.detail_content').slideToggle('fast');
         });
+
     $('table.search_results > .moreresults > tr').live('click', function(e) {
        var fetchCall = $(this).closest('div.results').data('fetchCall');
        if (fetchCall && $.isFunction(fetchCall.func)) {
+           showLoading($(this).find('td'));
            var offset = parseInt($(this).closest('tbody').attr('offset')) || 0;
            fetchCall.args.push(offset);
            fetchCall.func.apply(window,fetchCall.args);
@@ -468,7 +470,18 @@ function regionsFromMap() {
     return selected_regions;
 }
 
+function showLoading(aParent, aCenter, aReplace) {
+    var span = $('<span class="loading loading-black"/>');
+
+    if (aCenter) span.addClass('loading-center');
+
+    if (aReplace) $(aParent).empty();
+
+    $(aParent).append(span);
+}
+
 function cbPets() {
+    showLoading('#pets_results', true, true);
     getTameableMobs(
         $('#player_level').slider('value'),
         $('#max_power').slider('value'),
@@ -492,6 +505,7 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
 
 function cbNPCs() {
     var b = $('#profession').val().split(':');
+    showLoading('#npcs_results', true, true);
     findNPCs(
         $('#npc_search').val(),
         b[0],
@@ -516,6 +530,7 @@ function findNPCs(name, behavior, profession, regions, offset) {
 }
 
 function cbMobs() {
+    showLoading('#mobs_results', true, true);
     findMobs(
         $('#mob_search').val(),
         regionsFromMap()
@@ -536,6 +551,7 @@ function findMobs(name, regions, offset) {
 }
 
 function cbGrinding(alt) {
+    showLoading('#grinding_results', true, true);
     var v = $('#level_range').slider('values');
     if (alt) {
         getKillsToLevelByArea(

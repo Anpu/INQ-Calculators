@@ -620,3 +620,16 @@ ul.legend a {
     font-size: 75%;
     font-weight: lighter;
 }
+
+.loading {
+    width: 48px;
+    height: 48px;
+    display:inline-block;
+}
+.loading-center {
+    margin-left: 50%;
+    margin-right: 50%;
+}
+.loading-black {
+    background-image: url(../images/loading-000000.gif);
+}
