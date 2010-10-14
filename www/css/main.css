@@ -274,6 +274,10 @@ ul.legend a {
     z-index: 1;
 }
 
+select option.category {
+    font-weight: bold;
+}
+
 .mapWidget-point {
     cursor: url('../images/links.cur'), pointer !important;
 }
