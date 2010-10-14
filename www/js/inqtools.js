@@ -76,6 +76,22 @@ function prefixNumber(number, prefix, digits) {
 
 // JQuery on ready event
 $(function() {
+    function locationHashChanged() {
+        if (locationHashChanged.UPDATE_TO == location.hash) {
+            return;
+        }
+        if (location.hash.length > 0) {
+            var parts = location.hash.substr(2).split('/');
+            if (parts.length && $('#'+parts[0]).length > 0) {
+                $('#main').tabs('select','#'+parts[0]);
+            }
+        }
+    }
+    locationHashChanged.UPDATE_TO = null;
+    if ("onhashchange" in window) {
+        window.onhashchange = locationHashChanged;
+    }
+
     var tool_args = [];
     $("#main").tabs({
         show: function(event, ui) {
@@ -94,6 +110,7 @@ $(function() {
             var o = $(ui.tab);
             switchTool(o, false);
             if (ui.tab.hash.length > 0) {
+                locationHashChanged.UPDATE_TO = '#/'+ui.tab.hash.substr(1);
                 location.hash = '/'+ui.tab.hash.substr(1);
             }
         }
@@ -391,7 +408,7 @@ $(function() {
                 $('#main').data('results').find('.moreresults tr').click();
             }
         }
-    })
+    });
 });
 
 function updateQuickMap() {
