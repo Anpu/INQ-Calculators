@@ -686,7 +686,10 @@ function cbStopCredits() {
 function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
-            if (json.data.offset) {
+            if (json.response == 'error') {
+                /** @todo could copy this in from some hidden template place instead */
+                $(aDiv).html('<div class="ui-state-error ui-corner-all" style="padding: 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float:left; margin-right: .3em;"/>Error Fetching Data</p></div>');
+            } else if (json.data.offset) {
                 // find the first table
                 var table = $(aDiv).find('table');
                 var tbody = table.find('tbody[offset="'+json.data.offset+'"]');
