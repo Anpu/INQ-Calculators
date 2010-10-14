@@ -1,5 +1,5 @@
 <tal:block metal:define-macro="entry">
-    <tr class="search_result_row">
+    <tr tal:attributes="class string:search_result_row ${EvenOdd}">
         <td>${entry/name}</td>
         <td>${entry/profession}</td>
         <td>${entry/zone/realm}</td>

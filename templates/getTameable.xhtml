@@ -1,13 +1,19 @@
 <tal:block metal:define-macro="entry">
-    <tr class="search_result_row">
+    <tr tal:attributes="class string:search_result_row ${EvenOdd}">
         <td><span class="toggle_icon"></span></td>
         <td>${entry/name}</td>
         <td>${entry/level}</td>
         <td>${entry/tameSpell}(${entry/tameable})</td>
-        <td metal:use-macro="library.xhtml/zone_shields" tal:define="zones entry/zoneOverview"/>
+        <td>
+            <tal:block metal:use-macro="library.xhtml/zone_shields" tal:define="zones entry/zoneOverview"/>
+        </td>
     </tr>
-    <tal:block metal:use-macro="library.xhtml/zone_list"
-               tal:define="zones entry/zones; colspan string:5"/>
+    <tr tal:attributes="class string:search_result_detail ${EvenOdd}">
+        <td colspan="5">
+            <tal:block metal:use-macro="library.xhtml/zone_list"
+               tal:define="zones entry/zones;"/>
+        </td>
+    </tr>
 </tal:block>
 <tal:block tal:define="item_name string:Pets; colspan string:5; entry_macro string:getTameable.xhtml/entry"
            metal:use-macro="library.xhtml/resultiterator">

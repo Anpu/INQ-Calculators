@@ -1,35 +1,32 @@
-<tr class="search_result_detail" metal:define-macro="zone_list">
-    <td tal:attributes="colspan colspan">
-        <div class="detail_content">
-            <ul class="area_list">
-                <li tal:repeat="zone zones">
-                    ${zone/name} in the ${zone/realm} ${zone/region}
-                </li>
-            </ul>
-        </div>
-    </td>
-</tr>
-<td metal:define-macro="zone_shields">
-    <span tal:repeat="zone zones" tal:attributes="class string:zone-icon ${repeat/zone/key}; title zone"/>
-</td>
-<tr class="search_result_detail" metal:define-macro="zone_mob_list">
-    <td tal:attributes="colspan colspan">
-        <div class="detail_content" style="padding-left:4em;">
-            <tal:block tal:repeat="mob zone/mobs">
-                <span>${mob/name} (${mob/level})</span><span tal:condition="not: repeat/mob/end">,</span>
-            </tal:block>
-        </div>
-    </td>
-</tr>
-<tal:block metal:define-macro="moreresults">
-    <tbody class="moreresults" tal:attributes="limit limit; offset php:offset+limit">
-        <tr>
-            <td tal:attributes="colspan colspan">
-                Fetch More Results...
-            </td>
-        </tr>
-    </tbody>
-</tal:block>
+<!-- Generates a list of zone names -->
+<div metal:define-macro="zone_list" class="detail_content">
+    <ul class="area_list">
+        <li tal:repeat="zone zones">
+            ${zone/name} in the ${zone/realm} ${zone/region}
+        </li>
+    </ul>
+</div>
+
+<!-- given a list of zone shields generates the icon list -->
+<span metal:define-macro="zone_shields"
+        tal:repeat="zone zones"
+        tal:attributes="class string:zone-icon ${repeat/zone/key}; title zone"/>
+
+<!-- Mob list from a zone object -->
+<div metal:define-macro="zone_mob_list" class="detail_content" style="padding-left:4em;">
+    <tal:block tal:repeat="mob zone/mobs">
+        <span>${mob/name} (${mob/level})</span><span tal:condition="not: repeat/mob/end">,</span>
+    </tal:block>
+</div>
+<!-- Shows a Fetch more tbody -->
+<tbody metal:define-macro="moreresults" class="moreresults" tal:attributes="limit limit; offset php:offset+limit">
+    <tr>
+        <td tal:attributes="colspan colspan">
+            Fetch More Results...
+        </td>
+    </tr>
+</tbody>
+
 <!--
     results         countable array of entries.
     offset & limit  result set position.
@@ -44,7 +41,7 @@
         <tal:block metal:define-macro="body">
             <tbody tal:attributes="offset offset; limit limit">
                 <tal:block tal:repeat="entry limit: offset limit results">
-                    <tal:block metal:use-macro="${entry_macro}"/>
+                    <tal:block tal:define="EvenOdd cssodd:repeat/entry/odd" metal:use-macro="${entry_macro}"/>
                 </tal:block>
             </tbody>
             <tal:block tal:condition="moreresults" metal:use-macro="moreresults"/>

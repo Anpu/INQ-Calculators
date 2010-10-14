@@ -62,9 +62,15 @@ class Template_Tales implements PHPTAL_Tales {
     {
         return "phptal_isempty(".phptal_tale($src,true).")";
     }
+
+    public static function cssodd($src, $nothrow)
+    {
+        return '('.phptal_tale($src, $nothrow) . ' ? "odd" : "even" )';
+    }
 }
 
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("limit", array('Template_Tales','limit'));
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("empty", array('Template_Tales','_empty'));
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("count", array('Template_Tales','count'));
+PHPTAL_TalesRegistry::getInstance()->registerPrefix("cssodd", array('Template_Tales','cssodd'));
 ?>

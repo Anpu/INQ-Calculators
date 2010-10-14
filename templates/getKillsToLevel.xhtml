@@ -1,13 +1,17 @@
 <tal:block metal:define-macro="entry">
-    <tr class="search_result_row">
+    <tr tal:attributes="class string:search_result_row ${EvenOdd}">
         <td><span class="toggle_icon"></span></td>
         <td>${entry/mob/name}</td>
         <td>${entry/mob/level}</td>
         <td>${entry/base_xp} + ${entry/chg_xp}</td>
         <td tal:content="entry/kills | default">You have Graduated</td>
     </tr>
-    <tal:block metal:use-macro="library.xhtml/zone_list"
-               tal:define="zones entry/mob/zones; colspan string:5"/>
+    <tr tal:attributes="class string:search_result_detail ${EvenOdd}">
+        <td colspan="5">
+            <tal:block metal:use-macro="library.xhtml/zone_list"
+               tal:define="zones entry/mob/zones;"/>
+        </td>
+    </tr>
 </tal:block>
 <tal:block tal:define="item_name string:Mobs; colspan string:5; entry_macro string:getKillsToLevel.xhtml/entry"
            metal:use-macro="library.xhtml/resultiterator">

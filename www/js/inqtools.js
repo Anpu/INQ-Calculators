@@ -703,10 +703,6 @@ function loadIntoDIV(aDiv) {
              * OR move this logic into the template on the server side
              */
             $(aDiv).find('div.detail_content').hide();
-            $(aDiv).find('.search_result_row:odd').addClass('odd');
-            $(aDiv).find('.search_result_row:even').addClass('even');
-            $(aDiv).find('.search_result_detail:odd').addClass('odd');
-            $(aDiv).find('.search_result_detail:even').addClass('even');
         };
     }
     return loadIntoDIV.funcs[aDiv];
