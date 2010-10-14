@@ -12,6 +12,9 @@
         tal:repeat="zone zones"
         tal:attributes="class string:zone-icon ${repeat/zone/key}; title zone"/>
 
+<span metal:define-macro="zone_shield"
+        tal:attributes="class string:zone-icon ${zone/shortID}; title zone/shortName"/>
+
 <!-- Mob list from a zone object -->
 <div metal:define-macro="zone_mob_list" class="detail_content" style="padding-left:4em;">
     <tal:block tal:repeat="mob zone/mobs">

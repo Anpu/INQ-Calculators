@@ -5,9 +5,12 @@
         <td>${entry/zone/realm}</td>
         <td>${entry/zone/name}</td>
         <td>${entry/x}, ${entry/z}</td>
+        <td>
+            <tal:block metal:use-macro="library.xhtml/zone_shield" tal:define="zone entry/zone"/>
+        </td>
     </tr>
 </tal:block>
-<tal:block tal:define="item_name string:NPCs; colspan string:5; entry_macro string:findNPCs.xhtml/entry"
+<tal:block tal:define="item_name string:NPCs; colspan string:6; entry_macro string:findNPCs.xhtml/entry"
            metal:use-macro="library.xhtml/resultiterator">
     <thead metal:fill-slot="header">
         <tr>
@@ -16,6 +19,7 @@
             <th>Realm</th>
             <th>Area</th>
             <th>Location</th>
+            <th>Found In</th>
         </tr>
     </thead>
 </tal:block>

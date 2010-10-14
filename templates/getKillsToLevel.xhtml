@@ -5,15 +5,18 @@
         <td>${entry/mob/level}</td>
         <td>${entry/base_xp} + ${entry/chg_xp}</td>
         <td tal:content="entry/kills | default">You have Graduated</td>
+        <td>
+            <tal:block metal:use-macro="library.xhtml/zone_shields" tal:define="zones entry/mob/zoneOverview"/>
+        </td>
     </tr>
     <tr tal:attributes="class string:search_result_detail ${EvenOdd}">
-        <td colspan="5">
+        <td colspan="6">
             <tal:block metal:use-macro="library.xhtml/zone_list"
                tal:define="zones entry/mob/zones;"/>
         </td>
     </tr>
 </tal:block>
-<tal:block tal:define="item_name string:Mobs; colspan string:5; entry_macro string:getKillsToLevel.xhtml/entry"
+<tal:block tal:define="item_name string:Mobs; colspan string:6; entry_macro string:getKillsToLevel.xhtml/entry"
            metal:use-macro="library.xhtml/resultiterator">
     <thead metal:fill-slot="header">
         <tr>
@@ -22,6 +25,7 @@
             <th>Mob Level</th>
             <th>Base XP</th>
             <th># of Kills</th>
+            <th>Found In</th>
         </tr>
     </thead>
 </tal:block>

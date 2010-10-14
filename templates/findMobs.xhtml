@@ -4,15 +4,18 @@
         <td>${entry/name}</td>
         <td>${entry/level}</td>
         <td>${entry/class}</td>
+        <td>
+            <tal:block metal:use-macro="library.xhtml/zone_shields" tal:define="zones entry/zoneOverview"/>
+        </td>
     </tr>
     <tr tal:attributes="class string:search_result_detail ${EvenOdd}">
-        <td colspan="4">
+        <td colspan="5">
             <tal:block metal:use-macro="library.xhtml/zone_list"
                tal:define="zones entry/zones;"/>
         </td>
     </tr>
 </tal:block>
-<tal:block tal:define="item_name string:Mobs; colspan string:4; entry_macro string:findMobs.xhtml/entry"
+<tal:block tal:define="item_name string:Mobs; colspan string:5; entry_macro string:findMobs.xhtml/entry"
            metal:use-macro="library.xhtml/resultiterator">
     <thead metal:fill-slot="header">
         <tr>
@@ -20,6 +23,7 @@
             <th>Name</th>
             <th>Mob Level</th>
             <th>Class</th>
+            <th>Found In</th>
         </tr>
     </thead>
 </tal:block>
