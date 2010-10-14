@@ -8,6 +8,12 @@ UI and much more.
 [1]: http://www.claninquisition.org/
 [2]: http://regnumonline.com.ar/
 
+Installation
+------------
+
+1. Copy config.php.sample to config.php and edit the DSN.
+2. Copy the www/htaccess.sample to www/.htaccess and adjust to your server configuration.
+3. Configure the webserver to export the "www" folder.
 
 Licensing
 ---------
