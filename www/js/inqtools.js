@@ -527,6 +527,10 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    if (args.player_level < 10) {
+        ShowError('Must choose Level 10 or greater.','#pets_results');
+        return;
+    };
     $('#pets_results').data('fetchCall',{
         func: getTameableMobs,
         args: [player_level, maxpower, regions]
@@ -553,6 +557,11 @@ function findNPCs(name, behavior, profession, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    if (args.name.length == 0 && args.behavior.length ==0
+                && args.profession.length ==0) {
+        ShowError('Must enter a Name OR choose a Profession','#npcs_results');
+        return;
+    }
     $('#npcs_results').data('fetchCall',{
         func: findNPCs,
         args: [name, behavior, profession, regions]
@@ -574,6 +583,10 @@ function findMobs(name, regions, offset) {
         regions: regions instanceof Array ? regions.join(',') : regions || '',
         offset: offset || 0
     };
+    if (args.name.length == 0) {
+        ShowError('Must enter a Name', '#mobs_results');
+        return;
+    }
     $('#mobs_results').data('fetchCall',{
         func: findMobs,
         args: [name, regions]
@@ -605,6 +618,7 @@ function cbGrinding(alt) {
 
 function getKillsToLevel(player_level, player_xp, min_level, max_level, regions, offset) {
     if (!player_level && !player_xp) {
+        ShowError('Must pick a Level', '#grinding_results');
         return;
     }
     var args = {
@@ -624,6 +638,7 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
 
 function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, regions, offset) {
     if (!player_level && !player_xp) {
+        ShowError('Must pick a Level', '#grinding_results');
         return;
     }
     var args = {
@@ -704,8 +719,7 @@ function loadIntoDIV(aDiv) {
     if (loadIntoDIV.funcs[aDiv]===undefined) {
         loadIntoDIV.funcs[aDiv] = function(json, textStatus) {
             if (json.response == 'error') {
-                /** @todo could copy this in from some hidden template place instead */
-                $(aDiv).html('<div class="ui-state-error ui-corner-all" style="padding: 0.7em;"><p><span class="ui-icon ui-icon-alert" style="float:left; margin-right: .3em;"/>Error Fetching Data</p></div>');
+                ShowError('Error fetching Results',aDiv);
             } else if (json.data.offset) {
                 // find the first table
                 var table = $(aDiv).find('table');
@@ -724,8 +738,24 @@ function loadIntoDIV(aDiv) {
 }
 loadIntoDIV.funcs = {};
 
-function ShowError(msg) {
-    $('#errorDialog')
-        .data('error',{message:msg})
-        .dialog('open');
+/**
+ * aParent  the element to put the error message inside of.  If empty load an error dialog instead
+ * aMessage the actual error message
+ * aReplace whether to replace the contents of aParent (default true)
+ */
+function ShowError(aMessage, aParent, aReplace) {
+    if (aParent) {
+        if (aReplace === undefined || aReplace) {
+            $(aParent).empty();
+        }
+        var p = $('<p/>')
+            .append('<span class="ui-icon ui-icon-alert" style="float:left; margin-right: .3em;"/>')
+            .append(aMessage);
+        $('<div class="ui-state-error ui-corner-all" style="padding: 0.7em;"/>')
+            .append(p).appendTo(aParent);
+    } else {
+        $('#errorDialog')
+            .data('error',{message:aMessage})
+            .dialog('open');
+    }
 }
