@@ -200,6 +200,10 @@ ul.legend a {
   font-size: 85%;
 }
 
+.search_result_detail div.detail_content {
+    display: none;
+}
+
 .toggle_icon {
   width: 16px;
   height: 16px;

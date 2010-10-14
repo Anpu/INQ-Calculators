@@ -698,11 +698,6 @@ function loadIntoDIV(aDiv) {
             } else {
                 $(aDiv).html(json.data.html);
             }
-            /** @todo
-             * Could optimize and only update recently added rows instead of ALL
-             * OR move this logic into the template on the server side
-             */
-            $(aDiv).find('div.detail_content').hide();
         };
     }
     return loadIntoDIV.funcs[aDiv];
