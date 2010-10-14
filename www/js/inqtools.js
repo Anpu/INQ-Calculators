@@ -677,42 +677,51 @@ function refreshMaps() {
 }
 
 function CreditsAnimation() {
-    var credits = $(this).children('.credit');
-    var data = $(this).data('credits');
-    if (!data) {
-        data = {
-            position: 0
-        };
-        $(this).data('credits',data);
+    var o = $('#credit_scroller');
+    var credits = o.children('.credit');
+    var data = CreditsData();
+    if (data.stop) {
+        data.stop = false;
+        return;
     }
     // queue up the credits
-    var topstart = $(this).height();
+    var topstart = o.height();
     credits.eq(data.position)
-        .queue(function() {
-            $(this)
-                .css({top: topstart, left: 0})
-                .show()
-                .dequeue();
-        })
+        .css({top: topstart, left: 0})
+        .show()
         .animate({top: 0},1500)
         .delay(1500)
-        .animate({left: "-100%"},1000);
+        .animate({left: "-100%"},1000)
+        .queue(function() {
+            CreditsAnimation();
+            $(this).dequeue();
+        });
 
     ++data.position;
     if (data.position >= credits.length) {
         data.position = 0;
     }
-    $(this)
-        .dequeue()
-        .delay(5000)
-        .queue(CreditsAnimation);
 }
-function cbStartCredits() {
-    $('#credit_scroller').queue(CreditsAnimation);
+function CreditsData() {
+    var o = $('#credit_scroller');
+    var data = o.data('credits');
+    if (!data) {
+        data = {
+            position: 0,
+            stop: false
+        };
+        o.data('credits',data);
+    }
+    return data;
+}
+function cbCreditsStart() {
+    $('#credit_scroller > *').stop(true,true).hide();
+    CreditsData().stop = false;
+    CreditsAnimation();
 }
 
-function cbStopCredits() {
-    $('#credit_scroller').stop(true,true);
+function cbCreditsStop() {
+    CreditsData().stop = true;
 }
 
 function loadIntoDIV(aDiv) {
