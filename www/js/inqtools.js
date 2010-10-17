@@ -85,6 +85,9 @@ $(function() {
             if (parts.length && $('#'+parts[0]).length > 0) {
                 $('#main').tabs('select','#'+parts[0]);
             }
+        } else {
+            // has is empty load home tab
+            $('#main').tabs('select','#home');
         }
     }
     locationHashChanged.UPDATE_TO = null;
