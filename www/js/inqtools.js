@@ -76,6 +76,18 @@ function prefixNumber(number, prefix, digits) {
 
 // JQuery on ready event
 $(function() {
+    $.ajaxSetup({
+        error: function(aXHR, textStatus, errorThrown) {
+            if ($.isFunction(this.success)) {
+                if (this.dataType == 'json') {
+                    this.success({response:'error',error:textStatus||errorThrown},textStatus||errorThrown);
+                }
+            } else {
+                ShowError("Error Occured Fetching Data:"+(textStatus || errorThrown));
+            }
+        }
+    });
+
     function locationHashChanged() {
         if (locationHashChanged.UPDATE_TO == location.hash) {
             return;
