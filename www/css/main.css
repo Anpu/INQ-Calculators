@@ -121,6 +121,10 @@ ul.navigation li.ui-state-hover a {
     text-shadow: 0px 0px 1em white, 0px 0px 0.2em white;
 }
 
+.ui-button-text-only .ui-button-text {
+    padding: 0.1em 0.5em;
+}
+
 div.content {
     clear: left;
     width: 60%;

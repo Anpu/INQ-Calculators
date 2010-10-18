@@ -374,12 +374,12 @@ $(function() {
         }
     });
 
-    $('#tool_options button.go').click(function() {
+    $('#tool_options button.go').button().click(function() {
        doSearch();
     });
-    $('#tool_options button.goalt').click(function() {
+    $('#tool_options button.goalt').button().click(function() {
        doSearch(true);
-    });
+    }).parent().buttonset();
 
     /** Interactive Map */
     $('#RO_InteractiveMap').interactiveMap({
