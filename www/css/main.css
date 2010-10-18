@@ -396,7 +396,10 @@ select option.category {
     color: white;
     padding: 0 2px;
 }
-#realm_crests li.selected, #realm_wz.selected {
+#realm_crests li.label a {
+    color: white;
+}
+#realm_crests li.selected, #realm_crests li.selected a, #realm_wz.selected {
     color: #EFC235;
 }
 #realm_wz {
