@@ -284,7 +284,7 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
         this._tileCache[tile[0].offsetLeft][tile[0].offsetTop] = undefined;
         var img = tile.children();
         // Set blank image
-        //img.attr('src',this._getData('blankImage'));
+        img.attr('src',this.options.blankImage);
         // Move Tile
         tile.css({left:x,top:y});
         // Update Image
