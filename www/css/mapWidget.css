@@ -17,6 +17,7 @@ div.mapWidget-hint {
     -moz-border-radius: 5%;
     color: #2c2c2c;
     padding: 0 0.5em;
+    z-index: 15;
 }
 
 div.mapWidget-overlay {

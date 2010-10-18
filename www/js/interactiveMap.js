@@ -111,8 +111,13 @@ $.extend(OverlayContainer.prototype, {
     }
 });
 
-$.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
-    _init: function() {
+$.widget('ui.interactiveMap', $.ui.mouse, {
+    options: {
+        map:'',
+        blankImage:'images/blank.gif'
+    },
+
+    _create: function() {
         this._mouseInit();
         this._elems = {};
         var self = this;
@@ -137,9 +142,9 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         }
         // Called when the display needs to be recalculated (resize or show when previously hidden)
         var _viewwidth = this.element.innerWidth()
-            || this._getData('width') || 400;
+            || this.options.width || 400;
         var _viewheight = this.element.innerHeight()
-            || this._getData('height') || 400;
+            || this.options.height || 400;
         var tiles_x = Math.ceil(_viewwidth / this._map.tilesize) + 1;
         var tiles_y = Math.ceil(_viewheight / this._map.tilesize) + 1;
         this._view = {
@@ -160,14 +165,14 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
             .removeClass('interactiveMap')
             .enableSelection();
 
-        $.widget.prototype.destroy.apply(this, arguments);
+        $.Widget.prototype.destroy.apply(this, arguments);
     },
     loadMap: function(map) {
         if (map) {
-            this._setData('map',map);
+            this._setOption('map',map);
         }
         var self = this;
-        $.get(this._getData('map'),undefined,function(xml) {
+        $.get(this.options.map,undefined,function(xml) {
             self._loadXML(xml);
         },'xml');
     },
@@ -186,7 +191,7 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
                 width: parseInt(_l.attr('width')),
                 height: parseInt(_l.attr('height')),
                 scale: parseScale(_l.attr('scale')),
-                path: dirname(this._getData('map'))+'/'+_l.attr('path')+'/',
+                path: dirname(this.options.map)+'/'+_l.attr('path')+'/',
                 pieces: {}
             }
             // Parse Pieces
@@ -302,7 +307,7 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
         if (this._activeLayer.pieces[x] && this._activeLayer.pieces[x][y]) {
             return this._activeLayer.path + this._activeLayer.pieces[x][y];
         }
-        return this._getData('blankImage');
+        return this.options.blankImage;
     },
     checkTiles: function(aX, aY) {
         if (this.element.is(':hidden')) {
@@ -385,15 +390,10 @@ $.widget('ui.interactiveMap', $.extend({}, $.ui.mouse, {
     _mouseStop: function(aEvt) {
 
     }
-}));
+});
 
 $.extend($.ui.interactiveMap, {
-    version: "0.0.1",
-    getter: "overlay",
-    defaults: $.extend({}, $.ui.mouse.defaults, {
-        map:'',
-        blankImage:'images/blank.gif'
-    })
+    version: "0.2"
 });
 
 })(jQuery);

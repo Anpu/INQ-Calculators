@@ -22,9 +22,16 @@
  */
 (function($) { // hide namespace
 
-$.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
-    _init: function() {
-        this._setData('distance', 0);
+$.widget("ui.mapWidget", $.ui.mouse, {
+    options: {
+        'class': '',
+        'hintclass':'mapWidget-hint',
+        maps: {},
+        width: 100,
+        height: 100
+    },
+    _create: function() {
+        this._setOption('distance', 0);
         this._mouseInit();
         this._maps = {};
         this._editing = false;
@@ -46,10 +53,10 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
 			return self._MWmouseOut(event);
 		};
         this.element
-            .addClass('mapWidget '+this._getData('class'))
+            .addClass('mapWidget '+this.options['class'])
             .bind('mousemove.mapWidget',this._MWmouseMoveDelegate)
             .bind('mouseout.mapWidget',this._MWmouseOutDelegate);
-        var maps = this._getData('maps');
+        var maps = this.options.maps;
         for (var m in maps) {
             var c = maps[m].config;
             this._maps[m] = $('<div/>')
@@ -71,7 +78,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
 
             this._maps[m].appendTo(this.element);
         }
-        this._trigger('init',0);
+        this._trigger('create',0);
     },
 
     _MWmouseMove: function(e) {
@@ -80,7 +87,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         var hit = this._hitFromPoint(p);
         this.element.toggleClass('mapWidget-point', !!hit.map);
         if (hit.map) {
-            var map = this._getData('maps')[hit.map];
+            var map = this.options.maps[hit.map];
             var region = map.areas[hit.region];
             this._setHint(region.hint || map.config.hint || null, region.map.getBounds());
         } else {
@@ -97,7 +104,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
             this._hintbox = {
                 text:'',
                 control:$('<div/>')
-                    .addClass(this._getData('hintclass'))
+                    .addClass(this.options.hintclass)
                     .hide()
                     .appendTo(document.body)
                     .mouseover(function(e) {$(this).hide()})
@@ -132,7 +139,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
 
     _hitFromPoint: function(p) {
         var hit = {map:null,region:null};
-        var maps = this._getData('maps');
+        var maps = this.options.maps;
         for (var m in maps) {
             if (maps[m].areas) {
                 for (var region in maps[m].areas) {
@@ -157,7 +164,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
             var ret = this._trigger('validate', e, hit);
 
             if ((ret !== false) && hit.map) {
-                if (this._getData('maps')[hit.map].areas[hit.region].toggle) {
+                if (this.options.maps[hit.map].areas[hit.region].toggle) {
                     var hidden = this._maps[hit.map].is(':hidden');
                     this.setValue(hit.map, hidden ? hit.region : false);
                 } else {
@@ -172,12 +179,12 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         if (aRegion) {
             if (aRegion === true) {
                 // Anyone have a better way of getting the first key in an object?
-                for (var a in this._getData('maps')[aMap].areas) {
+                for (var a in this.options.maps[aMap].areas) {
                     aRegion = a;
                     break;
                 }
             }
-            var r = this._getData('maps')[aMap].areas[aRegion];
+            var r = this.options.maps[aMap].areas[aRegion];
             this._maps[aMap].show();
             if (r.offset) {
                 // set the background position
@@ -288,7 +295,7 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
             self._editmode_remove($(this).attr('map'),$(this).attr('region'));
             return false;
         };
-        var maps = this._getData('maps');
+        var maps = this.options.maps;
         for (var m in maps) {
             this._editmode.maps[m] = {};
             var mWMapHeader = $('<div/>')
@@ -340,9 +347,6 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
     value: function() {
         return this._value;
     },
-    setMapValue: function(aMap, aValue) {
-        // if false make it hidden
-    },
     destroy: function() {
         this._mouseDestroy();
         this.editmode(false);
@@ -350,22 +354,14 @@ $.widget("ui.mapWidget", $.extend({}, $.ui.mouse, {
         this.element.unbind('mousemove.mapWidget',this._MWmouseMoveDelegate);
         this.element.unbind('mouseout.mapWidget',this._MWmouseMoveOut);
         this.element.find('div.mapWidget-overlay').remove();
-        this.element.removeClass('mapWidget mapWidget-editing '+this._getData('class'));
+        this.element.removeClass('mapWidget mapWidget-editing '+this.options['class']);
 
-        $.widget.prototype.destroy.apply(this, arguments);
+        $.Widget.prototype.destroy.apply(this, arguments);
     }
-}));
+});
 
 $.extend($.ui.mapWidget, {
-    version: "0.0.1",
-    getter: "value",
-    defaults: $.extend({}, $.ui.mouse.defaults, {
-        'class': '',
-        'hintclass':'mapWidget-hint',
-        maps: {},
-        width: 100,
-        height: 100
-    })
+    version: "0.2"
 });
 
 })(jQuery);

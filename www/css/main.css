@@ -253,6 +253,7 @@ ul.legend a {
     position:absolute;
     background-color: black;
     border: 1px solid #EFC235;
+    z-index: 10;
     display: none;
 }
 .tool_value {
