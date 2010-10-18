@@ -21,27 +21,53 @@
  */
 class ActionScale extends Console_CommandLine_Action {
     public function execute($value = false, $params = array()) {
-        $p = explode(':', trim($value));
-        if (count($p) != 2) {
+        try {
+            $scale = Scale::parse($value);
+        } catch (Exception $ex) {
             throw new Exception(sprintf(
                 'Option "%s" must be 2 integeres separated by a colon (:)',
                 $this->option->name
             ));
         }
-        list ($num, $den) = self::simplify($p[0], $p[1]);
-        $this->setResult((object)array('num'=>$num,'den'=>$den));
-    }
-    private static function simplify($num, $den) {
-        $a = $num;
-        $b = $den;
-        for ($r = $a % $b;
-            $r != 0;
-            $a = $b, $b = $r, $r = $a % $b);
-
-        return array($num / $b, $den / $b);
+        $this->setResult($scale->simplify());
     }
 }
 
 Console_CommandLine::registerAction("Scale", "ActionScale");
 
+
+class Scale {
+    public $num;
+    public $den;
+    function __construct($num, $den) {
+        $this->num = $num;
+        $this->den = $den;
+    }
+
+    static function parse($scale) {
+        $p = explode(':', trim($scale));
+        if (count($p) != 2) {
+            throw new Exception('Scale \''.$scale.'\' does not contain only two components');
+        }
+        return new Scale($p[0],$p[1]);
+    }
+
+    function simplify() {
+        $a = $this->num;
+        $b = $this->den;
+        for ($r = $a % $b;
+            $r != 0;
+            $a = $b, $b = $r, $r = $a % $b);
+
+        return new Scale($this->num / $b, $this->den / $b);
+    }
+
+    function scale(Scale $scale) {
+        return new Scale($this->num * $scale->num, $this->den * $scale->den);
+    }
+
+    function unscale(Scale $scale) {
+        return new Scale($this->num * $scale->den, $this->den * $scale->num);
+    }
+}
 ?>

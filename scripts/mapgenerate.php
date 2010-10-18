@@ -1,4 +1,4 @@
-#!/bin/env php
+#!/usr/bin/php
 <?php
 /**
  * @copyright Copyright 2010
@@ -40,7 +40,7 @@ $parser->version = "0.0.1";
 $parser->addOption('scale',array(
     'long_name'     => '--scale',
     'description'   => 'Scale Factor for the image (numerator:denominator)',
-    'default'       => (object)array('num'=>1,'den'=>1),
+    'default'       => new Scale(1,1),
     'help_name'     => 'SCALE',
     'action'        => 'Scale',
 ));
@@ -49,7 +49,7 @@ $parser->addOption('tilesize',array(
     'description'   => 'Tile Size',
     'action'        => 'StoreInt',
     'default'       => 256,
-    'help_name'     => 'SCALE',
+    'help_name'     => 'SIZE',
 ));
 $parser->addOption('append',array(
     'long_name'     => '--append',
@@ -170,6 +170,7 @@ class Map {
     private $file;
     private $pieces;
     private $bounds;
+    private $input_scale;
 
     public function __construct($file = null) {
         if (!is_null($file)) {
@@ -182,6 +183,7 @@ class Map {
         $xml = simplexml_load_file($this->file);
         $this->pieces = array();
         $basedir = dirname($file);
+        $this->input_scale = Scale::parse($xml['scale']);
         foreach ($xml->piece as $_piece) {
             $file = (string)$_piece['file'];
             if ($file[0]=='/') {
@@ -198,9 +200,10 @@ class Map {
         $this->bounds = $this->calculateBounds($this->pieces);
     }
 
-    public function scale($scale, $tilesize, $outdir, SimpleXMLElement $layerXML) {
+    public function scale(Scale $scale, $tilesize, $outdir, SimpleXMLElement $layerXML) {
         $newBounds = clone $this->bounds;
-        $newBounds->scale($scale, $newBounds->left, $newBounds->top);
+        $_scale = $scale->unscale($this->input_scale);
+        $newBounds->scale($_scale, $newBounds->left, $newBounds->top);
 
         //Check if scale is "even" according to chunk size
         $pieces_x = $newBounds->width / $tilesize;
