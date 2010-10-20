@@ -367,7 +367,7 @@ $(function() {
     });
     $('#location_map_display').text('Anywhere');
 
-    $('input[type="text"]').keypress(function(e) {
+    $('#tool_options input[type="text"]').keypress(function(e) {
         if (e.keyCode==13) {
             doSearch();
         }
