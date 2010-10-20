@@ -78,7 +78,6 @@ $.widget("ui.mapWidget", $.ui.mouse, {
 
             this._maps[m].appendTo(this.element);
         }
-        this._trigger('create',0);
     },
 
     _MWmouseMove: function(e) {
