@@ -424,6 +424,7 @@ $(function() {
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
+    $('#main').delay(100).fadeIn('slow');
 });
 
 function updateQuickMap() {
