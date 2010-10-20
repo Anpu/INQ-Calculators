@@ -401,6 +401,14 @@ $(function() {
 
     window.Trainer = new cTrainer('#trainer_tool');
 
+    $(window).scroll(function() {
+        if ($(window).scrollTop() >= ($(document).height() - $(window).height() - 5)) {
+            if ($('#main').data('results').length) {
+                $('#main').data('results').find('.moreresults tr').click();
+            }
+        }
+    });
+
     // Do this AFTER all widgets are setup to insure they "hide" correctly
     var curpage = '#home';
     if (location.hash.length > 0) {
@@ -416,13 +424,6 @@ $(function() {
 
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
-    $(window).scroll(function() {
-        if ($(window).scrollTop() >= ($(document).height() - $(window).height() - 5)) {
-            if ($('#main').data('results').length) {
-                $('#main').data('results').find('.moreresults tr').click();
-            }
-        }
-    });
 });
 
 function updateQuickMap() {
