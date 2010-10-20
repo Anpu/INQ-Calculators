@@ -164,5 +164,14 @@ class RO_Mob extends RO_Base {
         $stmt->closeCursor();
         return new ResultIterator($ret, __CLASS__, array('regions'=>$regions));
     }
+
+    public static function suggest($term = '')
+    {
+        $sql = "CALL SuggestMobs(?)";
+        $stmt = Database::query($sql, $term);
+        $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $stmt->closeCursor();
+        return new ResultIterator($ret, __CLASS__);
+    }
 }
 ?>

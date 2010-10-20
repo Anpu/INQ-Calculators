@@ -68,5 +68,31 @@ class RO_Zone extends RO_Base {
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return new ResultIterator($rows,'RO_Mob');
     }
+
+    /**
+     * Find Zone by name
+     *
+     * @param string $name         The name of the Mob
+     * @param array $regions       List of regions to search in
+     *
+     * @return Iterator the found Mobs
+     */
+    public static function findByName($name = '', $regions = array())
+    {
+        $sql = "CALL FindZones(?, ?)";
+        $stmt = Database::query($sql, $name, implode(',',$regions));
+        $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $stmt->closeCursor();
+        return new ResultIterator($ret, __CLASS__, array('regions'=>$regions));
+    }
+
+    public static function suggest($term = '')
+    {
+        $sql = "CALL SuggestZones(?)";
+        $stmt = Database::query($sql, $term);
+        $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $stmt->closeCursor();
+        return new ResultIterator($ret, __CLASS__);
+    }
 }
 ?>

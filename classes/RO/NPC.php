@@ -55,5 +55,14 @@ class RO_NPC extends RO_Base {
         $stmt->closeCursor();
         return new ResultIterator($ret, __CLASS__);
     }
+
+    public static function suggest($term = '')
+    {
+        $sql = "CALL SuggestNPCs(?)";
+        $stmt = Database::query($sql, $term);
+        $ret = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $stmt->closeCursor();
+        return new ResultIterator($ret, __CLASS__);
+    }
 }
 ?>
