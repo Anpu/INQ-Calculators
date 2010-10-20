@@ -423,6 +423,19 @@ $(function() {
         }
     }).prev().addClass('ui-state-error');
 
+    $('#npc_search').basecomplete({
+       source: function(request, response) {
+           $.getJSON(ajaxRoot + 'suggestNPCs',
+                request, function(json) {response(json.data)});
+       }
+    });
+    $('#mob_search').basecomplete({
+       source: function(request, response) {
+           $.getJSON(ajaxRoot + 'suggestMobs',
+                request, function(json) {response(json.data)});
+       }
+    });
+
     window.Trainer = new cTrainer('#trainer_tool');
 
     $(window).scroll(function() {
