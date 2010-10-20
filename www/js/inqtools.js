@@ -107,8 +107,7 @@ $(function() {
         window.onhashchange = locationHashChanged;
     }
 
-    var tool_args = [];
-    $("#main").tabs({
+    $("#main").data('tool_args',[]).tabs({
         show: function(event, ui) {
             var loadcb = $(ui.tab).attr('load') || '';
             // Magic to allow scrolling to get more results
@@ -116,9 +115,9 @@ $(function() {
             $(window).scroll();
             // Trigger the on-load callback if set
             if ($.isFunction(window[loadcb])) {
-                window[loadcb].apply($(ui.tab),tool_args);
+                window[loadcb].apply($(ui.tab),$('#main').data('tool_args'));
                 // Only load tool args ONCE
-                tool_args = [];
+                $('#main').data('tool_args',[]);
             }
         },
         select:function (event, ui) {
@@ -409,7 +408,7 @@ $(function() {
         if (parts.length && $('#'+parts[0]).length > 0) {
             curpage = '#'+parts[0];
         }
-        tool_args = parts.slice(1);
+        $('#main').data('tool_args', parts.slice(1));
     }
     var o = $('#main li > a[href="'+curpage+'"]');
     switchTool(o, false);
