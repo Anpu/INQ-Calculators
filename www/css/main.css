@@ -23,6 +23,10 @@ label {
     cursor: url('../images/normal.cur'), default;
 }
 
+input[type="checkbox"], input[type="radio"], select {
+    cursor: url('../images/links.cur'), pointer;
+}
+
 a { 
     text-decoration: none;
     color: #EFC325;
