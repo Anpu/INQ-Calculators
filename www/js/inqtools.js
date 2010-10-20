@@ -56,6 +56,30 @@ if (!Object.keys)
   }
 }
 
+if (!Array.range)
+{
+    Array.range = function(low, high)
+    {
+        var ret = [];
+        var i = low;
+        var plus = ( ( i > high ) ? false : true );
+        if ( plus ) {
+            while ( i <= high ) {
+                ret.push( i.toString() );
+                i ++;
+            }
+        } else {
+            while ( i >= high ) {
+                ret.push( i.toString() );
+                i --;
+            }
+        }
+
+        return ret;
+    }
+
+}
+
 /** For users w/o firebug/a real browser */
 if (window.console == undefined) {
     window.console = {
