@@ -400,9 +400,11 @@ $(function() {
     $('#tool_options button.go').button().click(function() {
        doSearch();
     });
-    $('#tool_options button.goalt').button().click(function() {
+    $('#tool_options button.goalt').click(function() {
        doSearch(true);
-    }).parent().buttonset();
+    }).parent().buttonset().children()
+            .first().addClass('ui-corner-left').end()
+            .last().addClass('ui-corner-right');
 
     /** Interactive Map */
     $('#RO_InteractiveMap').interactiveMap({
