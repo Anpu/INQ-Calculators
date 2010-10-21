@@ -67,14 +67,14 @@
     <div id="main">
       <ul class="navigation">
         <li><a href="#home">Home</a></li>
-        <li tal:condition="not: empty: tools/grinding"><a href="#grinding" widgets="level,levelrange,region,gogrind" callback="cbGrinding">Grinding</a></li>
-        <li tal:condition="not: empty: tools/mobs"><a href="#mobs" widgets="mob_search,region,go" callback="cbMobs">Mobs</a></li>
-        <li tal:condition="not: empty: tools/pets"><a href="#pets" widgets="level,power,region,go" callback="cbPets">Pets</a></li>
-        <li tal:condition="not: empty: tools/npcs"><a href="#npcs" widgets="npc_search,profession,region,go" callback="cbNPCs">NPCs</a></li>
-        <li tal:condition="not: empty: tools/map"><a href="#map" load="refreshMaps">Map</a></li>
-        <li tal:condition="not: empty: tools/shops"><a href="#shops">Shops</a></li>
-        <li tal:condition="not: empty: tools/armor"><a href="#armor">Armor</a></li>
-        <li tal:condition="not: empty: tools/trainer"><a href="#trainer" widgets="class,go" callback="cbTrainer" load="cbInitTrainer">Trainer</a></li>
+        <li tal:condition="notempty: tools/grinding"><a href="#grinding" widgets="level,levelrange,region,gogrind" callback="cbGrinding">Grinding</a></li>
+        <li tal:condition="notempty: tools/mobs"><a href="#mobs" widgets="mob_search,region,go" callback="cbMobs">Mobs</a></li>
+        <li tal:condition="notempty: tools/pets"><a href="#pets" widgets="level,power,region,go" callback="cbPets">Pets</a></li>
+        <li tal:condition="notempty: tools/npcs"><a href="#npcs" widgets="npc_search,profession,region,go" callback="cbNPCs">NPCs</a></li>
+        <li tal:condition="notempty: tools/map"><a href="#map" load="refreshMaps">Map</a></li>
+        <li tal:condition="notempty: tools/shops"><a href="#shops">Shops</a></li>
+        <li tal:condition="notempty: tools/armor"><a href="#armor">Armor</a></li>
+        <li tal:condition="notempty: tools/trainer"><a href="#trainer" widgets="class,go" callback="cbTrainer" load="cbInitTrainer">Trainer</a></li>
         <li><a href="#credits" load="cbCreditsStart" unload="cbCreditsStop">Credits</a></li>
       </ul>
       <div id="tool_options">
@@ -189,17 +189,17 @@
             Here you can find some useful tools to help you in Regnum Online.<br />
             List of the tools:<br />
             <ul class="legend">
-              <li tal:condition="not: empty: tools/grinding"><a class="tablink" href="#grinding">Grinding</a> - calculate the number of mob kills till you level up as well as the best areas.</li>
-              <li tal:condition="not: empty: tools/mobs"><a class="tablink" href="#mobs">Mobs</a> - search for the mobs by name.</li>
-              <li tal:condition="not: empty: tools/pets"><a class="tablink" href="#pets">Pets</a> - find the pet for your hunter.</li>
-              <li tal:condition="not: empty: tools/npcs"><a class="tablink" href="#npcs">NPCs</a> - search for the quest NPCs.</li>
-              <li tal:condition="not: empty: tools/shops"><a class="tablink" href="#shops">Shops</a> - find out which merchants sell stuff for your class.</li>
-              <li tal:condition="not: empty: tools/armor"><a class="tablink" href="#armor">Armor</a> - calculate armor points per damage type of your armor set.</li>
-              <li tal:condition="not: empty: tools/trainer"><a class="tablink" href="#trainer">Trainer</a> - build the setup for your character.</li>
+              <li tal:condition="notempty: tools/grinding"><a class="tablink" href="#grinding">Grinding</a> - calculate the number of mob kills till you level up as well as the best areas.</li>
+              <li tal:condition="notempty: tools/mobs"><a class="tablink" href="#mobs">Mobs</a> - search for the mobs by name.</li>
+              <li tal:condition="notempty: tools/pets"><a class="tablink" href="#pets">Pets</a> - find the pet for your hunter.</li>
+              <li tal:condition="notempty: tools/npcs"><a class="tablink" href="#npcs">NPCs</a> - search for the quest NPCs.</li>
+              <li tal:condition="notempty: tools/shops"><a class="tablink" href="#shops">Shops</a> - find out which merchants sell stuff for your class.</li>
+              <li tal:condition="notempty: tools/armor"><a class="tablink" href="#armor">Armor</a> - calculate armor points per damage type of your armor set.</li>
+              <li tal:condition="notempty: tools/trainer"><a class="tablink" href="#trainer">Trainer</a> - build the setup for your character.</li>
               <li><a class="tablink" href="#credits">Credits</a> - list who provided you all this.</li>
             </ul>
           </div>
-          <div tal:condition="not: empty: tools/grinding" id="grinding" class="content">
+          <div tal:condition="notempty: tools/grinding" id="grinding" class="content">
             <h2>Grinding</h2>
             <p class="help">
                 Trying to find that <em>perfect</em> mob to get you to the next level?<br/>
@@ -208,7 +208,7 @@
             </p>
             <div id="grinding_results" class="results"/>
           </div>
-          <div tal:condition="not: empty: tools/mobs" id="mobs" class="content">
+          <div tal:condition="notempty: tools/mobs" id="mobs" class="content">
             <h2>Mobs</h2>
             <p class="help">
             Having trouble finding that beast or monster to finish a quest?
@@ -216,28 +216,28 @@
             </p>
             <div id="mobs_results" class="results"/>
           </div>
-          <div tal:condition="not: empty: tools/pets" id="pets" class="content">
+          <div tal:condition="notempty: tools/pets" id="pets" class="content">
             <h2>Pets</h2>
             <p class="help">
             Let me find the best pet for you.
             </p>
             <div id="pets_results" class="results"/>
           </div>
-          <div tal:condition="not: empty: tools/npcs" id="npcs" class="content">
+          <div tal:condition="notempty: tools/npcs" id="npcs" class="content">
             <h2>NPCs</h2>
             <p class="help">Having trouble finding that NPC to finish a quest?
             Ask me, I'll help you locate them.</p>
             <div id="npcs_results" class="results"/>
           </div>
-          <div tal:condition="not: empty: tools/shops" id="shops" class="content">
+          <div tal:condition="notempty: tools/shops" id="shops" class="content">
             <h2>Shops</h2>
             Coming soon
           </div>
-          <div tal:condition="not: empty: tools/armor" id="armor" class="content">
+          <div tal:condition="notempty: tools/armor" id="armor" class="content">
             <h2>Armor Points</h2>
             Coming soon
           </div>
-          <div tal:condition="not: empty: tools/trainer" id="trainer" class="content">
+          <div tal:condition="notempty: tools/trainer" id="trainer" class="content">
             <h2>Trainer</h2>
             <p class="help">Trying to find that sweet spell setup? Let me help.</p>
             <div id="trainer_tool"/>
@@ -251,7 +251,7 @@
                 </div>
             </div>
           </div>
-          <div tal:condition="not: empty: tools/map" id="map" class="content">
+          <div tal:condition="notempty: tools/map" id="map" class="content">
               <h2>Look at the pretty map!</h2>
               <div id="RO_InteractiveMap"/>
           </div>
