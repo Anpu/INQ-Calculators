@@ -16,6 +16,7 @@ body {
     line-height: 2.2em;
     background-color: #000000;
     color: #EFC235;
+    margin: 0;
     cursor: url('../images/normal.cur'), default;
 }
 

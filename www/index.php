@@ -43,6 +43,7 @@ if (empty($_GET['PATH_INFO'])) {
         );
         // Load enablement of tools
         $tpl->tools = $config->tools;
+        $tpl->devheader = $config->devheader;
         $tpl->credits = is_array($config->credits)
                 ? $config->credits
                 : array(array('name'=>'Anonymous','job'=>'I did something?'));
