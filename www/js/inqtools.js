@@ -132,6 +132,7 @@ $(function() {
     }
 
     $("#main").data('tool_args',[]).tabs({
+        selected: -1,
         show: function(event, ui) {
             var loadcb = $(ui.tab).attr('load') || '';
             // Magic to allow scrolling to get more results
@@ -457,13 +458,11 @@ $(function() {
         }
         $('#main').data('tool_args', parts.slice(1));
     }
-    var o = $('#main li > a[href="'+curpage+'"]');
-    switchTool(o, false);
-    $('#main').tabs('select',curpage);
-
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
-    $('#main').delay(100).fadeIn('slow');
+    $('#main').delay(100).fadeIn('normal',function() {
+        $('#main').tabs('select',curpage);
+    });
 });
 
 function updateQuickMap() {
