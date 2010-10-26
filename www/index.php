@@ -32,6 +32,8 @@ define('DEBUG',!empty($config->debug));
 // Load up the class auto loader
 require_once(APP_ROOT . "/classes/Init.php");
 
+FB::setEnabled(DEBUG);
+
 Template::addTemplatePath(APP_ROOT . '/templates');
 Database::setDSN($config->db->dsn, $config->db->user, $config->db->password);
 
