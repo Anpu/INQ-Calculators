@@ -50,6 +50,11 @@ if (empty($_GET['PATH_INFO'])) {
                 ? $config->credits
                 : array(array('name'=>'Anonymous','job'=>'I did something?'));
         $tpl->echoExecute();
+        if ($config->cachehome) {
+            header("Pragma: public");
+            header("Cache-Control: maxage=".$config->cachehome);
+            header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
+        }
     } catch (Exception $ex) {
         die ((string)$ex);
     }
