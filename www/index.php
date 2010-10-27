@@ -85,7 +85,7 @@ if (empty($_GET['PATH_INFO'])) {
                 $data = $memcache->get($key);
             }
             if (empty($data)) {
-                $data = call_user_func(array($class,'request'), array_slice($path_info,2));
+                $data = $class::request(array_slice($path_info,2));
 
                 if ($config->memcache && $class::$cache) {
                     $memcache->set($key, $data);
