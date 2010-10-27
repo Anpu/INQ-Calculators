@@ -18,6 +18,14 @@ return (object)array(
     'password' => 'password',
   ),
 
+  'memcache' => false,
+  /*
+  'memcache' => (object)array(
+      'host'=>'localhost',
+      'port'=>11211,
+  ),
+  */
+
   'credits' => array(
     array(
       'name' => 'Someones Name',

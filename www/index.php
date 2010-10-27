@@ -37,6 +37,12 @@ FB::setEnabled(DEBUG);
 Template::addTemplatePath(APP_ROOT . '/templates');
 Database::setDSN($config->db->dsn, $config->db->user, $config->db->password);
 
+if ($config->memcache) {
+    $memcache = new Memcached();
+    $memcache->addServer($config->memcache->host, $config->memcache->port);
+    RO_Base::setMemcache($memcache);
+}
+
 if (empty($_GET['PATH_INFO'])) {
     try {
         $tpl = new Template("index.xhtml");
