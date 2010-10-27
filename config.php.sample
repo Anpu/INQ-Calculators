@@ -12,6 +12,9 @@ return (object)array(
   // Cache setting for the main "Home" screen. Setting to false disables client caching
   'cachehome' => 60 * 60 * 4, // 4 hours
 
+  // Expires setting for ajax requests.  Setting to false disabled ajax client caching
+  'ajaxexpires'=> 60 * 60 * 4, // 4 hours
+
   'db' => (object)array(
     'dsn' => "mysql:host=localhost;dbname=databasename;unix_socket=/var/lib/mysql/mysql.sock",
     'user' => 'username',

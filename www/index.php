@@ -76,8 +76,30 @@ if (empty($_GET['PATH_INFO'])) {
             }
             include_once(APP_ROOT.'/ajax/'.$path_info[1].'.php');
             $class = 'ajax_'.$path_info[1];
-            $data = call_user_func(array($class,'request'), array_slice($path_info,2));
 
+            if (DEBUG) {
+                $start = microtime(true);
+            }
+            if ($config->memcache && $class::$cache) {
+                $key = AjaxRequest::genkey();
+                $data = $memcache->get($key);
+            }
+            if (empty($data)) {
+                $data = call_user_func(array($class,'request'), array_slice($path_info,2));
+
+                if ($config->memcache && $class::$cache) {
+                    $memcache->set($key, $data);
+                }
+            }
+            if (DEBUG) {
+                $stop = microtime(true);
+                FB::log(number_format(($stop - $start) * 1000),'Duration');
+            }
+            if ($class::$cache && $config->ajaxexpires) {
+                header("Pragma: public");
+                header("Cache-Control: maxage=".$config->ajaxexpires);
+                header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->ajaxexpires). ' GMT');
+            }
             echo json_encode(array(
                 'response'=>'success',
                 'data'=>$data,

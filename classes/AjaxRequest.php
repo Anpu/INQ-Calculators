@@ -23,5 +23,21 @@ abstract class AjaxRequest {
     static $cache = true;
 
     abstract public static function request($path_args);
+
+    public static function genkey()
+    {
+        $key = '';
+        $prevkey = array();
+        $k = array_keys($_GET);
+        sort($k);
+        foreach ($k as $_k) {
+            for ($keylen = 1, $_t = substr($_k, 0, $keylen); in_array($_t,$prevkey); ++$keylen) {
+                $_t = substr($_k, 0, $keylen);
+            }
+            $prevkey[] = $_t;
+            $key .= $_t.':'.$_GET[$_k].';';
+        }
+        return $key;
+    }
 }
 ?>
