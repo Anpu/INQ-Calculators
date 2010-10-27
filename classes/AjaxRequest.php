@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
-interface AjaxRequest {
-    public static function request($path_args);
+abstract class AjaxRequest {
+    static $cache = true;
+
+    abstract public static function request($path_args);
 }
 ?>

@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
-class ajax_suggestMobs implements AjaxRequest {
+class ajax_suggestMobs extends AjaxRequest {
     public static function request($path_args) {
         $result = RO_Mob::suggest(Util::GetString('term'));
         $ret = array();

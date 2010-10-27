@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
-class ajax_suggestZones implements AjaxRequest {
+class ajax_suggestZones extends AjaxRequest {
     public static function request($path_args) {
         $result = RO_Zone::suggest(Util::GetString('term'));
         $ret = array();

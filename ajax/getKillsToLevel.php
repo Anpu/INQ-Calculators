@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
-class ajax_getKillsToLevel implements AjaxRequest {
+class ajax_getKillsToLevel extends AjaxRequest {
     public static function request($path_args)
     {
         $tpl = new Template("getKillsToLevel.xhtml");
