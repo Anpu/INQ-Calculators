@@ -155,8 +155,8 @@ $(function() {
         }
     });
 
-    $('ul.navigation li:first').addClass('first-item');
-    $('ul.navigation li:last').addClass('last-item');
+    $('ul.navigation li:first-child').addClass('first-item');
+    $('ul.navigation li:last-child').addClass('last-item');
 
     $('a.tablink').live('click',function(e) {
         if (e.button !=0) return;
