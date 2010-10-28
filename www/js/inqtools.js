@@ -131,7 +131,7 @@ $(function() {
         window.onhashchange = locationHashChanged;
     }
 
-    $("#main").data('tool_args',[]).tabs({
+    $("#main").data('tool_args',[]).data('results',{length:0}).tabs({
         selected: -1,
         show: function(event, ui) {
             var loadcb = $(ui.tab).attr('load') || '';
