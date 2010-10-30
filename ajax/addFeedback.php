@@ -41,7 +41,7 @@ class ajax_addFeedback extends AjaxRequest {
                 'issue_id'=>$issue_id,
             );
         } catch (SoapFault $ex) {
-            throw new Exception("Failed to log feedback",0,$ex);
+            throw new Exception("Failed to log feedback");
         }
     }
 
