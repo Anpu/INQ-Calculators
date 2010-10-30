@@ -21,6 +21,14 @@ return (object)array(
     'password' => 'password',
   ),
 
+  'mantis'=> (object) array(
+    'wsdl'=>"http://example.com/mantis/api/soap/mantisconnect.php?wsdl",
+    'project_id'=>1,
+    'tool_version'=>'1.0',
+    'user'=>'user',
+    'pass'=>'pass',
+  ),
+
   'memcache' => false,
   /*
   'memcache' => (object)array(
