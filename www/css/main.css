@@ -679,3 +679,8 @@ select option.category {
 .loading-black {
     background-image: url(../images/loading-000000.gif);
 }
+.loading-black-big {
+    width: 64px;
+    height: 64px;
+    background-image: url(../images/loading-big-000000.gif);
+}

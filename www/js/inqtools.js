@@ -439,6 +439,7 @@ $(function() {
         autoOpen: false,
         resizable: false,
         minWidth: 400,
+        loadingclass: 'loading loading-black-big',
         open: function() {
             $(this).find('input[type="checkbox"],input[type="radio"]').attr('checked',false);
             $(this).find('input[type="text"]').val('');
@@ -472,7 +473,7 @@ $(function() {
                 if ($(ui.current).find('input[name="fb_mob_name"]').val()=='') {
                     return false;
                 } else {
-                    SubmitFeedback(ui.finish);
+                    SubmitFeedback(ui.finish, ui.fail);
                     return true;
                 }
             },
@@ -488,7 +489,7 @@ $(function() {
                 if ($(ui.current).find('input[name="fb_npc_name"]').val()=='') {
                     return false;
                 } else {
-                    SubmitFeedback(ui.finish);
+                    SubmitFeedback(ui.finish, ui.fail);
                     return true;
                 }
             },
@@ -505,7 +506,7 @@ $(function() {
                         || $(ui.current).find('select[name="fb_area_realm').val()=='') {
                     return false;
                 } else {
-                    SubmitFeedback(ui.finish);
+                    SubmitFeedback(ui.finish, ui.fail);
                     return true;
                 }
             },
@@ -517,7 +518,7 @@ $(function() {
                         || $(ui.current).find('textarea[name="fb_feedback"]').val()=='') {
                     return false;
                 } else {
-                    SubmitFeedback(ui.finish);
+                    SubmitFeedback(ui.finish, ui.fail);
                     return true;
                 }
             }
@@ -915,7 +916,7 @@ function loadIntoDIV(aDiv) {
 }
 loadIntoDIV.funcs = {};
 
-function SubmitFeedback(callback) {
+function SubmitFeedback(cbSuccess, cbError) {
     var post = {
        request:$('*[name="fb_requesttype"]:checked').val()
     };
@@ -958,14 +959,25 @@ function SubmitFeedback(callback) {
         dataType: "json",
         contentType: 'application/json',
         data: $.JSON.encode(post),
-        context: {callback: callback},
+        context: {success: cbSuccess, error: cbError },
         processData: false,
-        success: SubmitFeedback.callback
+        success: SubmitFeedback.callback,
+        error: SubmitFeedback.error
     });
 }
 
-SubmitFeedback.callback = function (data, textStatus, xhr) {
+SubmitFeedback.error = function(xhr, textStatus, errorThrown) {
+    if ($.isFunction(this.error)) this.error();
+    ShowError('Error Submitting Feedback');
+}
 
+SubmitFeedback.callback = function (json, textStatus, xhr) {
+    if (json.response == 'error') {
+        if ($.isFunction(this.error)) this.error();
+        ShowError('Error Submitting Feedback');
+    } else {
+        if ($.isFunction(this.success)) this.success();
+    }
 };
 
 /**
