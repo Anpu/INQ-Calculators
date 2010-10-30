@@ -426,13 +426,127 @@ $(function() {
         }
     }).prev().addClass('ui-state-error');
 
-    $('#npc_search').basecomplete({
+/** Auto complete formatters */
+    var autoCompleteRenderers = {
+        withZone: function(ul, item) {
+           return $('<li></li>')
+                .append('<a>'+item.label + '<br/><span class="subtitle">'+item.realm +' '+item.region+'</span></a>')
+                .appendTo(ul);
+        }
+    };
+
+    $('#feedbackDialog').wizarddialog({
+        autoOpen: false,
+        resizable: false,
+        minWidth: 400,
+        open: function() {
+            $(this).find('input[type="checkbox"],input[type="radio"]').attr('checked',false);
+            $(this).find('input[type="text"]').val('');
+            $(this).find('textarea').val('');
+            // do this so we don't have to use an each'
+            $(this).find('select').attr('selectedIndex',0);
+        },
+        callbacks: {
+            finish_start: function(e, ui) {
+                var val = $(ui.current).find('input[name="fb_requesttype"]:checked').val();
+                if (val == 'new' || val == 'update') {
+                    val = 'itemtype';
+                }
+                return val || false;
+            },
+            finish_itemtype: function(e, ui) {
+                var type = $(ui.current).find('input[name="fb_itemtype"]:checked').val();
+                if (!type) return false;
+                var report = $(this).find('input[name="fb_requesttype"]:checked').val();
+                return type+'info';
+            },
+            enter_mobinfo: function(e, ui) {
+                var report = $(this).find('input[name="fb_requesttype"]:checked').val();
+                if (report == 'update') {
+                    $(ui.current).find('input[name="fb_mob_name"]').basecomplete('enable');
+                } else {
+                    $(ui.current).find('input[name="fb_mob_name"]').basecomplete('disable');
+                }
+            },
+            finish_mobinfo: function(e, ui) {
+                if ($(ui.current).find('input[name="fb_mob_name"]').val()=='') {
+                    return false;
+                } else {
+                    SubmitFeedback(ui.finish);
+                    return true;
+                }
+            },
+            enter_npcinfo: function(e, ui) {
+                var report = $(this).find('input[name="fb_requesttype"]:checked').val();
+                if (report == 'update') {
+                    $(ui.current).find('input[name="fb_npc_name"]').basecomplete('enable');
+                } else {
+                    $(ui.current).find('input[name="fb_npc_name"]').basecomplete('disable');
+                }
+            },
+            finish_npcinfo: function(e, ui) {
+                if ($(ui.current).find('input[name="fb_npc_name"]').val()=='') {
+                    return false;
+                } else {
+                    SubmitFeedback(ui.finish);
+                    return true;
+                }
+            },
+            enter_areainfo: function(e, ui) {
+                var report = $(this).find('input[name="fb_requesttype"]:checked').val();
+                if (report == 'update') {
+                    $(ui.current).find('input[name="fb_area_name"]').basecomplete('enable');
+                } else {
+                    $(ui.current).find('input[name="fb_area_name"]').basecomplete('disable');
+                }
+            },
+            finish_areainfo: function(e, ui) {
+                if ($(ui.current).find('input[name="fb_area_name"]').val()==''
+                        || $(ui.current).find('select[name="fb_area_realm').val()=='') {
+                    return false;
+                } else {
+                    SubmitFeedback(ui.finish);
+                    return true;
+                }
+            },
+            enter_feedback: function(e, ui) {
+                $(ui.current).find('select[name="fb_feedbacktype"]').change();
+            },
+            finish_feedback: function(e, ui) {
+                if ($(ui.current).find('select[name="fb_feedbacktype"]').val()==""
+                        || $(ui.current).find('textarea[name="fb_feedback"]').val()=='') {
+                    return false;
+                } else {
+                    SubmitFeedback(ui.finish);
+                    return true;
+                }
+            }
+        }
+    });
+    $('#feedbackDialog select[name="fb_feedbacktype"]').change(function() {
+        $('#fb_feedback_help').html($(this).children('option:selected').attr('title'));
+    });
+    $('#feedbackDialog *[name="fb_mob_areas"]').multicomplete({
+       source: function(request, response) {
+           $.getJSON(ajaxRoot + 'suggestZones',
+                request, function(json) {response(json.data)});
+       },
+       renderItem: autoCompleteRenderers.withZone
+    });
+    $('*[name="fb_npc_area"],*[name="fb_area_name"]').basecomplete({
+       source: function(request, response) {
+           $.getJSON(ajaxRoot + 'suggestZones',
+                request, function(json) {response(json.data)});
+       },
+       renderItem: autoCompleteRenderers.withZone
+    });
+    $('#npc_search, *[name="fb_npc_name"]').basecomplete({
        source: function(request, response) {
            $.getJSON(ajaxRoot + 'suggestNPCs',
                 request, function(json) {response(json.data)});
        }
     });
-    $('#mob_search').basecomplete({
+    $('#mob_search, *[name="fb_mob_name"]').basecomplete({
        source: function(request, response) {
            $.getJSON(ajaxRoot + 'suggestMobs',
                 request, function(json) {response(json.data)});
@@ -800,6 +914,59 @@ function loadIntoDIV(aDiv) {
     return loadIntoDIV.funcs[aDiv];
 }
 loadIntoDIV.funcs = {};
+
+function SubmitFeedback(callback) {
+    var post = {
+       request:$('*[name="fb_requesttype"]:checked').val()
+    };
+    if (post.request == "feedback") {
+        post.feedback = {
+            type:$('*[name="fb_feedbacktype"]').val(),
+            notes:$('*[name="fb_feedback"]').val()
+        };
+    } else {
+        post.item = $('*[name="fb_itemtype"]:checked').val();
+        if (post.item == "mob") {
+            post.mob = {
+                name: $('*[name="fb_mob_name"]').val(),
+                level: $('*[name="fb_mob_level"]').val(),
+                type: $('*[name="fb_mob_type"]').val(),
+                tameable: $('*[name="fb_mob_tameable"]').val(),
+                areas: $('*[name="fb_mob_areas"]').val(),
+                notes: $('*[name="fb_mob_notes"]').val()
+            };
+        } else if (post.item == "npc") {
+            post.npc = {
+                name: $('*[name="fb_npc_name"]').val(),
+                area: $('*[name="fb_npc_area"]').val(),
+                location: $('*[name="fb_npc_location"]').val(),
+                profession: $('*[name="fb_npc_profession"]').val(),
+                notes: $('*[name="fb_npc_notes"]').val()
+            };
+        } else if (post.item == "area") {
+            post.area = {
+                name: $('*[name="fb_area_name"]').val(),
+                realm: $('*[name="fb_area_realm"]').val(),
+                bounds: $('*[name="fb_area_bounds"]').val(),
+                notes: $('*[name="fb_area_notes"]').val()
+            };
+        }
+    }
+    $.ajax({
+        url: ajaxRoot+'addFeedback',
+        type:"POST",
+        dataType: "json",
+        contentType: 'application/json',
+        data: $.JSON.encode(post),
+        context: {callback: callback},
+        processData: false,
+        success: SubmitFeedback.callback
+    });
+}
+
+SubmitFeedback.callback = function (data, textStatus, xhr) {
+
+};
 
 /**
  * aParent  the element to put the error message inside of.  If empty load an error dialog instead

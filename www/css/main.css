@@ -170,7 +170,16 @@ div.content.ui-widget-content a:hover {
     float: left;
 }
 
+div.formrow > label {
+    font-weight: bold;
+    width: 8em;
+    display: inline-block;
+}
 
+p.formdesc {
+    font-size:0.8em;
+    font-style: italic;
+}
 /* Home section styles */
 
 ul.legend a {

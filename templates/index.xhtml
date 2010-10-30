@@ -24,6 +24,7 @@
     <script type="text/javascript" src="js/Polygon.js"></script>
     <script type="text/javascript" src="js/interactiveMap.js"></script>
     <script type="text/javascript" src="js/multicomplete.js"></script>
+    <script type="text/javascript" src="js/wizarddialog.js"></script>
     <script type="text/javascript">
       <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
     </script>
@@ -60,6 +61,157 @@
         </div>
         <div id="errorDialog" class="ui-helper-hidden" title="Error">
             <div class="message"/>
+        </div>
+        <div id="feedbackDialog"  class="ui-helper-hidden" title="Provide Feedback">
+            <div class="step" step="intro">
+                <p>Press Start to provide updates to the data or report an issue.</p>
+            </div>
+            <div class="step" step="start">
+                <p>What kind of feedback do you wish to report?</p>
+                <label class="pointer"><input type="radio" name="fb_requesttype" value="new"/>Missing Mob, NPC, or Area</label><br/>
+                <label class="pointer"><input type="radio" name="fb_requesttype" value="update"/>Correction to a Mob, NPC, or Area</label><br/>
+                <label class="pointer"><input type="radio" name="fb_requesttype" value="feedback"/>Any other feedback</label>
+                <div class="ui-helper-hidden ui-state-error error">
+                    Select the kind of feedback before proceeding.
+                </div>
+            </div>
+            <div class="step" step="itemtype">
+                <p>What type of item is wrong or missing?</p>
+                <div>
+                <label class="pointer"><input type="radio" name="fb_itemtype" value="mob"/>Mob</label><br/>
+                <label class="pointer"><input type="radio" name="fb_itemtype" value="npc"/>NPC</label><br/>
+                <label class="pointer"><input type="radio" name="fb_itemtype" value="area"/>Area</label><br/>
+                </div>
+                <div class="ui-helper-hidden ui-state-error error">
+                    Select the type of item before proceeding.
+                </div>
+            </div>
+            <div class="step finish" step="mobinfo">
+                <p>Enter the details of the Mob</p>
+                <div class="formrow"><label>Name:</label><input size="30" type="text" name="fb_mob_name"/></div>
+                <p class="formdesc">For Mob Level discovery enter in the following information.  The your players level, the color/difficulty of the Mob (easy, hard, etc..), and how many XP you received when killing the mob alone (23XP CHG+3).</p>
+                <div class="formrow"><label style="vertical-align:top">Level Discovery:</label><textarea cols="30" rows="5" name="fb_mob_level"/></div>
+                <div class="formrow"><label>Type:</label><select name="fb_mob_type">
+                        <option value="">-- Mob Type --</option>
+                        <option value="Unknown">Not Sure</option>
+                        <option value="Lesser">Lesser (Bugs, Spiders, etc..)</option>
+                        <option value="Beast">Beast (Wolfs, Bears, etc..)</option>
+                        <option value="Monster">Monster (Orcs, Trolls, etc..)</option>
+                        <option value="Summon">Summon (Lich, Golem)</option>
+                        <option value="Dummy">Training Dummies</option>
+                        <option value="Quest">Named Mob for a Quest</option>
+                        <option value="Leader">Named Leaders (Not Orc Leader, etc..)</option>
+                        <option value="Champion">Champion</option>
+                        <option value="Legendary">Legendary</option>
+                        <option value="Epic">Epic</option>
+                    </select></div>
+                <div class="formrow"><label>Tameable:</label><select name="fb_mob_tameable">
+                        <option value="">-- Tameable --</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select></div>
+                <div class="formrow"><label style="vertical-align:top;">Areas Found:</label><textarea cols="30" rows="5" name="fb_mob_areas"/></div>
+                <p>Additional Information (ie. where the Mob was last seen):</p>
+                <textarea cols="40" rows="5" name="fb_mob_notes"/>
+                <div class="ui-helper-hidden ui-state-error error">
+                    Enter at least the Mob name
+                </div>
+            </div>
+            <div class="step finish" step="npcinfo">
+                <p>Enter in as many details of the NPC as you know or need to be corrected</p>
+                <div class="formrow"><label>Name:</label><input size="30" type="text" name="fb_npc_name"/></div>
+                <div class="formrow"><label>Area:</label><input size="30" type="text" name="fb_npc_area"/></div>
+                <div class="formrow"><label>Location (X,Z):</label><input size="30" type="text" name="fb_npc_location"/></div>
+                <div class="formrow"><label>Profession:</label><select name="fb_npc_profession">
+                      <option value="">-- Profession --</option>
+                      <option value="Arena Guardian:">Arena Guardian</option>
+                      <option value="Clan Notary:">Clan Notary</option>
+                      <optgroup label="Denizens">
+                        <option value="Denizen:Animal">Animal</option>
+                        <option value="Denizen:Denizen">Denizen</option>
+                        <option value="Denizen:Guide">Guide</option>
+                        <option value="Denizen:Noble">Noble</option>
+                        <option value="Denizen:Town Crier">Town Crier</option>
+                      </optgroup>
+                      <optgroup label="Guards">
+                        <option value="Guard:Guard">Guard</option>
+                        <option value="Guard:General">General</option>
+                        <option value="Guard:Elite guard">Elite guard</option>
+                      </optgroup>
+                      <optgroup label="Merchants">
+                        <option value="Merchant:Alchemist">Alchemist</option>
+                        <option value="Merchant:Blacksmith">Blacksmith</option>
+                        <option value="Merchant:Enchanter">Enchanter</option>
+                        <option value="Merchant:Farrier">Farrier</option>
+                        <option value="Merchant:Herbalist">Herbalist</option>
+                        <option value="Merchant:Merchant">Merchant</option>
+                        <option value="Merchant:Tailor">Tailor</option>
+                        <option value="Merchant:Weaponsmith">Weaponsmith</option>
+                        <option value="Merchant:Woodworker">Woodworker</option>
+                      </optgroup>
+                      <option value="Teleporter:">Teleporter</option>
+                      <optgroup label="Trainers">
+                        <option value="Trainer:Archer Trainer">Archer Trainer</option>
+                        <option value="Trainer:Hunter Trainer">Hunter Trainer</option>
+                        <option value="Trainer:Marksman Trainer">Marksman Trainer</option>
+                        <option value="Trainer:Mage Trainer">Mage Trainer</option>
+                        <option value="Trainer:Conjurer Trainer">Conjurer Trainer</option>
+                        <option value="Trainer:Warlock Trainer">Warlock Trainer</option>
+                        <option value="Trainer:Warrior Trainer">Warrior Trainer</option>
+                        <option value="Trainer:Barbarian Trainer">Barbarian Trainer</option>
+                        <option value="Trainer:Knight Trainer">Knight Trainer</option>
+                      </optgroup>
+                    </select></div>
+                <p>Additional Information:</p>
+                <textarea cols="40" rows="5" name="fb_npc_notes"/>
+                <div class="ui-helper-hidden ui-state-error error">
+                    Enter at least the NPC name.
+                </div>
+            </div>
+            <div class="step finish" step="areainfo">
+                <p>Enter in the defaults of the Area</p>
+                <div class="formrow"><label>Name:</label><input size="30" type="text" name="fb_area_name"/></div>
+                <div class="formrow"><label>Realm:</label><select name="fb_area_realm">
+                        <option value="">-- Realm --</option>
+                        <optgroup label="Alsius">
+                            <option value="Alsius Initiation Zone">Alsius Initiation Zone</option>
+                            <option value="Alsius Inner Realm">Alsius Inner Realm</option>
+                            <option value="Alsius War Zone">Alsius War Zone</option>
+                        </optgroup>
+                        <optgroup label="Ignis">
+                            <option value="Ignis Initiation Zone">Ignis Initiation Zone</option>
+                            <option value="Ignis Inner Realm">Ignis Inner Realm</option>
+                            <option value="Ignis War Zone">Ignis War Zone</option>
+                        </optgroup>
+                        <optgroup label="Syrtis">
+                            <option value="Syrtis Initiation Zone">Syrtis Initiation Zone</option>
+                            <option value="Syrtis Inner Realm">Syrtis Inner Realm</option>
+                            <option value="Syrtis War Zone">Syrtis War Zone</option>
+                        </optgroup>
+                    </select></div>
+                <p class="formdesc">Describe the boundaries of the zone. Include North, Sound, East,and West coordinates and a description of the shape.</p>
+                <div class="formrow"><label style="vertical-align:top;">Boundaries</label><textarea cols="30" rows="5" name="fb_area_bounds"/></div>
+                <p>Additional Information:</p>
+                <textarea cols="40" rows="5" name="fb_area_notes"/>
+                <div class="ui-helper-hidden ui-state-error error">
+                    Enter at least the Area name and select the realm.
+                </div>
+            </div>
+            <div class="step finish" step="feedback">
+                <select name="fb_feedbacktype">
+                    <option title="Describe the error you encountered.">Error</option>
+                    <option title="Describe the feature suggestion.">Suggestion</option>
+                    <option title="Describe the general feedback.">General Feedback</option>
+                </select>
+                <p id="fb_feedback_help"/>
+                <textarea cols="40" rows="8" name="fb_feedback"/>
+                <div class="ui-helper-hidden ui-state-error error">
+                    Fill in the description field.
+                </div>
+            </div>
+            <div class="step" step="thanks">
+                <p>Thank you for providing valuable feedback.</p>
+            </div>
         </div>
     <!-- End The Tools -->
     <div id="header">
