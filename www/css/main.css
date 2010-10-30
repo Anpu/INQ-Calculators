@@ -136,9 +136,13 @@ ul.navigation li.ui-state-hover a {
     overflow-y: auto;
 }
 
+.ui-autocomplete .ui-menu-item {
+    font-size: 0.8em;
+}
+
 .ui-autocomplete .ui-menu-item .subtitle {
     font-style: italic;
-    font-size: 80%;
+    font-size: 0.8em;
 }
 
 div.content {
