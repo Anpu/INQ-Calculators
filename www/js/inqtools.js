@@ -155,6 +155,23 @@ $(function() {
         }
     });
 
+    $('#helpmenu')
+        .addClass('ui-helper-reset ui-helper-clearfix')
+        .children().addClass('ui-state-default')
+        .hover(
+            function() {$(this).addClass('ui-state-hover');},
+            function() {$(this).removeClass('ui-state-hover');}
+        );
+    $('#helpmenu .btn-feedback').click(function(event) {
+        event.preventDefault();
+        $('#feedbackDialog').wizarddialog('open');
+    });
+    $('#helpmenu .btn-help').click(function(event) {
+        event.preventDefault();
+        ShowError("Some Cool Help Would appear");
+    });
+
+
     $('ul.navigation li:first-child').addClass('first-item');
     $('ul.navigation li:last-child').addClass('last-item');
 

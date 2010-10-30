@@ -46,8 +46,18 @@ option, optgroup, optgroup > option {
     font-family: inherit !important;
 }
 
+#helpmenu {
+    right: 0px;
+    position: absolute;
+}
+
 #header {
     text-align: center;
+}
+
+#header img {
+    width: 400px;
+    height: 100px;
 }
 
 #main {
@@ -69,40 +79,56 @@ ul.legend {
     color: #EFC235;
 }
 
+#main > ul.navigation {
+    float: left;
+    left: 50%;
+    margin: 0 auto;
+    padding: 0 !important;
+}
+
 ul.navigation {
     background-color: transparent;
     background-image: none;
     border: none;
-    float: left;
     position: relative;
-    left: 50%;
     list-style: none;
     list-style-type: none;
     text-align: left;
-    padding: 0 !important;
-    margin: 0 auto;
+}
+
+#main > ul.navigation li {
+    position: relative;
+    left: -50%;
+    margin: 0 !important;
+}
+
+#header > ul.navigation li a {
+    padding: 0.5em 0px;
+    display: block;
 }
 
 ul.navigation li {
     float: left;
-    position: relative;
-    left: -50%;
     font-weight: bold;
-    padding: 0.2em 1em;
+    padding: 0px 1em;
     padding-bottom: 0 !important;
     background-image: url('../images/menu-gradient.png') !important;
     background-repeat: repeat-x;
     background-position: 0 0 !important;
-    margin: 0 !important;
+    height: 40px;
 }
 
-ul.navigation li.first-item {
+ul.navigation li a {
+    padding-top: 0.6em !important;
+}
+
+ul.navigation li.first-item, button.first-item {
     padding-left: 38px;
     background-image: url('../images/menu-left.png') !important;
     background-repeat: no-repeat;
 }
 
-ul.navigation li.last-item {
+ul.navigation li.last-item, button.last-item {
     padding-right: 38px;
     background-image: url('../images/menu-right.png') !important;
     background-repeat: no-repeat;
