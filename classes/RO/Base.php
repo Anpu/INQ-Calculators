@@ -28,6 +28,7 @@ abstract class RO_Base {
 
     /** @var Memcached */
     static private $memcache = false;
+    static private $memcache_expire = 0;
     static private $cache = array();
 
     public function  __construct($id, $extra = array())
@@ -50,15 +51,16 @@ abstract class RO_Base {
         return $this->id;
     }
 
-    final static public function setMemcache(Memcached $cache) {
+    final static public function setMemcache(Memcached $cache, $expire = 0) {
         self::$memcache = $cache;
+        self::$memcache_expire = $expire;
     }
 
     final protected function setCache($data)
     {
         list($name, $key) = $this->configCache();
         if (self::$memcache) {
-            self::$memcache->set($name.':'.$data->$key, $data);
+            self::$memcache->set($name.':'.$data->$key, $data, 0, self::$memcache_expire);
         } else {
             self::$cache[$name][$data->$key] = $data;
         }

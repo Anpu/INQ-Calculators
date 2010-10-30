@@ -40,7 +40,7 @@ Database::setDSN($config->db->dsn, $config->db->user, $config->db->password);
 if ($config->memcache) {
     $memcache = new Memcached();
     $memcache->addServer($config->memcache->host, $config->memcache->port);
-    RO_Base::setMemcache($memcache);
+    RO_Base::setMemcache($memcache, $config->memcache->expire);
 }
 
 if (empty($_GET['PATH_INFO'])) {
@@ -88,7 +88,7 @@ if (empty($_GET['PATH_INFO'])) {
                 $data = $class::request(array_slice($path_info,2));
 
                 if ($config->memcache && $class::$cache) {
-                    $memcache->set($key, $data);
+                    $memcache->set($key, $data, 0, $config->memcache->expire);
                 }
             }
             if (DEBUG) {

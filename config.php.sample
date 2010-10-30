@@ -34,6 +34,7 @@ return (object)array(
   'memcache' => (object)array(
       'host'=>'localhost',
       'port'=>11211,
+      'expire'=>0,
   ),
   */
 
