@@ -26,6 +26,7 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
         stepclass:'step',
         finishclass:'finish',
         errorclass:'error',
+        loadingclass:'',
         callbacks: {}
     },
 
@@ -61,6 +62,9 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
         this._CBPostFinish = function(e) {
             self._wizardPostFinish(e);
         };
+        this._CBPostFail = function(e) {
+            self._wizardPostFail(e);
+        };
         this._CBDone = function(e) {
             self._wizardDone(e);
         };
@@ -69,6 +73,7 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
     _resetWizard: function(noIntro) {
         // hide all steps
         this.steps.hide();
+        if (this.loader) this.loader.hide();
         this.history = [];
         this.current = null;
         // setup step 0
@@ -77,6 +82,10 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
         } else {
             this._gotoStep(this.start);
         }
+    },
+
+    next: function() {
+        this._wizardNext($.Event('next'));
     },
 
     _wizardNext: function(e) {
@@ -113,6 +122,10 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
         }
     },
 
+    prev: function() {
+        this._wizardPrev($.Event('prev'));
+    },
+
     _wizardPrev: function(e) {
         var step = this.history.pop();
         this._gotoStep(step);
@@ -120,7 +133,7 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
 
     _wizardFinish: function(e) {
         var ret = this._doCallback('finish_'+this.current.attr('step'),e,
-                {current:this.current,finish:this._CBPostFinish});
+                {current:this.current,finish:this._CBPostFinish,fail:this._CBPostFail});
         if (ret === false) {
             this.current.find('.'+this.options.errorclass).slideDown();
             return;
@@ -129,13 +142,31 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
         }
         if (ret !== true) {
             this._wizardPostFinish(e);
+        } else {
+            // setup loader
+            if (!this.loader) {
+                this.loader = $('<div class="ui-helper-hidden" style="text-align: center"/>');
+                this.loader.append($('<span/>').addClass(this.options.loadingclass));
+                this.loader.appendTo(this.element);
+            }
+            this.current.slideUp('fast');
+            this.loader.slideDown('fast');
         }
     },
     _wizardPostFinish: function(e) {
         if (!this.thanks) {
             this._wizardDone(e);
         } else {
+            if (this.loader) this.loader.slideUp();
             this._gotoStep(this.thanks);
+        }
+    },
+    _wizardPostFail: function(e) {
+        if (this.loader && this.loader.index(this.current) > -1) {
+            this._wizardPrev($.Event('postfail'));
+        } else {
+            if (this.loader) this.loader.slideUp();
+            this.current.slideDown();
         }
     },
     _wizardDone: function() {
@@ -171,6 +202,10 @@ $.widget('ooo.wizarddialog', $.ui.dialog, {
     _updateButtons: function() {
         var idx = this.steps.index(this.current);
         var buttons = {};
+        if (this.loader && this.loader.index(this.current) > -1) {
+            this._createButtons(buttons);
+            return;
+        }
         if (this.history.length) {
             buttons["Back"] = this._CBPrev;
         }
