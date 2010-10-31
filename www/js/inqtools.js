@@ -168,7 +168,7 @@ $(function() {
     });
     $('#helpmenu .btn-help').click(function(event) {
         event.preventDefault();
-        ShowError("Some Cool Help Would appear");
+        $('#feedbackDialog').dialog('open');
     });
 
 
@@ -443,6 +443,13 @@ $(function() {
         }
     }).prev().addClass('ui-state-error');
 
+    $('#helpDialog').dialog({
+        autoOpen: false,
+        modal: true,
+        open: function(event, ui) {
+            $(this).load('/help');
+        }
+    });
 /** Auto complete formatters */
     var autoCompleteRenderers = {
         withZone: function(ul, item) {

@@ -104,6 +104,9 @@ if (empty($_GET['PATH_INFO'])) {
                 'response'=>'success',
                 'data'=>$data,
             ));
+        } elseif ($path_info[0]=='help') {
+            $tpl = new Template("help.xhtml");
+            $tpl->echoExecute();
         } else {
             throw new Exception("Invalid Request");
         }
