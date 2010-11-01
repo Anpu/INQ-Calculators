@@ -577,6 +577,10 @@ $(function() {
                 request, function(json) {response(json.data)});
        }
     });
+    $('*[name="fb_reporter_server"]').basecomplete({
+        source: ['Horus','Ra','Muspell','Niflheim','Nemon'],
+        minLength: 0
+    });
 
     window.Trainer = new cTrainer('#trainer_tool');
 
@@ -942,7 +946,10 @@ loadIntoDIV.funcs = {};
 
 function SubmitFeedback(cbSuccess, cbError) {
     var post = {
-       request:$('*[name="fb_requesttype"]:checked').val()
+       request:$('*[name="fb_requesttype"]:checked').val(),
+       name:$('*[name="fb_reporter_name"]').val(),
+       server:$('*[name="fb_reporter_server"]').val(),
+       email:$('*[name="fb_reporter_email"]').val()
     };
     if (post.request == "feedback") {
         post.feedback = {

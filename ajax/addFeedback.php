@@ -82,14 +82,19 @@ class ajax_addFeedback extends AjaxRequest {
     }
 
     private static function getDescription($data) {
+        $name =
+            'Name: '.(empty($data->name) ? "Unknown" : $data->name)
+                .' of '.(empty($data->server) ? "Unknown" : $data->server)."\n"
+            .'Email: '.(empty($data->email) ? "Unknown" : $data->email)."\n\n";
+
         switch ($data->request) {
             case 'feedback':
-                return $data->feedback->notes;
+                return $name.'Notes: '.$data->feedback->notes;
             case 'update':
             case 'new':
                 switch ($data->item) {
                     case 'mob':
-                        return implode("\n",array(
+                        return $name.implode("\n",array(
                             'Name: '.$data->mob->name,
                             'Level: '.$data->mob->level,
                             'Type: '.$data->mob->type,
@@ -98,7 +103,7 @@ class ajax_addFeedback extends AjaxRequest {
                             'Notes: '.$data->mob->notes,
                         ));
                     case 'npc':
-                        return implode("\n",array(
+                        return $name.implode("\n",array(
                             'Name: '.$data->npc->name,
                             'Area: '.$data->npc->area,
                             'Location: '.$data->npc->location,
@@ -106,7 +111,7 @@ class ajax_addFeedback extends AjaxRequest {
                             'Notes: '.$data->mob->notes,
                         ));
                     case 'area':
-                        return implode("\n",array(
+                        return $name.implode("\n",array(
                             'Name: '.$data->area->name,
                             'Realm: '.$data->area->realm,
                             'Bounds: '.$data->area->bounds,
@@ -115,7 +120,7 @@ class ajax_addFeedback extends AjaxRequest {
                 }
                 break;
         }
-        return "Unknown";
+        return $name."Unknown Feedback Request";
     }
 
     private static function getCategory($data) {
