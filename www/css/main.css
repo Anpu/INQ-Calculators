@@ -62,7 +62,6 @@ option, optgroup, optgroup > option {
 
 #main {
     display: none;
-    width: 100%;
     margin-left: auto;
     margin-right: auto;
     overflow: hidden;
