@@ -276,11 +276,18 @@ $(function() {
             var v = o.slider('values');
             var d = ui.value - v[0];
             var n = v[0]+d;
+            var a = o.is(':visible');
+            if (!a) {
+                o.slider('option','animate',false);
+            }
             if (n > 58) n = 58;
             o.slider('values',0,n);
             n = v[1]+d;
             if (n > 58) n = 58;
             o.slider('values',1,n);
+            if (!a) {
+                o.slider('option','animate',true);
+            }
         }
     });
     $('#player_level_display').text('01');
