@@ -684,11 +684,11 @@ select option.category {
     width: 100%;
 }
 .credit .name {
-    color: blue;
+    color: green;
     font-weight: bold;
 }
 .credit .job {
-    color: white;
+    color: #efc235;
     font-size: 75%;
     font-weight: lighter;
 }
