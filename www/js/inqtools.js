@@ -713,14 +713,14 @@ function doSearch(alt) {
     if ($.isFunction(window[cb])) {
         window[cb](alt);
     }
-    if (!$('#logo').data('moved')) {
+    if ($('#logo').length && !$('#logo').data('moving')) {
         animateLogo();
     }
 }
 
 function animateLogo() {
     $('#logo')
-        .data('moved',true)
+        .data('moving',true)
         .clone(false)
         .attr('id','#logo-moved')
         .css({
