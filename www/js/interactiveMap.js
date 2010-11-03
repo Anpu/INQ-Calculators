@@ -152,9 +152,8 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
             h: (tiles_y + 1) * this._map.tilesize
         };
         if (this._activeLayerNum !== undefined) {
-            var left = this._elems.container[0].offsetLeft;
-            var top = this._elems.container[0].offsetTop;
-            this.checkTiles(left, top);
+            var p = this._elems.container.position();
+            this.checkTiles(p.left, p.top);
             this.overlay().draw();
         }
     },
@@ -220,16 +219,15 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
         }
         this._activeLayer = this._map.layers[layer];
         this._activeLayerNum = layer;
-        var left = this._elems.container[0].offsetLeft;
-        var top = this._elems.container[0].offsetTop;
+        var p = this._elems.container.position();
         if (cur_scale) {
             var new_scale = this._activeLayer.scale;
             var mult = (cur_scale.den * new_scale.num) / (cur_scale.num * new_scale.den);
-            left = (left - center.x) * mult + center.x;
-            top = (top - center.y) * mult + center.y;
-            this._elems.container.css({left:left,top:top});
+            p.left = (p.left - center.x) * mult + center.x;
+            p.top = (p.top - center.y) * mult + center.y;
+            this._elems.container.css({left:p.left,top:p.top});
         }
-        this.checkTiles(left, top);
+        this.checkTiles(p.left, p.top);
         this._elems.overlay.css({width:this._activeLayer.width,height:this._activeLayer.height});
         this.overlay()
             .setScale(this._activeLayer.scale)
@@ -265,7 +263,7 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
         var tile = $('<div class="tile"/>')
             .css({left:x,top:y,
                 width:this._map.tilesize,height:this._map.tilesize})
-            .appendTo(this._elems.tileCache)
+            .appendTo(this._elems.tileCache);
         $('<img/>')
             .attr('src',this._getImageForTile(x,y))
             .css({
@@ -273,6 +271,7 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
                 height: this._map.tilesize
             })
             .appendTo(tile);
+        tile.data('position',{left:x, top:y});
         if (!this._tileCache[x]) {
             this._tileCache[x] = {};
         }
@@ -281,12 +280,15 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
     },
     _moveTile: function(tile, x, y) {
         // Remove from Cache
-        this._tileCache[tile[0].offsetLeft][tile[0].offsetTop] = undefined;
+        var p = tile.data('position');
+        this._tileCache[p.left][p.top] = undefined;
         var img = tile.children();
         // Set blank image
         img.attr('src',this.options.blankImage);
         // Move Tile
-        tile.css({left:x,top:y});
+        p = {left:x,top:y};
+        tile.css(p);
+        tile.data('position',p);
         // Update Image
         img.attr('src',this._getImageForTile(x,y));
         // update layer for tile
@@ -354,14 +356,15 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
     },
     _mouseStart: function(aEvt) {
         this.offset = this.element.offset();
+        var p = this._elems.container.position();
         $.extend(this.offset, {
             click: { //Where click happened, relative to the element
                 x:aEvt.pageX - this.offset.left,
                 y:aEvt.pageY - this.offset.top
             },
             view: {
-                x:this._elems.container[0].offsetLeft,
-                y:this._elems.container[0].offsetTop
+                x:p.left,
+                y:p.top
             }
         });
     },
