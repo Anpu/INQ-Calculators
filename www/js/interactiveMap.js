@@ -271,7 +271,7 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
                 height: this._map.tilesize
             })
             .appendTo(tile);
-        tile.data('position',{left:x, top:y});
+        $.data(tile,'position',{left:x, top:y});
         if (!this._tileCache[x]) {
             this._tileCache[x] = {};
         }
@@ -280,7 +280,7 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
     },
     _moveTile: function(tile, x, y) {
         // Remove from Cache
-        var p = tile.data('position');
+        var p = $.data(tile,'position');
         this._tileCache[p.left][p.top] = undefined;
         var img = tile.children();
         // Set blank image
@@ -288,11 +288,11 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
         // Move Tile
         p = {left:x,top:y};
         tile.css(p);
-        tile.data('position',p);
+        $.data(tile,'position',p);
         // Update Image
         img.attr('src',this._getImageForTile(x,y));
         // update layer for tile
-        tile.data('layer',this._activeLayerNum);
+        $.data(tile,'layer',this._activeLayerNum);
         // Add back into cache
         if (!this._tileCache[x]) {
             this._tileCache[x] = {};
@@ -332,7 +332,7 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
             for (var x=l; x < r; x+=this._map.tilesize) {
                 var tile = this._getTileForPoint(x, y);
                 if (tile === false
-                        || tile.data('layer')!=this._activeLayerNum) {
+                        || $.data(tile,'layer')!=this._activeLayerNum) {
                     needed.push([x,y]);
                 } else {
                     good.push(tile);
