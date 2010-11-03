@@ -457,6 +457,27 @@ $(function() {
             $(this).load('/help');
         }
     });
+    $('#licenseDialog').dialog({
+        autoOpen: false,
+        modal: true,
+        show: 'scale',
+        hide: 'scale',
+        width: '80%',
+        open: function(event, ui) {
+            $(this)
+                .dialog('option','height',$(window).height() * 0.8)
+                .load('/license');
+        }
+    });
+    $('#license').click(function(e) {
+        e.preventDefault();
+        $('#licenseDialog')
+                .dialog('option','height',$(window).height() * 0.8)
+                .load($(this).attr('href'),function() {
+                    $('#licenseDialog').dialog('open');
+                });
+    });
+
 /** Auto complete formatters */
     var autoCompleteRenderers = {
         withZone: function(ul, item) {
@@ -610,7 +631,7 @@ $(function() {
     }
     $('#main').tabs('option','fx',{opacity:'toggle'});
 
-    $('#main').delay(100).fadeIn('normal',function() {
+    $('#main,#footer').delay(100).fadeIn('normal',function() {
         $('#main').tabs('select',curpage);
     });
 });

@@ -67,7 +67,6 @@ if (empty($_GET['PATH_INFO'])) {
 } else {
     try {
         $path_info = explode("/",trim($_GET['PATH_INFO'],'/'));
-        header("Content-Type: application/json");
         if ($path_info[0]=='ajax' && !empty($path_info[1])
                 && preg_match("/^[a-zA-Z]+$/",$path_info[1])) {
             // Process Ajax request
@@ -95,6 +94,7 @@ if (empty($_GET['PATH_INFO'])) {
                 $stop = microtime(true);
                 FB::log(number_format(($stop - $start) * 1000),'Duration');
             }
+            header("Content-Type: application/json; charset=UTF-8");
             if ($class::$cache && $config->ajaxexpires) {
                 header("Pragma: public");
                 header("Cache-Control: maxage=".$config->ajaxexpires);
@@ -107,16 +107,23 @@ if (empty($_GET['PATH_INFO'])) {
         } elseif ($path_info[0]=='help') {
             $tpl = new Template("help.xhtml");
             $tpl->echoExecute();
+        } elseif ($path_info[0]=='license') {
+            $tpl = new Template("license.xhtml");
+            $tpl->license = "<h1>test</h1>";
+            $tpl->license = file_get_contents("http://www.gnu.org/licenses/agpl-3.0-standalone.html");
+            $tpl->echoExecute();
         } else {
             throw new Exception("Invalid Request");
         }
     } catch(PDOException $ex) {
-      echo json_encode(array(
-          'response'=>'error',
-          'error'=>"Database Error: SQLSTATE:".$ex->getCode(),
-      ));
-      error_log((string)$ex);
+        header("Content-Type: application/json; charset=UTF-8");
+        echo json_encode(array(
+            'response'=>'error',
+            'error'=>"Database Error: SQLSTATE:".$ex->getCode(),
+        ));
+        error_log((string)$ex);
     } catch(Exception $ex) {
+        header("Content-Type: application/json; charset=UTF-8");
         echo json_encode(array(
             'response'=>'error',
             'error'=>(string)$ex,

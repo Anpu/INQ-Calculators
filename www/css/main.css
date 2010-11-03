@@ -47,8 +47,12 @@ option, optgroup, optgroup > option {
 }
 
 #helpmenu {
-    right: 0px;
+    right: 0.5em;
     position: absolute;
+}
+
+#devheader {
+    text-align: center;
 }
 
 #header {
@@ -67,6 +71,15 @@ option, optgroup, optgroup > option {
     overflow: hidden;
     border: none;
     background: transparent none;
+}
+
+#footer {
+    display: none;
+    text-align: center;
+    font-size: 0.8em;
+}
+#footer p {
+    margin: 0px;
 }
 
 h2 {

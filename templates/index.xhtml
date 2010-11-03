@@ -31,7 +31,7 @@
   </head>
 
   <body>
-      <div class="ui-state-highlight" style="text-align:center" tal:condition="notempty:devheader" tal:content="structure devheader"/>
+      <div class="ui-state-highlight" id="devheader" tal:condition="notempty:devheader" tal:content="structure devheader"/>
     <!-- The Tools -->
         <div class="tool_popup" id="player_level">
             <div class="ui-slider-marker" style="left:18.3673%;"/>
@@ -67,6 +67,7 @@
             <div class="message"/>
         </div>
         <div id="helpDialog" class="ui-helper-hidden" title="Help"/>
+        <div id="licenseDialog" class="ui-helper-hidden" title="License Information"/>
         <div id="feedbackDialog"  class="ui-helper-hidden" title="Provide Feedback">
             <div class="step" step="intro">
                 <p>Press Start to provide updates to the data or report an issue.</p>
@@ -422,6 +423,10 @@
               <div id="RO_InteractiveMap"/>
           </div>
       </div>
+    </div>
+    <div id="footer">
+        <p>INQ Calculators Copyright &copy; 2010. <a id="license" href="/license">Read License Information</a></p>
+        <p>Data Copyright Clan Inquisition &copy; 2007-2010 and portions Copyright &copy; NGD Studios.</p>
     </div>
   </body>
 </html>
