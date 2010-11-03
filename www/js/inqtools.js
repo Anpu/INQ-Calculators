@@ -1056,7 +1056,7 @@ function SubmitFeedback(cbSuccess, cbError) {
         dataType: "json",
         contentType: 'application/json',
         data: $.JSON.encode(post),
-        context: {success: cbSuccess, error: cbError },
+        context: {success: cbSuccess, error: cbError},
         processData: false,
         success: SubmitFeedback.callback,
         error: SubmitFeedback.error
