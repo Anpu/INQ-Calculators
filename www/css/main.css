@@ -275,6 +275,11 @@ ul.legend a {
     display: none;
 }
 
+.moreresults {
+    text-align: center;
+    color: #EFC325;
+}
+
 .toggle_icon {
   width: 16px;
   height: 16px;

@@ -22,7 +22,7 @@
     </tal:block>
 </div>
 <!-- Shows a Fetch more tbody -->
-<tbody metal:define-macro="moreresults" class="moreresults" tal:attributes="limit limit; offset php:offset+limit">
+<tbody metal:define-macro="moreresults" class="moreresults pointer" tal:attributes="limit limit; offset php:offset+limit">
     <tr>
         <td tal:attributes="colspan colspan">
             Fetch More Results...
