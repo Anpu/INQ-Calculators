@@ -168,7 +168,7 @@ $(function() {
     });
     $('#helpmenu .btn-help').click(function(event) {
         event.preventDefault();
-        $('#feedbackDialog').dialog('open');
+        $('#helpDialog').dialog('open');
     });
 
 
