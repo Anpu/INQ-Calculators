@@ -49,6 +49,7 @@ option, optgroup, optgroup > option {
 #helpmenu {
     right: 0.5em;
     position: absolute;
+    z-index: 100;
 }
 
 #devheader {
