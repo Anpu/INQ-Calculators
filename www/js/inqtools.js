@@ -713,6 +713,44 @@ function doSearch(alt) {
     if ($.isFunction(window[cb])) {
         window[cb](alt);
     }
+    if (!$('#logo').data('moved')) {
+        animateLogo();
+    }
+}
+
+function animateLogo() {
+    $('#logo')
+        .data('moved',true)
+        .clone(false)
+        .attr('id','#logo-moved')
+        .css({
+            position:'absolute',
+            left: $('#logo').offset().left,
+            top: $('#logo').offset().top
+        })
+        .insertAfter('#logo')
+    // Animation
+        .delay(100).queue(function() {
+            $('#logo').css({
+                visibility:'hidden'
+            });
+            $(this).dequeue();
+        })
+        .animate({
+            left:0
+        })
+        .queue(function() {
+            $('#header').animate({
+                height:0
+            },function() {
+                $('#logo').remove();
+            });
+            $(this).dequeue();
+        })
+        .animate({
+            width:$('#logo').width()*0.7,
+            height:$('#logo').height()*0.7
+        });
 }
 
 function regionsFromMap() {
