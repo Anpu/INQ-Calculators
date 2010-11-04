@@ -679,10 +679,14 @@ locationLabel.labels = {
 }
 
 function switchTool(optObj, animate) {
+    $('#header')
+        .data('logo',optObj.data('logo') || 'side')
+        .delay(100)
+        .queue(animateLogo);
+
     animate = (animate === false) ? false : true;
     var aWidgets = optObj.attr('widgets') || '';
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
-    //if (aWidgets.length > 0) w.push('go');
     $('.tool_popup_wrapper').stop(true,true).slideUp({queue:false});
     $('#tool_options *[widget]').each(function() {
         var o = $(this);
@@ -713,24 +717,67 @@ function doSearch(alt) {
     if ($.isFunction(window[cb])) {
         window[cb](alt);
     }
-    if ($('#logo').length && !$('#logo').data('moving')) {
-        animateLogo();
-    }
 }
 
 function animateLogo() {
-    $('#logo')
-        .data('moving',true)
-        .clone(false)
-        .attr('id','#logo-moved')
-        .css({
-            position:'absolute',
-            left: $('#logo').offset().left,
-            top: $('#logo').offset().top
-        })
-        .insertAfter('#logo')
+    var o = $(this).data('logo');
+    if (o == 'center') {
+        animateLogoToCenter();
+    } else {
+        animateLogoToSide();
+    }
+    $(this).dequeue();
+}
+
+function animateLogoToCenter() {
+    if (!$('#logo').data('moved')) {
+        return;
+    }
     // Animation
-        .delay(100).queue(function() {
+    $('#logo-moved').animate({
+        width: $('#logo').width(),
+        height: $('#logo').height()
+    });
+    $('#header').animate({
+        height:$('#header').data('oldheight')
+    },function() {
+        $('#logo-moved')
+            .animate({
+                left: $('#logo').offset().left
+            },function() {
+                $('#logo').css({
+                    visibility:'visible'
+                }).data('moved',false);
+                $('#logo-moved').css({
+                    visibility:'hidden'
+                })
+            });
+    });
+}
+
+function animateLogoToSide() {
+    if ($('#logo').data('moved')) {
+        return;
+    }
+    if ($('#logo-moved').length==0) {
+        $('#logo')
+            .clone()
+            .attr('id','logo-moved')
+            .css({
+                position:'absolute',
+                left: $('#logo').offset().left,
+                top: $('#logo').offset().top
+            })
+            .insertAfter('#logo');
+    }
+    // Animation
+    $('#logo').data('moved',true);
+    $('#logo-moved')
+        .css({
+            visibility:'visible'
+        })
+        .delay(50)
+        .queue(function() {
             $('#logo').css({
                 visibility:'hidden'
             });
@@ -740,10 +787,9 @@ function animateLogo() {
             left:0
         })
         .queue(function() {
+            $('#header').data('oldheight',$('#header').height());
             $('#header').animate({
                 height:0
-            },function() {
-                $('#logo').remove();
             });
             $(this).dequeue();
         })
