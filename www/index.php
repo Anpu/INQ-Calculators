@@ -109,8 +109,7 @@ if (empty($_GET['PATH_INFO'])) {
             $tpl->echoExecute();
         } elseif ($path_info[0]=='license') {
             $tpl = new Template("license.xhtml");
-            $tpl->license = "<h1>test</h1>";
-            $tpl->license = file_get_contents("http://www.gnu.org/licenses/agpl-3.0-standalone.html");
+            $tpl->license = new FileLoader("http://www.gnu.org/licenses/agpl-3.0-standalone.html");
             $tpl->echoExecute();
         } else {
             throw new Exception("Invalid Request");
