@@ -105,9 +105,19 @@ if (empty($_GET['PATH_INFO'])) {
                 'data'=>$data,
             ));
         } elseif ($path_info[0]=='help') {
+            if ($config->cachehome) {
+                header("Pragma: public");
+                header("Cache-Control: maxage=".$config->cachehome);
+                header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
+            }
             $tpl = new Template("help.xhtml");
             $tpl->echoExecute();
         } elseif ($path_info[0]=='license') {
+            if ($config->cachehome) {
+                header("Pragma: public");
+                header("Cache-Control: maxage=".$config->cachehome);
+                header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
+            }
             $tpl = new Template("license.xhtml");
             $tpl->license = new FileLoader("http://www.gnu.org/licenses/agpl-3.0-standalone.html");
             $tpl->echoExecute();
