@@ -489,7 +489,7 @@ select option.category {
     background-image: url(../images/crests.png);
 }
 .ROCrests.alsius {
-    height: 41px;
+    height: 40px;
     width: 30px;
     background-position: -28px -41px;
 }
@@ -497,7 +497,7 @@ select option.category {
     background-position: -28px 0;
 }
 .ROCrests.ignis {
-    height: 41px;
+    height: 40px;
     width: 28px;
     background-position: 0 -41px;
 }
@@ -505,7 +505,7 @@ select option.category {
     background-position: 0 0;
 }
 .ROCrests.syrtis {
-    height: 41px;
+    height: 40px;
     width: 22px;
     background-position: -58px -41px;
 }
