@@ -264,7 +264,7 @@ ul.legend a {
   background: #333333;
 }
 
-.search_result_row, .search_result_detail, .pointer {
+.search_result_row, .search_result_detail, .pointer, #helpDialog area {
   cursor: url('../images/links.cur'), pointer;
 }
 

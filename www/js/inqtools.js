@@ -168,7 +168,9 @@ $(function() {
     });
     $('#helpmenu .btn-help').click(function(event) {
         event.preventDefault();
-        $('#helpDialog').dialog('open');
+        $('#helpDialog')
+            .dialog('option','height',$(window).height() * 0.9)
+            .dialog('open');
     });
 
 
@@ -453,8 +455,13 @@ $(function() {
     $('#helpDialog').dialog({
         autoOpen: false,
         modal: true,
+        width: '90%',
         open: function(event, ui) {
-            $(this).load('/help');
+            if (!$(this).data('loaded')) {1
+                showLoading(this,true,true);
+                $(this).load('help');
+                $(this).data('loaded',true);
+            }
         }
     });
     $('#licenseDialog').dialog({
@@ -634,6 +641,18 @@ $(function() {
     $('#main,#footer').delay(100).fadeIn('normal',function() {
         $('#main').tabs('select',curpage);
     });
+});
+
+// Magic help interaction
+$('#helpDialog area').live('mouseover',function() {
+    $('#help_layout').addClass('pointer');
+}).live('mouseout',function() {
+    $('#help_layout').removeClass('pointer');
+}).live('click',function(e) {
+    e.preventDefault();
+    var o = $( $(this).attr('href') );
+    if (o.length) o[0].scrollIntoView(false);
+    o.effect('pulsate',{times:2},200);
 });
 
 function updateQuickMap() {
