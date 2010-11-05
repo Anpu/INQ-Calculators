@@ -464,18 +464,18 @@ $(function() {
         hide: 'scale',
         width: '80%',
         open: function(event, ui) {
-            $(this)
-                .dialog('option','height',$(window).height() * 0.8)
-                .load('/license');
+            if (!$(this).data('loaded')) {1
+                showLoading(this,true,true);
+                $(this).load('license *:not(meta,title,link,head)');
+                $(this).data('loaded',true);
+            }
         }
     });
     $('#license').click(function(e) {
         e.preventDefault();
         $('#licenseDialog')
-                .dialog('option','height',$(window).height() * 0.8)
-                .load($(this).attr('href'),function() {
-                    $('#licenseDialog').dialog('open');
-                });
+            .dialog('option','height',$(window).height() * 0.8)
+            .dialog('open');
     });
 
 /** Auto complete formatters */
