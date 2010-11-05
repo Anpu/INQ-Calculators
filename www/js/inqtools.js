@@ -813,7 +813,9 @@ function regionsFromMap() {
 function showLoading(aParent, aCenter, aReplace) {
     var span = $('<span class="loading loading-black"/>');
 
-    if (aCenter) span.addClass('loading-center');
+    if (aCenter) {
+        span = $('<div/>').addClass("loading-center").append(span);
+    }
 
     if (aReplace) $(aParent).empty();
 

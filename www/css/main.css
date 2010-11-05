@@ -717,8 +717,7 @@ select option.category {
     display:inline-block;
 }
 .loading-center {
-    margin-left: 50%;
-    margin-right: 50%;
+    text-align: center;
 }
 .loading-black {
     background-image: url(../images/loading-000000.gif);
