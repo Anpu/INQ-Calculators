@@ -1,0 +1,26 @@
+<tal:block metal:define-macro="entry">
+    <tr tal:attributes="class string:search_result_row ${EvenOdd}">
+        <td><span class="toggle_icon"></span></td>
+        <td>${entry/name}</td>
+        <td>${entry/realm}</td>
+        <td>
+            <tal:block metal:use-macro="library.xhtml/zone_shield" tal:define="zone entry"/>
+        </td>
+    </tr>
+    <tr tal:attributes="class 'search_result_detail ${EvenOdd}'">
+        <td colspan="4">
+            <div class="detail_content">No Data Yet</div>
+        </td>
+    </tr>
+</tal:block>
+<tal:block tal:define="item_name string:Areas; colspan string:5; entry_macro string:findAreas.xhtml/entry"
+           metal:use-macro="library.xhtml/resultiterator">
+    <thead metal:fill-slot="header">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Realm</th>
+            <th>Found In</th>
+        </tr>
+    </thead>
+</tal:block>

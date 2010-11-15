@@ -622,6 +622,12 @@ $(function() {
        },
        renderItem: autoCompleteRenderers.withZone
     });
+    $('#area_search').basecomplete({
+       source: function(request, response) {
+           $.getJSON(ajaxRoot + 'suggestZones',
+                request, function(json) {response(json.data)});
+       }
+    });
     $('#npc_search, *[name="fb_npc_name"]').basecomplete({
        source: function(request, response) {
            $.getJSON(ajaxRoot + 'suggestNPCs',
@@ -983,6 +989,31 @@ function findMobs(name, regions, offset) {
         args: [name, regions]
     });
     $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
+}
+
+function cbAreas() {
+    showLoading('#areas_results', true, true);
+    findAreas(
+        $('#area_search').val(),
+        regionsFromMap()
+    );
+}
+
+function findAreas(name, regions, offset) {
+    var args = {
+        name: name || '',
+        regions: regions instanceof Array ? regions.join(',') : regions || '',
+        offset: offset || 0
+    };
+    if (args.name.length == 0) {
+        ShowError('Must enter a Name', '#areas_results');
+        return;
+    }
+    $('#areas_results').data('fetchCall',{
+        func: findAreas,
+        args: [name, regions]
+    });
+    $.getJSON(ajaxRoot + 'findAreas',args, loadIntoDIV('#areas_results'));
 }
 
 function cbGrinding(alt) {

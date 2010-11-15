@@ -237,6 +237,7 @@
       <ul class="navigation">
         <li><a href="#home" data-logo="center">Home</a></li>
         <li tal:condition="notempty: tools/grinding"><a href="#grinding" widgets="level,levelrange,region,gogrind" callback="cbGrinding">Grinding</a></li>
+        <li tal:condition="notempty: tools/areas"><a href="#areas" widgets="area_search,region,go" callback="cbAreas">Areas</a></li>
         <li tal:condition="notempty: tools/mobs"><a href="#mobs" widgets="mob_search,region,go" callback="cbMobs">Mobs</a></li>
         <li tal:condition="notempty: tools/pets"><a href="#pets" widgets="level,power,region,go" callback="cbPets">Pets</a></li>
         <li tal:condition="notempty: tools/npcs"><a href="#npcs" widgets="npc_search,profession,region,go" callback="cbNPCs">NPCs</a></li>
@@ -273,6 +274,10 @@
           <li class="tool_option" widget="npc_search">
             <label for="npc_search">NPC Name:</label>
             <input type="text" id="npc_search" />
+          </li>
+          <li class="tool_option" widget="area_search">
+            <label for="area_search">Area Name:</label>
+            <input type="text" id="area_search" />
           </li>
           <li class="tool_option" widget="profession">
               <!-- Yeah we could pull this dynamically from the DB.. but why increase db load? -->
@@ -359,6 +364,7 @@
             List of the tools:<br />
             <ul class="legend">
               <li tal:condition="notempty: tools/grinding"><a class="tablink" href="#grinding">Grinding</a> - calculate the number of mob kills till you level up as well as the best areas.</li>
+              <li tal:condition="notempty: tools/areas"><a class="tablink" href="#mobs">Areas</a> - search for areas by name.</li>
               <li tal:condition="notempty: tools/mobs"><a class="tablink" href="#mobs">Mobs</a> - search for mobs by name.</li>
               <li tal:condition="notempty: tools/pets"><a class="tablink" href="#pets">Pets</a> - find the pet for your hunter.</li>
               <li tal:condition="notempty: tools/npcs"><a class="tablink" href="#npcs">NPCs</a> - search for quest NPCs.</li>
@@ -376,6 +382,15 @@
                 Ask me, and I'll help you locate the <em>best</em> place to grind.
             </p>
             <div id="grinding_results" class="results"/>
+          </div>
+          <div tal:condition="notempty: tools/areas" id="areas" class="content">
+            <h2>Areas</h2>
+            <p class="help">
+            Having trouble finding that area for a quest?<br/>
+            Interesting in what mobs or npcs are in a specific area?<br/>
+            Ask me, I'll help you find information about that area.
+            </p>
+            <div id="areas_results" class="results"/>
           </div>
           <div tal:condition="notempty: tools/mobs" id="mobs" class="content">
             <h2>Mobs</h2>
