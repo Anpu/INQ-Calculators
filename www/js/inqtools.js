@@ -421,6 +421,9 @@ $(function() {
     $('#tool_options input[type="text"]').keypress(function(e) {
         if (e.keyCode==13) {
             doSearch();
+            if ($(this).is(':ooo-basecomplete')) {
+                $(this).basecomplete('close');
+            }
         }
     });
 
