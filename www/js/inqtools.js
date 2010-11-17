@@ -164,10 +164,12 @@ $(function() {
             function() {$(this).removeClass('ui-state-hover');}
         );
     $('#helpmenu .btn-feedback').click(function(event) {
+        trackEvent('Dialogs', 'Open', 'Feedback');
         event.preventDefault();
         $('#feedbackDialog').wizarddialog('open');
     });
     $('#helpmenu .btn-help').click(function(event) {
+        trackEvent('Dialogs', 'Open', 'Help');
         event.preventDefault();
         $('#helpDialog')
             .dialog('option','height',$(window).height() * 0.9)
@@ -484,6 +486,7 @@ $(function() {
         }
     });
     $('#license').click(function(e) {
+        trackEvent('Dialogs', 'Open', 'License');
         e.preventDefault();
         $('#licenseDialog')
             .dialog('option','height',$(window).height() * 0.8)
