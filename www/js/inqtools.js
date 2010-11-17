@@ -294,6 +294,9 @@ $(function() {
             if (!a) {
                 o.slider('option','animate',true);
             }
+        },
+        change: function(e, ui) {
+            trackEvent('Option', 'Set Player Level', ui.value);
         }
     });
     $('#player_level_display').text('01');
@@ -312,6 +315,9 @@ $(function() {
                         +prefixNumber(ui.values[1],'0',2));
         },
         change: function(e, ui) {
+            if (e.originalEvent) {
+                trackEvent('Option', 'Set Mob Level Range', ui.value, ui.values[1] - ui.value[0]);
+            }
             $('#level_range_display').text(
                     prefixNumber(ui.values[0],'0',2)
                         +'-'
@@ -330,10 +336,15 @@ $(function() {
             $('#max_power_display').text(ui.value);
         },
         change: function(e, ui) {
+            trackEvent('Option', 'Set Tame Power Level', ui.value);
             $('#max_power_display').text(ui.value);
         }
     });
     $('#max_power_display').text('05');
+
+    $('#profession').change(function(e) {
+        trackEvent('Option', 'Set Profession', $(this).val());
+    });
 
     $('#realm_crests > li').live('click',function(e) {
         var o = $(this);
@@ -343,6 +354,7 @@ $(function() {
                 .mapWidget('setValue',realm+'-iz',sel)
                 .mapWidget('setValue',realm+'-ir',sel)
                 .mapWidget('setValue',realm+'-wz',sel);
+        trackEvent('Option', 'Set Region Map', locationLabel.labels[locationLabel.bitmap[realm]]);
         updateQuickMap();
         locationLabel();
     });
@@ -353,6 +365,7 @@ $(function() {
                 .mapWidget('setValue','alsius-wz',sel)
                 .mapWidget('setValue','ignis-wz',sel)
                 .mapWidget('setValue','syrtis-wz',sel);
+        trackEvent('Option', 'Set Region Map', 'Warzone');
         updateQuickMap();
         locationLabel();
     });
@@ -416,6 +429,7 @@ $(function() {
             }
         },
         click:function(e, hit) {
+            trackEvent('Option', 'Set Region Map', locationLabel.labels[locationLabel.bitmap[bit.map]]);
             updateQuickMap();
             locationLabel();
         }
@@ -687,12 +701,15 @@ function locationLabel() {
     $('#location_map_display').text(label);
 }
 locationLabel.bitmap = {
+    'alsius':0x007,
     'alsius-iz':0x001,
     'alsius-ir':0x002,
     'alsius-wz':0x004,
+    'ignis':0x070,
     'ignis-iz':0x010,
     'ignis-ir':0x020,
     'ignis-wz':0x040,
+    'syrtis':0x700,
     'syrtis-iz':0x100,
     'syrtis-ir':0x200,
     'syrtis-wz':0x400
@@ -706,7 +723,17 @@ locationLabel.labels = {
     0x070: "Ignis",
     0x474: "Ignis + WZ",
     0x700: "Syrtis",
-    0x744: "Syrtis + WZ"
+    0x744: "Syrtis + WZ",
+
+    0x001: "Alsius Initiation",
+    0x002: "Alsius Inner",
+    0x004: "Alsius Warzone",
+    0x010: "Ignis Initiation",
+    0x020: "Ignis Inner",
+    0x040: "Ignis Warzone",
+    0x100: "Syrtis Initiation",
+    0x200: "Syrtis Inner",
+    0x400: "Syrtis Warzone"
 }
 
 function switchTool(optObj, animate) {
