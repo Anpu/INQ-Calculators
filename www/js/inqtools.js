@@ -992,6 +992,7 @@ function findMobs(name, regions, offset) {
 }
 
 function cbAreas() {
+    trackEvent('Tools', 'Search', 'Areas');
     showLoading('#areas_results', true, true);
     findAreas(
         $('#area_search').val(),
@@ -1011,6 +1012,7 @@ function findAreas(name, regions, offset) {
     }
     $('#areas_results').data('fetchCall',{
         func: findAreas,
+        tool: 'Areas',
         args: [name, regions]
     });
     $.getJSON(ajaxRoot + 'findAreas',args, loadIntoDIV('#areas_results'));
