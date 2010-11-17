@@ -28,6 +28,7 @@
     <script type="text/javascript">
       <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
     </script>
+    <tal:block tal:condition="notempty:analytics/enabled" metal:use-macro="analytics.xhtml/analytics"/>
   </head>
 
   <body>

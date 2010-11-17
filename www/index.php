@@ -55,6 +55,10 @@ if (empty($_GET['PATH_INFO'])) {
         $tpl->credits = is_array($config->credits)
                 ? $config->credits
                 : array(array('name'=>'Anonymous','job'=>'I did something?'));
+        // Analytics support
+        $tpl->analytics = !empty($config->analytics)
+                ? $config->analytics
+                : array('enabled'=>false);
         $tpl->echoExecute();
         if ($config->cachehome) {
             header("Pragma: public");

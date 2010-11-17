@@ -146,6 +146,7 @@ $(function() {
             }
         },
         select:function (event, ui) {
+            trackEvent('Tools', 'Select', ui.tab.hash.substr(1));
             var o = $(ui.tab);
             switchTool(o, false);
             if (ui.tab.hash.length > 0) {
@@ -202,6 +203,7 @@ $(function() {
            var offset = parseInt($(this).closest('tbody').attr('offset')) || 0;
            fetchCall.args.push(offset);
            fetchCall.func.apply(window,fetchCall.args);
+           trackEvent('Tools', 'Fetch More', fetchCall.tool, offset);
        }
     });
 
@@ -658,6 +660,10 @@ $('#helpDialog area').live('mouseover',function() {
     o.effect('pulsate',{times:2},200);
 });
 
+function trackEvent(category, action, label, value) {
+  window._gaq && _gaq.push(['_trackEvent',category, action, label, value]);
+}
+
 function updateQuickMap() {
     var v = $('#region_map').mapWidget('value');
     $('#realm_wz').toggleClass("selected",!!(v['alsius-wz'] && v['ignis-wz'] && v['syrtis-wz']));
@@ -845,6 +851,7 @@ function showLoading(aParent, aCenter, aReplace) {
 }
 
 function cbPets() {
+    trackEvent('Tools', 'Search', 'Pets');
     showLoading('#pets_results', true, true);
     getTameableMobs(
         $('#player_level').slider('value'),
@@ -866,12 +873,14 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
     };
     $('#pets_results').data('fetchCall',{
         func: getTameableMobs,
+        tool: 'Pets',
         args: [player_level, maxpower, regions]
     });
     $.getJSON(ajaxRoot + 'getTameable', args, loadIntoDIV('#pets_results'));
 }
 
 function cbNPCs() {
+    trackEvent('Tools', 'Search', 'NPCs');
     var b = $('#profession').val().split(':');
     showLoading('#npcs_results', true, true);
     findNPCs(
@@ -897,12 +906,14 @@ function findNPCs(name, behavior, profession, regions, offset) {
     }
     $('#npcs_results').data('fetchCall',{
         func: findNPCs,
+        tool: 'NPCs',
         args: [name, behavior, profession, regions]
     });
     $.getJSON(ajaxRoot + 'findNPCs',args, loadIntoDIV('#npcs_results'));
 }
 
 function cbMobs() {
+    trackEvent('Tools', 'Search', 'Mobs');
     showLoading('#mobs_results', true, true);
     findMobs(
         $('#mob_search').val(),
@@ -922,6 +933,7 @@ function findMobs(name, regions, offset) {
     }
     $('#mobs_results').data('fetchCall',{
         func: findMobs,
+        tool: 'Mobs',
         args: [name, regions]
     });
     $.getJSON(ajaxRoot + 'findMobs',args, loadIntoDIV('#mobs_results'));
@@ -931,6 +943,7 @@ function cbGrinding(alt) {
     showLoading('#grinding_results', true, true);
     var v = $('#level_range').slider('values');
     if (alt) {
+        trackEvent('Tools', 'Search', 'Grinding By Area');
         getKillsToLevelByArea(
             $('#player_level').slider('value'),
             0,
@@ -939,6 +952,7 @@ function cbGrinding(alt) {
             regionsFromMap()
         );
     } else {
+        trackEvent('Tools', 'Search', 'Grinding');
         getKillsToLevel(
             $('#player_level').slider('value'),
             0,
@@ -964,6 +978,7 @@ function getKillsToLevel(player_level, player_xp, min_level, max_level, regions,
     };
     $('#grinding_results').data('fetchCall',{
         func: getKillsToLevel,
+        tool: 'Grinding',
         args: [player_level, player_xp, min_level, max_level, regions]
     });
     $.getJSON(ajaxRoot + 'getKillsToLevel', args, loadIntoDIV('#grinding_results'));
@@ -984,6 +999,7 @@ function getKillsToLevelByArea(player_level, player_xp, min_level, max_level, re
     };
     $('#grinding_results').data('fetchCall',{
         func: getKillsToLevelByArea,
+        tool: 'Grinding By Area',
         args: [player_level, player_xp, min_level, max_level, regions]
     });
     $.getJSON(ajaxRoot + 'getKillsToLevelByArea', args, loadIntoDIV('#grinding_results'));
