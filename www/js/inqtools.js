@@ -678,7 +678,7 @@ $('#helpDialog area').live('mouseover',function() {
 });
 
 function trackEvent(category, action, label, value) {
-  window._gaq && _gaq.push(['_trackEvent',category, action, label, value]);
+    window._gaq && _gaq.push(['_trackEvent',category, action, label && label.toString(), value]);
 }
 
 function updateQuickMap() {
