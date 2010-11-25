@@ -429,7 +429,7 @@ $(function() {
             }
         },
         click:function(e, hit) {
-            trackEvent('Option', 'Set Region Map', locationLabel.labels[locationLabel.bitmap[bit.map]]);
+            trackEvent('Option', 'Set Region Map', locationLabel.labels[locationLabel.bitmap[hit.map]]);
             updateQuickMap();
             locationLabel();
         }
