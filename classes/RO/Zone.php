@@ -64,7 +64,8 @@ class RO_Zone extends RO_Base {
     {
         $min_level = empty($this->extra->min_level) ? null : $this->extra->min_level;
         $max_level = empty($this->extra->max_level) ? null : $this->extra->max_level;
-        $stmt = Database::query("CALL GetAreaMobs(?,?,?)",$this->ID(),$min_level, $max_level);
+        $only_grinding = empty($this->extra->only_grinding) ? null : $this->extra->only_grinding;
+        $stmt = Database::query("CALL GetAreaMobs(?,?,?,?)",$this->ID(),$min_level, $max_level, $only_grinding);
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return new ResultIterator($rows,'RO_Mob');
     }

@@ -142,6 +142,7 @@ class RO_Mob extends RO_Base {
         return new ResultIterator($ret, 'CustomResultSet',array(
             'min_level'=>$min_level,
             'max_level'=>$max_level,
+            'only_grinding'=>true,
             'config'=>array(
                 'zone'=>array('key'=>'zone_id','class'=>'RO_Zone'),
             )
