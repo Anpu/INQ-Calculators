@@ -111,7 +111,7 @@ $.extend(OverlayContainer.prototype, {
     }
 });
 
-$.widget('ui.interactiveMap', $.ui.mouse, {
+$.widget('ooo.interactiveMap', $.ui.mouse, {
     options: {
         map:'',
         blankImage:'images/blank.gif'
@@ -395,7 +395,7 @@ $.widget('ui.interactiveMap', $.ui.mouse, {
     }
 });
 
-$.extend($.ui.interactiveMap, {
+$.extend($.ooo.interactiveMap, {
     version: "0.2"
 });
 
