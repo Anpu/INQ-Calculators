@@ -181,7 +181,7 @@ $(function() {
     $('ul.navigation li:last-child').addClass('last-item');
 
     $('a.tablink').live('click',function(e) {
-        if (e.button !=0) return;
+        if (e.button !=0) return false;
         $('#main').tabs('select',this.hash);
         return false;
     });
@@ -478,7 +478,7 @@ $(function() {
         modal: true,
         width: '90%',
         open: function(event, ui) {
-            if (!$(this).data('loaded')) {1
+            if (!$(this).data('loaded')) {
                 showLoading(this,true,true);
                 $(this).load('help');
                 $(this).data('loaded',true);
@@ -492,7 +492,7 @@ $(function() {
         hide: 'scale',
         width: '80%',
         open: function(event, ui) {
-            if (!$(this).data('loaded')) {1
+            if (!$(this).data('loaded')) {
                 showLoading(this,true,true);
                 $(this).load('license *:not(meta,title,link,head)');
                 $(this).data('loaded',true);
@@ -900,7 +900,7 @@ function getTameableMobs(player_level, maxpower, regions, offset) {
     if (args.player_level < 10) {
         ShowError('Must choose Level 10 or greater.','#pets_results');
         return;
-    };
+    }
     $('#pets_results').data('fetchCall',{
         func: getTameableMobs,
         tool: 'Pets',
