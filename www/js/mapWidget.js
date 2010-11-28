@@ -22,7 +22,7 @@
  */
 (function($) { // hide namespace
 
-$.widget("ui.mapWidget", $.ui.mouse, {
+$.widget("ooo.mapWidget", $.ui.mouse, {
     options: {
         'class': '',
         'hintclass':'mapWidget-hint',
@@ -359,7 +359,7 @@ $.widget("ui.mapWidget", $.ui.mouse, {
     }
 });
 
-$.extend($.ui.mapWidget, {
+$.extend($.ooo.mapWidget, {
     version: "0.2"
 });
 
