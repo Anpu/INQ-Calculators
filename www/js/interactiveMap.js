@@ -51,19 +51,20 @@ $.extend(OverlayContainer.prototype, {
         return this;
     },
     draw: function(force) {
+        var o, f;
         if (force) {
             this._toDraw = [];
             for (var i=0,l=this._elems.length; i<l; ++i) {
-                var o = this._elems[i];
-                var f = this['_draw_'+o.type];
+                o = this._elems[i];
+                f = this['_draw_'+o.type];
                 if ($.isFunction(f)) {
                     f.call(this,o);
                 }
             }
         } else {
             while (this._toDraw.length) {
-                var o = this._elems[this._toDraw.shift()];
-                var f = this['_draw_'+o.type];
+                o = this._elems[this._toDraw.shift()];
+                f = this['_draw_'+o.type];
                 if ($.isFunction(f)) {
                     f.call(this,o);
                 }
