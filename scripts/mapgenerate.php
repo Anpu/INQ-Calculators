@@ -232,7 +232,15 @@ class Map {
                 $dst_rect = new Rect(array($_x * $tilesize + $this->bounds->left,
                         $_y * $tilesize + $this->bounds->top));
                 $dst_rect->setDimensions($tilesize, $tilesize);
-                $file = sprintf("%d_%d.jpg",$dst_rect->top,$dst_rect->left);
+                $ipath = $outdir.DIRECTORY_SEPARATOR.$dst_rect->top;
+                if (file_exists($ipath)) {
+                    if (!is_dir($ipath) || !is_writable($ipath)) {
+                        throw new Exception("Can not write to output dir: $ipath");
+                    }
+                } else {
+                    mkdir($ipath);
+                }
+                $file = sprintf("%d/%d.jpg",$dst_rect->top,$dst_rect->left);
                 echo "Building piece ",$file,"\n";
 
                 $img = $this->fetchMapSection($src_rect, $dst_rect);
