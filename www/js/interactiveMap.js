@@ -43,14 +43,24 @@ function OverlayContainer(elem) {
     this._toDraw = [];
 }
 $.extend(OverlayContainer.prototype, {
-    setScale: function(scale) {
-        if (this._scale.num != scale.num || this._scale.den != scale.den) {
-            this._scale.num = scale.num;
-            this._scale.den = scale.den;
+    scale: function(scale) {
+        if (scale) {
+            if (this._scale.num != scale.num || this._scale.den != scale.den) {
+                this._scale.num = scale.num;
+                this._scale.den = scale.den;
+                var svg = this.element.svg('get');
+                var g = svg.getElementById('SVGScale');
+                svg.change(g, {transform:'scale('+(this._scale.num/this._scale.den)+')'});
+            }
+            return this;
+        } else {
+            return this._scale;
         }
-        return this;
     },
     draw: function(force) {
+        var svg = this.element.svg('get');
+        svg.clear();
+        var g = svg.group('SVGScale',{transform:'scale('+(this._scale.num/this._scale.den)+')'});
         var o, f;
         if (force) {
             this._toDraw = [];
@@ -133,8 +143,13 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         this._elems.tileCache = $('<div class="tileCache"/>')
             .appendTo(this._elems.container);
         this._elems.overlay = $('<div class="overlay"/>')
+            .svg({onLoad:this._loadSVG})
             .appendTo(this._elems.container);
         this.loadMap();
+    },
+    _loadSVG: function(svg) {
+        svg.root().setAttribute('width','100%');
+        svg.root().setAttribute('height','100%');
     },
     render: function() {
         if (this.element.is(':hidden') || !this._map) {
@@ -231,15 +246,14 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         this.checkTiles(p.left, p.top);
         this._elems.overlay.css({width:this._activeLayer.width,height:this._activeLayer.height});
         this.overlay()
-            .setScale(this._activeLayer.scale)
-            .draw(true);
+            .scale(this._activeLayer.scale);
     },
     /** Overlays */
     overlay: function(cmd) {
         if (!this._overlay) {
             this._overlay = new OverlayContainer(this._elems.overlay);
             if (this._activeLayer) {
-                this._overlay.setScale(this._activeLayer.scale);
+                this._overlay.scale(this._activeLayer.scale);
             }
         }
         if (cmd) {
