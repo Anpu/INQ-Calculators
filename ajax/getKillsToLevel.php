@@ -45,4 +45,26 @@ class ajax_getKillsToLevel extends AjaxRequest {
         );
     }
 }
+
+function phptal_func_calcxp($xp, $chg) {
+    if ($chg > 0) {
+        return $xp.' + '.$chg;
+    } else {
+        $val = $xp+$chg;
+        return $val ?: null;
+    }
+}
+
+function phptal_tales_calcxp($src, $nothrow) {
+    $exp = Template::SplitSRC($src);
+
+    $args = explode(' ',trim($src));
+    if (count($args)!==2) {
+        throw new PHPTAL_InvalidVariableNameException("calcxp takes two arguments, XP and CHG.");
+    }
+    $xp = phptal_tale($args[0]);
+    $chg = phptal_tale($args[1]);
+    array_unshift($exp,'phptal_func_calcxp('.$xp.','.$chg.')');
+    return $exp;
+}
 ?>

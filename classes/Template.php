@@ -35,6 +35,18 @@ class Template extends PHPTAL {
     public static function addTemplatePath($templatedir) {
         self::$_template_dirs[] = $templatedir;
     }
+
+    public static function SplitSRC(&$src) {
+        $pos = strpos($src,'|');
+        if ($pos !== false) {
+            $exp = phptal_tales(substr($src,$pos+1),$nothrow);
+            $src = substr($src, 0, $pos);
+            if (!is_array($exp)) $exp = array($exp);
+        } else {
+            $exp = array();
+        }
+        return $exp;
+    }
 }
 
 class Template_Tales implements PHPTAL_Tales {
@@ -72,6 +84,20 @@ class Template_Tales implements PHPTAL_Tales {
     {
         return '('.phptal_tale($src, $nothrow) . ' ? "odd" : "even" )';
     }
+
+    public static function nozeroFUNC($val)
+    {
+        if ((int)$val === 0) return null;
+        return $val;
+    }
+
+    public static function nozero($src, $nothrow)
+    {
+        $exp = Template::SplitSRC($src);
+        array_unshift($exp,
+                'Template_Tales::nozeroFUNC('.phptal_tale($src, $nothrow). ')');
+        return $exp;
+    }
 }
 
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("limit", array('Template_Tales','limit'));
@@ -79,4 +105,5 @@ PHPTAL_TalesRegistry::getInstance()->registerPrefix("empty", array('Template_Tal
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("notempty", array('Template_Tales','notempty'));
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("count", array('Template_Tales','count'));
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("cssodd", array('Template_Tales','cssodd'));
+PHPTAL_TalesRegistry::getInstance()->registerPrefix("nozero", array('Template_Tales','nozero'));
 ?>

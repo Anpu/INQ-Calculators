@@ -3,8 +3,11 @@
         <td><span class="toggle_icon" /></td>
         <td>${entry/zone/name} in the ${entry/zone/realm} ${entry/zone/region}</td>
         <td>${entry/mob_types}</td>
-        <td>${entry/avg_xp}</td>
-        <td tal:content="entry/kills | default">You have Graduated</td>
+        <td tal:content="nozero:entry/avg_xp | default"><em>No XP</em></td>
+        <td tal:content="entry/kills | default">
+            <em tal:condition="not:entry/avg_xp">No XP</em>
+            <em tal:condition="entry/avg_xp">At Max Level</em>
+        </td>
         <td>
             <tal:block metal:use-macro="library.xhtml/zone_shield" tal:define="zone entry/zone"/>
         </td>
@@ -24,7 +27,7 @@
             <th>Area</th>
             <th>Mob Count</th>
             <th>Average XP</th>
-            <th># of Kills</th>
+            <th>Kills To Level</th>
             <th>Found In</th>
         </tr>
     </thead>

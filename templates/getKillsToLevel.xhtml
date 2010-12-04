@@ -1,10 +1,13 @@
 <tal:block metal:define-macro="entry">
-    <tr tal:attributes="class string:search_result_row ${EvenOdd}">
+    <tr tal:attributes="class string:search_result_row ${EvenOdd}" tal:define="totalxp calcxp: entry/base_xp entry/chg_xp">
         <td><span class="toggle_icon"></span></td>
         <td>${entry/mob/name}</td>
         <td>${entry/mob/level}</td>
-        <td>${entry/base_xp} + ${entry/chg_xp}</td>
-        <td tal:content="entry/kills | default">You have Graduated</td>
+        <td tal:content="totalxp | default"><em>No XP</em></td>
+        <td tal:content="entry/kills | default">
+            <em tal:condition="not:totalxp">No XP</em>
+            <em tal:condition="totalxp">At Max Level</em>
+        </td>
         <td>
             <tal:block metal:use-macro="library.xhtml/zone_shields" tal:define="zones entry/mob/zoneOverview"/>
         </td>
@@ -23,8 +26,8 @@
             <th></th>
             <th>Name</th>
             <th>Mob Level</th>
-            <th>Base XP</th>
-            <th># of Kills</th>
+            <th>Gained XP</th>
+            <th>Kills to Level</th>
             <th>Found In</th>
         </tr>
     </thead>
