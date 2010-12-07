@@ -36,7 +36,7 @@ class Template extends PHPTAL {
         self::$_template_dirs[] = $templatedir;
     }
 
-    public static function SplitSRC(&$src) {
+    public static function SplitSRC(&$src, $nothrow) {
         $pos = strpos($src,'|');
         if ($pos !== false) {
             $exp = phptal_tales(substr($src,$pos+1),$nothrow);
@@ -93,7 +93,7 @@ class Template_Tales implements PHPTAL_Tales {
 
     public static function nozero($src, $nothrow)
     {
-        $exp = Template::SplitSRC($src);
+        $exp = Template::SplitSRC($src, $nothrow);
         array_unshift($exp,
                 'Template_Tales::nozeroFUNC('.phptal_tale($src, $nothrow). ')');
         return $exp;
