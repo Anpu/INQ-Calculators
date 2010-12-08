@@ -1101,6 +1101,35 @@ $cmd->addOption('outputfile',array(
     'help_name'     => 'FILE',
 ));
 
+$cmd = $parser->addCommand('exportsql',array(
+    'description'=>'Convert Polygonal data from a spatialite DB into a raw SQL insert script',
+));
+$cmd->addOption('spatialite',array(
+    'short_name'    => '-s',
+    'description'   => 'Spatialite DB',
+    'optional'      => false,
+    'help_name'     => 'FILE',
+));
+$cmd->addOption('table',array(
+    'short_name'    => '-t',
+    'description'   => 'The Table to load the geometry',
+    'optional'      => false,
+    'help_name'     => 'table',
+));
+$cmd->addOption('filter',array(
+    'short_name'    => '-w',
+    'description'   => 'Extra WHERE filter for the main zone query',
+    'optional'      => true,
+    'help_name'     => 'FILTER',
+));
+$cmd->addOption('outputfile',array(
+    'short_name'    => '-o',
+    'description'   => 'Output filename',
+    'default'       => 'insert.sql',
+    'optional'      => true,
+    'help_name'     => 'FILE',
+));
+
 try {
     $args = $parser->parse();
 } catch (Exception $ex) {
@@ -1379,6 +1408,36 @@ switch ($args->command_name) {
                 $insert_final->execute();
             }
         }
+        break;
+    case 'exportsql':
+        if (empty($args->command->options['spatialite'])) {
+            throw new Exception("Must specify spatialite DB");
+        }
+        if (empty($args->command->options['table'])) {
+            throw new Exception("Must specify Table Name");
+        }
+        $sdb = new SQLite3($args->command->options['spatialite']);
+        $sdb->loadExtension($config->spatialite);
+        $allzones = $sdb->prepare(sprintf("SELECT zone_id FROM %s"
+               .(empty($args->command->options['filter']) ? "" : " WHERE %s"),
+            $args->command->options['table'], $args->command->options['filter']));
+        $getFullPolygon = $sdb->prepare(sprintf("SELECT AsText(polygon) FROM %s WHERE zone_id = :zone",
+            $args->command->options['table']));
+
+        $res = $allzones->execute();
+        $zones = array();
+        $fp = fopen($args->command->options['outputfile'],"w");
+        fputs($fp,"DROP TABLE IF EXISTS zonetable;\n");
+        fputs($fp,"CREATE TABLE zonetable (zone_id INT UNSIGNED NOT NULL PRIMARY KEY, poly GEOMETRY NOT NULL);\n");
+        while ($row = $res->fetchArray(SQLITE3_NUM)) {
+            $getFullPolygon->bindValue('zone',$row[0],SQLITE3_INTEGER);
+            $res2 = $getFullPolygon->execute();
+            $poly = $res2->fetchArray(SQLITE3_NUM);
+            $res2->finalize();
+            fprintf($fp,"INSERT INTO zonetable (zone_id, poly) VALUES (%d,GeomFromText(%s));\n",
+                    $row[0], $dbh->quote($poly[0]));
+        }
+        fclose($fp);
         break;
     case 'mapoverlay':
         if (empty($args->command->options['spatialite'])) {
