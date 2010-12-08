@@ -86,6 +86,44 @@ function ParseLineString($line) {
     return $ret;
 }
 
+function DiffPointToTextI($a, $b) {
+    return ($a[0] - $b[0]).' '.($a[1]- $b[1]);
+}
+
+function PointToTextI($p) {
+    return $p[0].' '.$p[1];
+}
+
+function PolygonToSVGPath(array $ext, array $holes, &$state = null) {
+    if (!empty($state)) {
+        $path = "m".DiffPointToTextI($ext[0],$state);
+    } else {
+        $path = "M".PointToTextI($ext[0]);
+    }
+    $pp = $ext[0];
+    $pathP = array();
+    for ($i=1;$i<count($ext);++$i) {
+        $pathP[] = DiffPointToTextI($ext[$i],$pp);
+        $pp = $ext[$i];
+    }
+    $path .= 'l'.implode(" ",$pathP)."z";
+    foreach ($holes as $hole) {
+        $path .= "m".DiffPointToTextI($hole[0],$pp);
+        $pathP = array();
+        $pp = $hole[0];
+        for ($i=1;$i<count($hole);++$i) {
+            $pathP[] = DiffPointToTextI($hole[$i],$pp);
+            $pp = $hole[$i];
+        }
+        $path .= 'l'.implode(" ",$pathP)."z";
+    }
+    if (is_array($state)) {
+        $state[0] = $pp[0];
+        $state[1] = $pp[1];
+    }
+    return $path;
+}
+
 function parsePolygonsFromSVG($file, $bounds) {
     $xml = simplexml_load_file($file);
     $xml->registerXPathNamespace('svg','http://www.w3.org/2000/svg');
@@ -1073,7 +1111,7 @@ $cmd->addArgument('polyfiles',array(
 ));
 
 $cmd = $parser->addCommand('mapoverlay',array(
-    'description'=>'Convert Polygonal data from a spacialite DB into a map overlay file',
+    'description'=>'Convert Polygonal data from a spatialite DB into a map overlay file',
 ));
 $cmd->addOption('spatialite',array(
     'short_name'    => '-s',
@@ -1464,7 +1502,10 @@ switch ($args->command_name) {
         while ($row = $res->fetchArray(SQLITE3_NUM)) {
             $_zone = new stdClass();
             $_zone->id = $row[0];
-            $_zone->polygons = array();
+
+            $svg = array();
+            $state = array();
+            //$_zone->polygons = array();
             $getPolygon->bindValue('zone',$row[0],SQLITE3_INTEGER);
             $getPolygonHole->bindValue('zone',$row[0],SQLITE3_INTEGER);
             // Iterate Polygons
@@ -1485,12 +1526,14 @@ switch ($args->command_name) {
                     $res2->finalize();
                     $polygon->holes[] = ParseLineString($hole[0]);
                 }
+                $svg[] = PolygonToSVGPath($polygon->exterior, $polygon->holes, $state);
+                //$_zone->polygons[] = $polygon;
             }
-            $_zone->polygons[] = $polygon;
-            $zones[$_zone->id] = $_zone;
+            $_zone->svg = implode('',$svg);
+            $zones[$_zone->id] = implode('',$svg);
         }
         $res->finalize();
-        echo "Exported ".count($zones)." to ".$args->command->options['outputfile']."\n";
+        echo "Exported ".count($zones)." zones to ".$args->command->options['outputfile']."\n";
         file_put_contents($args->command->options['outputfile'], json_encode($zones));
         break;
     default:
