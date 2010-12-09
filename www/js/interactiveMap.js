@@ -34,80 +34,145 @@ function dirname (path) {
     return path.replace(/\/[^\/]*\/?$/, '');
 }
 
+// Overlay objects
+function OverlaySVGPath(aPath) {
+    this.path = aPath;
+}
+$.extend(OverlaySVGPath.prototype, {
+    drawSVG: function(svg, g, aColor) {
+        svg.path(g,this.path,{fill:aColor,stroke:aColor,strokeWidth: 1});
+    }
+});
+
+function OverlayCustom(drawSVG, draw)
+{
+    this.drawSVG = drawSVG;
+    this.draw = draw;
+}
+
+// Main overlay Management
+
 function OverlayContainer(elem) {
     this.element = elem;
     // The starting scale
-    this._scale = { num: 1, den: 1 };
-    // List of jsGraphics wrappers
+    this._scale = {num: 1, den: 1};
+    // List of contained overlay elements
     this._elems = [];
     this._toDraw = [];
+    this.svgReady = false;
+    this.element.svg({onLoad:$.proxy(this._loadSVG,this)});
 }
 $.extend(OverlayContainer.prototype, {
+    _loadSVG: function(svg) {
+        svg.root().setAttribute('width','100%');
+        svg.root().setAttribute('height','100%');
+        this.svg = svg;
+        this.svgReady = true;
+        if (this._toDraw.length) {
+            this.draw();
+        }
+    },
     scale: function(scale) {
         if (scale) {
             if (this._scale.num != scale.num || this._scale.den != scale.den) {
                 this._scale.num = scale.num;
                 this._scale.den = scale.den;
-                var svg = this.element.svg('get');
-                var g = svg.getElementById('SVGScale');
-                svg.change(g, {transform:'scale('+(this._scale.num/this._scale.den)+')'});
+                if (this.svgReady) {
+                    var g = this.svg.getElementById('SVGScale');
+                    this.svg.change(g, {transform:'scale('+(this._scale.num/this._scale.den)+')'});
+                }
             }
             return this;
         } else {
             return this._scale;
         }
     },
+    _applyScale: function(val) {
+        return val * this._scale.num / this._scale.den;
+    },
     draw: function(force) {
-        var svg = this.element.svg('get');
-        svg.clear();
-        var g = svg.group('SVGScale',{transform:'scale('+(this._scale.num/this._scale.den)+')'});
-        var o, f;
+        if (this.svgReady === false) {
+            return this;
+        }
+        var svg = this.svg;
+
+        var o, g;
+        if (svg) {
+            g = svg.getElementById('SVGScale');
+            if (!g || force) {
+                svg.clear();
+                g = svg.group('SVGScale',{transform:'scale('+(this._scale.num/this._scale.den)+')'});
+                force = true;
+            }
+        }
         if (force) {
             this._toDraw = [];
             for (var i=0,l=this._elems.length; i<l; ++i) {
                 o = this._elems[i];
-                f = this['_draw_'+o.type];
-                if ($.isFunction(f)) {
-                    f.call(this,o);
-                }
+                this._draw_object(o,g);
             }
         } else {
             while (this._toDraw.length) {
                 o = this._elems[this._toDraw.shift()];
-                f = this['_draw_'+o.type];
-                if ($.isFunction(f)) {
-                    f.call(this,o);
-                }
+                this._draw_object(o,g);
             }
         }
         return this;
     },
-    _draw_polygon: function(o) {
-        if (!o.wrapper) {
-            o.wrapper = $('<div/>').appendTo(this.element);
+    _draw_object: function(o, svgG) {
+        if (this.svgReady && o.data.drawSVG) {
+            o.data.drawSVG(this.svg, this.svg.group(svgG), this.nextColor());
+        } else if (o.data.draw) {
+            if (!o.wrapper) {
+                o.wrapper = $('<div/>').appendTo(this.element);
+            }
+            o.wrapper.empty();
+            o.data.draw(o.wrapper, this._scale, this.nextColor());
+        } else {
+            throw new TypeError("No Draw Routine for object");
         }
-        o.wrapper.empty();
-        o.data.draw(o.wrapper, this._scale, this.nextColor());
     },
+    // Big set of colors to pick from.
     colors: [
-        '#ffffff',
-        '#ff00ff',
-        '#00ffff',
-        '#ffff00',
-        '#ff0000',
-        '#00ff00',
-        '#0000ff',
-        '#000000',
+        '#00cc00','#0f2d89','#32994c','#d82652','#3df43d','#c10ac1','#d87f26','#00ff00','#4770ea','#999932','#e519b2',
+        '#897ab7','#914c07','#59cc32','#7fcc32','#654784','#e5194c','#ad1ead','#890f0f','#92a559','#9900cc','#a55959',
+        '#e05199','#7f26d8','#6b0f89','#848447','#4798ea','#b2e519','#65cbcc','#2626d8','#828216','#e5e519','#7098c1',
+        '#076e91','#91072a','#ea4799','#7ab789','#0f0f89','#634c35','#5175e0','#990026','#a5597f','#009972','#d85226',
+        '#cc9965','#3259cc','#262672','#1e7a4c','#2d6b3d','#311682','#1e7a35','#668e3d','#b75bd6','#351e7a','#002699',
+        '#ea9947','#59a592','#ff32cb','#7ff20c','#bf3f3f','#3d8e3d','#0f6b89','#7ad65b','#267226','#b77a89','#65b2cc',
+        '#1919e5','#9847ea','#ff0000','#bf3f7f','#00ffbf','#b71466','#5b5bd6','#5b7ad6','#f4993d','#635735','#3d8e7a',
+        '#5f3fbf','#b7b77a','#2652d8','#ccb265','#0c0cf2','#329999','#66c10a','#3d98f4','#a559a5','#7a1e4c','#5b2d6b',
+        '#0ac166','#421ead','#59a57f','#65cc65','#b265cc','#596ca5','#844756','#0a38c1','#4c2672','#7551e0','#4c0099',
+        '#3232cc','#d8ac26','#32ff99','#a36628','#b24cb2','#891ead','#cc657f','#993232','#26d852','#00994c','#cc7f32',
+        '#5bd6d6','#c10a0a','#f2b80c','#845647','#19b2e5','#99cc65','#6bf43d','#ff3299','#f20c46','#d8267f','#00ff3f',
+        '#844775','#912a07','#1e4c7a','#99f43d','#826716','#890f89','#8e14b7','#f2f20c','#4747ea','#727226','#4c9932',
+        '#4c1682','#894c0f','#f43d3d','#ff3265','#7a1e1e','#c1380a','#161682','#990000','#003fff','#072a91','#32a5cc',
+        '#b24c4c','#b7a87a','#00cbcc','#89890f','#669932','#65cc7f','#cc9900','#ea4770','#194ce5','#ac26d8','#32cc32',
+        '#3d3d8e','#7a1e7a','#8e3d8e','#3df4f4','#d65bb7','#feff32','#754784','#ad661e','#66b714','#ccff32','#bf7f3f',
+        '#1ead66','#6500cc','#5f7226','#7f3fbf','#5f2672','#267239','#59a559','#4c3299','#3f00ff','#892d0f','#47ea47',
+        '#99c170','#3f5fbf','#bc51e0','#91076e','#844747','#7a7a1e','#653299','#28a366','#573563','#000099','#0ac1c1',
+        '#47eac1','#3f9fbf','#b2cc65','#263972','#c170c1','#7aa8b7','#634135','#0ac10a','#997200','#990098','#32997f',
     ],
     nextColor: function() {
         this.color = ((this.color || 0) + 1) % this.colors.length;
         return this.colors[this.color];
     },
     addPolygon: function(polygon, offset) {
-        var id = this._addObject('polygon', polygon, offset, true);
-        return id;
+        if (!(polygon instanceof Polygon)) {
+            throw new TypeError('Must pass in an instance of a Polygon object');
+        }
+        return this.addObject('polygon', polygon, offset, true);
     },
-    _addObject: function(type, data, offset, toDraw) {
+    addCustom: function(draw, drawSVG, offset) {
+        return this.addObject('custom', new OverlayCustom(drawSVG, draw), offset, true);
+    },
+    addSVGPath: function(path, offset) {
+        if (!path || typeof path != 'string') {
+            throw new TypeError('Must pass in a string containing the SVG Path');
+        }
+        return this.addObject('svgpath', new OverlaySVGPath(path), offset, true);
+    },
+    addObject: function(type, data, offset, toDraw) {
         var o = {
             type: type,
             data: data,
@@ -127,7 +192,6 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         map:'',
         blankImage:'images/blank.gif'
     },
-
     _create: function() {
         this._mouseInit();
         this._elems = {};
@@ -143,13 +207,9 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         this._elems.tileCache = $('<div class="tileCache"/>')
             .appendTo(this._elems.container);
         this._elems.overlay = $('<div class="overlay"/>')
-            .svg({onLoad:this._loadSVG})
             .appendTo(this._elems.container);
+        this.overlay();
         this.loadMap();
-    },
-    _loadSVG: function(svg) {
-        svg.root().setAttribute('width','100%');
-        svg.root().setAttribute('height','100%');
     },
     render: function() {
         if (this.element.is(':hidden') || !this._map) {
