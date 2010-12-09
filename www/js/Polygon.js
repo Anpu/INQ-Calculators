@@ -405,6 +405,34 @@ $.extend(Polygon.prototype, {
             active_edges = active_temp;
             ++scanline;
         }
+    },
+    drawSVG: function(svg, g, aColor)
+    {
+        var path = svg.createPath();
+        var i = 0;
+        var p,pp;
+        p = this.points[i];
+        path.move(p.x, p.y);
+        var l = this.points.length;
+        for (++i; i<l; ++i) {
+            pp = this.points[i];
+            path.line(pp.x - p.x, pp.y - p.y,true);
+            p = pp;
+        }
+        path.close();
+        for (var h=0,hl=this.holes.length; h<hl; ++h) {
+            i = 0;
+            p = this.holes[h].points[i];
+            path.move(p.x, p.y);
+            l = this.holes[h].points.length;
+            for (++i; i<l; ++i) {
+                pp = this.holes[h].points[i];
+                path.line(pp.x - p.x, pp.y - p.y,true);
+                p = pp;
+            }
+            path.close();
+        }
+        svg.path(g,path,{fill:aColor,stroke:aColor,strokeWidth: 1});
     }
 });
 
