@@ -1500,8 +1500,8 @@ switch ($args->command_name) {
         $res = $allzones->execute();
         $zones = array();
         while ($row = $res->fetchArray(SQLITE3_NUM)) {
-            $_zone = new stdClass();
-            $_zone->id = $row[0];
+            //$_zone = new stdClass();
+            //$_zone->id = $row[0];
 
             $svg = array();
             $state = array();
@@ -1529,8 +1529,8 @@ switch ($args->command_name) {
                 $svg[] = PolygonToSVGPath($polygon->exterior, $polygon->holes, $state);
                 //$_zone->polygons[] = $polygon;
             }
-            $_zone->svg = implode('',$svg);
-            $zones[$_zone->id] = implode('',$svg);
+            //$_zone->svg = implode('',$svg);
+            $zones[$row[0]] = implode('',$svg);;
         }
         $res->finalize();
         echo "Exported ".count($zones)." zones to ".$args->command->options['outputfile']."\n";
