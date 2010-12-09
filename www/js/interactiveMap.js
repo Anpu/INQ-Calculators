@@ -60,6 +60,7 @@ function OverlayContainer(elem) {
     this._elems = [];
     this._toDraw = [];
     this.svgReady = false;
+    this.drawCalled = false;
     this.element.svg({onLoad:$.proxy(this._loadSVG,this)});
 }
 $.extend(OverlayContainer.prototype, {
@@ -68,7 +69,7 @@ $.extend(OverlayContainer.prototype, {
         svg.root().setAttribute('height','100%');
         this.svg = svg;
         this.svgReady = true;
-        if (this._toDraw.length) {
+        if (this.drawCalled) {
             this.draw();
         }
     },
@@ -92,6 +93,7 @@ $.extend(OverlayContainer.prototype, {
     },
     draw: function(force) {
         if (this.svgReady === false) {
+            this.drawCalled = true;
             return this;
         }
         var svg = this.svg;
