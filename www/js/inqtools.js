@@ -665,6 +665,22 @@ $(function() {
     });
 });
 
+$(function() {
+    if (!window._gaq) return;
+
+    var nssvg = 'http://www.w3.org/2000/svg';
+
+    var svg = !!document.createElementNS && !!document.createElementNS(nssvg, "svg").createSVGRect;
+
+    var div = document.createElement('div');
+    div.innerHTML = '<svg/>';
+    var inlinesvg = (div.firstChild && div.firstChild.namespaceURI) == nssvg;
+    div = null;
+
+    _gaq.push(['_setCustomVar',1,'SVG Support',svg?'Yes':'No',1]);
+    _gaq.push(['_setCustomVar',2,'Inline SVG Support',inlinesvg?'Yes':'No',1]);
+});
+
 // Magic help interaction
 $('#helpDialog area').live('mouseover',function() {
     $('#help_layout').addClass('pointer');
