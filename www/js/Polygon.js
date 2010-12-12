@@ -406,8 +406,9 @@ $.extend(Polygon.prototype, {
             ++scanline;
         }
     },
-    drawSVG: function(svg, g, aColor)
+    drawSVG: function(svg, parent, aColor)
     {
+        var g = svg.group(parent, {fill:aColor});
         var path = svg.createPath();
         var i = 0;
         var p,pp;
@@ -432,7 +433,8 @@ $.extend(Polygon.prototype, {
             }
             path.close();
         }
-        svg.path(g,path,{fill:aColor,stroke:aColor,strokeWidth: 1});
+        svg.path(g,path);
+        return g;
     }
 });
 

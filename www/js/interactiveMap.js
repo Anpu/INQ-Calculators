@@ -35,19 +35,32 @@ function dirname (path) {
 }
 
 // Overlay objects
-function OverlaySVGPath(aPath) {
+function OverlayPath(aPath) {
     this.path = aPath;
 }
-$.extend(OverlaySVGPath.prototype, {
-    drawSVG: function(svg, g, aColor) {
-        svg.path(g,this.path,{fill:aColor,stroke:aColor,strokeWidth: 1});
+$.extend(OverlayPath.prototype, {
+    drawSVG: function(svg, aParent, aColor) {
+        var g = svg.group(aParent, {fill:aColor});
+        svg.path(g,this.path);
+        return g;
     }
 });
 
-function OverlayCustom(drawSVG, draw)
+function OverlayReference(reference) {
+    this.ref = reference;
+}
+$.extend(OverlayReference.prototype, {
+    drawSVG: function(svg, aParent, aColor, offset) {
+        var g = svg.use(aParent, this.ref);
+        svg.change(g, offset);
+        return g;
+    }
+});
+
+
+function OverlayCustom(drawSVG)
 {
     this.drawSVG = drawSVG;
-    this.draw = draw;
 }
 
 // Main overlay Management
@@ -57,17 +70,24 @@ function OverlayContainer(elem) {
     // The starting scale
     this._scale = {num: 1, den: 1};
     // List of contained overlay elements
-    this._elems = [];
+    this._preElems = {};
+    this._elems = {};
+    this._toPreDraw = [];
     this._toDraw = [];
     this.svgReady = false;
     this.drawCalled = false;
     this.element.svg({onLoad:$.proxy(this._loadSVG,this)});
 }
 $.extend(OverlayContainer.prototype, {
-    _loadSVG: function(svg) {
+    _loadSVG: function(svg, error) {
+        if (error) alert(error);
         svg.root().setAttribute('width','100%');
         svg.root().setAttribute('height','100%');
         this.svg = svg;
+        this.element.delegate('#SVGScale > g',
+                'mouseover',$.proxy(this._mouseSVGIn,this));
+        this.element.delegate('#SVGScale > g',
+                'mouseout',$.proxy(this._mouseSVGOut,this));
         this.svgReady = true;
         if (this.drawCalled) {
             this.draw();
@@ -98,47 +118,59 @@ $.extend(OverlayContainer.prototype, {
         }
         var svg = this.svg;
 
-        var o, g;
+        var g, d;
         if (svg) {
             g = svg.getElementById('SVGScale');
-            if (!g || force) {
+            d = svg.getElementById('SVGDefs');
+            if (!g || !d || force) {
                 svg.clear();
+                d = svg.defs('SVGDefs');
                 g = svg.group('SVGScale',{transform:'scale('+(this._scale.num/this._scale.den)+')'});
                 force = true;
             }
         }
         if (force) {
-            this._toDraw = [];
-            for (var i=0,l=this._elems.length; i<l; ++i) {
-                o = this._elems[i];
-                this._draw_object(o,g);
-            }
-        } else {
-            while (this._toDraw.length) {
-                o = this._elems[this._toDraw.shift()];
-                this._draw_object(o,g);
-            }
+            this._toPreDraw = Object.keys(this._preElems);
+            this._toDraw = Object.keys(this._elems);
+        }
+        var o;
+        while (this._toPreDraw.length) {
+            o = this._preElems[this._toPreDraw.shift()];
+            this._draw_object(o,d);
+        }
+        while (this._toDraw.length) {
+            o = this._elems[this._toDraw.shift()];
+            this._draw_object(o,g);
         }
         return this;
     },
-    _draw_object: function(o, svgG) {
+    _draw_object: function(o, svgParent) {
         if (this.svgReady && o.data.drawSVG) {
-            o.data.drawSVG(this.svg, this.svg.group(svgG), this.nextColor());
-        } else if (o.data.draw) {
-            if (!o.wrapper) {
-                o.wrapper = $('<div/>').appendTo(this.element);
-            }
-            o.wrapper.empty();
-            o.data.draw(o.wrapper, this._scale, this.nextColor());
+            var g = o.data.drawSVG(this.svg, svgParent, this.nextColor(), o.offset);
+            this.svg.change(g,{id:o.name});
+//        } else if (o.data.draw) {
+            // Disable non SVG fallback for now
+//            if (!o.wrapper) {
+//                o.wrapper = $('<div/>').appendTo(this.element);
+//            }
+//            o.wrapper.empty();
+//            o.data.draw(o.wrapper, this._scale, this.nextColor());
         } else {
             throw new TypeError("No Draw Routine for object");
         }
+    },
+    // Events
+    _mouseSVGIn: function(e) {
+        this.svg.change(e.currentTarget,{stroke:'#FFFFFF','stroke-width':5});
+    },
+    _mouseSVGOut: function(e) {
+        this.svg.change(e.currentTarget,{stroke:null,'stroke-width':null});
     },
     // Big set of colors to pick from.
     colors: [
         '#00cc00','#0f2d89','#32994c','#d82652','#3df43d','#c10ac1','#d87f26','#00ff00','#4770ea','#999932','#e519b2',
         '#897ab7','#914c07','#59cc32','#7fcc32','#654784','#e5194c','#ad1ead','#890f0f','#92a559','#9900cc','#a55959',
-        '#e05199','#7f26d8','#6b0f89','#848447','#4798ea','#b2e519','#65cbcc','#2626d8','#828216','#e5e519','#7098c1',
+        '#e05199','#7f26d8','#6b0f89','#8484FF','#4798ea','#b2e519','#65cbcc','#2626d8','#8282FF','#e5e519','#7098c1',
         '#076e91','#91072a','#ea4799','#7ab789','#0f0f89','#634c35','#5175e0','#990026','#a5597f','#009972','#d85226',
         '#cc9965','#3259cc','#262672','#1e7a4c','#2d6b3d','#311682','#1e7a35','#668e3d','#b75bd6','#351e7a','#002699',
         '#ea9947','#59a592','#ff32cb','#7ff20c','#bf3f3f','#3d8e3d','#0f6b89','#7ad65b','#267226','#b77a89','#65b2cc',
@@ -159,33 +191,45 @@ $.extend(OverlayContainer.prototype, {
         this.color = ((this.color || 0) + 1) % this.colors.length;
         return this.colors[this.color];
     },
-    addPolygon: function(polygon, offset) {
+    addPolygon: function(name, polygon, offset) {
         if (!(polygon instanceof Polygon)) {
             throw new TypeError('Must pass in an instance of a Polygon object');
         }
-        return this.addObject('polygon', polygon, offset, true);
+        return this.addObject(name, 'polygon', polygon, offset, true);
     },
-    addCustom: function(draw, drawSVG, offset) {
-        return this.addObject('custom', new OverlayCustom(drawSVG, draw), offset, true);
+    addCustom: function(name, drawSVG, offset) {
+        return this.addObject(name, 'custom', new OverlayCustom(drawSVG), offset, true);
     },
-    addSVGPath: function(path, offset) {
+    addSymbol: function(name, drawSVG) {
+        return this.addObject(name, 'symbol', new OverlayCustom(drawSVG),true);
+    },
+    addPath: function(name, path, offset) {
         if (!path || typeof path != 'string') {
             throw new TypeError('Must pass in a string containing the SVG Path');
         }
-        return this.addObject('svgpath', new OverlaySVGPath(path), offset, true);
+        return this.addObject(name, 'path', new OverlayPath(path), offset, true);
     },
-    addObject: function(type, data, offset, toDraw) {
+    addReference: function(name, reference, offset) {
+        return this.addObject(name, 'use', new OverlayReference(reference), offset, true);
+    },
+    addObject: function(name, type, data, offset, toDraw) {
         var o = {
+            name: name,
             type: type,
             data: data,
             offset: offset
         };
-        this._elems.push(o);
-        var id = this._elems.length-1;
-        if (toDraw) {
-            this._toDraw.push(id);
+        if (type=='symbol') {
+            this._preElems[name] = o;
+            if (toDraw) {
+                this._toPreDraw.push(name);
+            }
+        } else {
+            this._elems[name]= o;
+            if (toDraw) {
+                this._toDraw.push(name);
+            }
         }
-        return id;
     }
 });
 
