@@ -40,3 +40,70 @@
     position: absolute;
     overflow: hidden;
 }
+
+.interactiveMap .navigation {
+    width: 100px;
+    height: 100px;
+    right: 0px;
+    position: absolute;
+}
+
+.interactiveMap .navigation > div {
+    position: absolute;
+    background-image: url(../images/navigator.png);
+}
+
+.interactiveMap .navigation > div.navigationBase {
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+}
+
+.interactiveMap .navigation > div.navigateLeft {
+    left: 4px;
+    top: 42px;
+    width: 12px;
+    height: 16px;
+    background-position: -64px -104px;
+}
+
+.interactiveMap .navigation > div.navigateRight {
+    left: 84px;
+    top: 42px;
+    width: 12px;
+    height: 16px;
+    background-position: -16px -104px;
+}
+
+.interactiveMap .navigation > div.navigateUp {
+    left: 42px;
+    top: 4px;
+    width: 16px;
+    height: 12px;
+    background-position: -32px -106px;
+}
+
+.interactiveMap .navigation > div.navigateDown {
+    left: 42px;
+    top: 84px;
+    width: 16px;
+    height: 12px;
+    background-position: -48px -106px;
+}
+
+.interactiveMap .navigation > div.navigatePlus {
+    left: 51px;
+    top: 20px;
+    width: 29px;
+    height: 60px;
+    background-position: -105px -4px;
+}
+
+.interactiveMap .navigation > div.navigateMinus {
+    left:20px;
+    top: 20px;
+    width: 29px;
+    height: 60px;
+    background-position: -105px -64px;
+}

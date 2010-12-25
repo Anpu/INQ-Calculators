@@ -241,11 +241,10 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
     _create: function() {
         this._mouseInit();
         this._elems = {};
-        var self = this;
         this.element
             .addClass('interactiveMap')
             .disableSelection()
-            .mousewheel(function(event,delta) {self._mouseWheel(event,delta);});
+            .mousewheel($.proxy(this._mouseWheel,this));
         this._elems.view = $('<div class="viewPort"/>')
             .appendTo(this.element);
         this._elems.container = $('<div class="container"/>')
@@ -254,6 +253,15 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
             .appendTo(this._elems.container);
         this._elems.overlay = $('<div class="overlay"/>')
             .appendTo(this._elems.container);
+        this._elems.navigator = $('<div class="navigation"><div class="navigationBase"/></div>')
+            .appendTo(this._elems.view)
+            .mousemove($.proxy(this._mouseNavigationHover,this))
+            .mousedown($.proxy(this._mouseNavigationDown,this))
+            .mouseup($.proxy(this._mouseNavigationUp,this));
+        this._navigatorHit = true;
+        this._elems.navigatorOverlay = $('<div class="navigateNone"/>')
+            .appendTo(this._elems.navigator);
+        this._navigatorFadeDone = $.proxy(this._navigatorFadeDoneEvt,this);
         this.overlay();
         this.loadMap();
     },
@@ -280,6 +288,9 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         }
     },
     destroy: function() {
+        for (var a in this._elems) {
+            this._elems[a] = null;
+        }
         this._mouseDestroy();
         this.element.empty();
         this.element
@@ -335,6 +346,9 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
     loadLayer: function(layer, center) {
         var cur_scale;
         if (layer === this._activeLayerNum) return;
+        if (layer < 0 || layer >= this._map.layers.length) {
+            return; // max zoom
+        }
         // Grab current layer scale
         if (this._activeLayer && center) {
             cur_scale = this._activeLayer.scale;
@@ -476,6 +490,7 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         }
     },
     _mouseStart: function(aEvt) {
+        this._navigatorHit = false;
         this.offset = this.element.offset();
         var p = this._elems.container.position();
         $.extend(this.offset, {
@@ -499,20 +514,124 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
             x:o.x - this.offset.click.x + this.offset.view.x,
             y:o.y - this.offset.click.y + this.offset.view.y
         };
-        this._elems.container.css({left:p.x, top: p.y});
+        this._elems.container.css({left:Math.floor(p.x), top: Math.floor(p.y)});
         this.checkTiles(p.x, p.y);
     },
     _mouseWheel: function(event, delta) {
         var layer = this._activeLayerNum + (delta < 0 ? -1 : 1);
         event.preventDefault();
-        if (layer < 0 || layer >= this._map.layers.length) {
-            return; // max zoom
-        }
         var offset = this.element.offset();
         this.loadLayer(layer, {x:event.pageX - offset.left, y:event.pageY - offset.top});
     },
     _mouseStop: function(aEvt) {
+        this._navigatorHit = true;
+    },
+    _navigatorFindButton: function(posX, posY) {
+        var x = posX - 50;
+        var y = posY - 50;
+        var r = Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+        var t = 360 - (Math.atan2(x,y)*(180/Math.PI)+180);
+        var btn = null;
 
+        if (r < 50) {
+            if (r <= 30) {
+                if (posX < 50) {
+                    btn = 'Minus';
+                } else if (posX > 50) {
+                    btn = 'Plus';
+                }
+            } else {
+                if (t > 330 || t < 30) {
+                    btn = 'Up';
+                } else if (t < 300 && t > 240) {
+                    btn = 'Left';
+                } else if (t < 210 && t > 150) {
+                    btn = 'Down';
+                } else if (t < 120 && t > 60) {
+                    btn = 'Right';
+                }
+            }
+        }
+        return btn;
+    },
+    _mouseNavigationHover: function(aEvt) {
+        if (!this._navigatorHit) {
+            return;
+        }
+        var offset = this._elems.navigator.offset();
+        var posX = aEvt.pageX - offset.left;
+        var posY = aEvt.pageY - offset.top;
+        var btn = this._navigatorFindButton(posX, posY);
+
+        var cls = 'navigate'+(btn || 'None');
+        if (!this._elems.navigatorOverlay.hasClass(cls)) {
+            this._elems.navigatorOverlay.attr('class',cls);
+        }
+    },
+    _mouseNavigationDown: function(aEvt) {
+        var offset = this._elems.navigator.offset();
+        var posX = aEvt.pageX - offset.left;
+        var posY = aEvt.pageY - offset.top;
+        var btn = this._navigatorFindButton(posX, posY);
+        if (btn) {
+            aEvt.stopPropagation();
+            this._navigatorHit = true;
+        } else {
+            this._navigatorHit = false;
+        }
+    },
+    _mouseNavigationUp: function(aEvt) {
+        if (!this._navigatorHit) {
+            this._navigatorHit = true;
+            return;
+        }
+        this._navigatorHit = true;
+        var offset = this._elems.navigator.offset();
+        var posX = aEvt.pageX - offset.left;
+        var posY = aEvt.pageY - offset.top;
+        var btn = this._navigatorFindButton(posX, posY);
+        if (!btn) {
+            return;
+        }
+        var DIST = 50;
+        var p = this._elems.container.position();
+        this._elems.navigatorOverlay.attr('class','navigate'+btn);
+        switch (btn) {
+            case 'Up':
+                p.top += DIST;
+                this.checkTiles(p.left,p.top);
+                this._elems.container.animate({top:p.top},'fast');
+                break;
+            case 'Down':
+                p.top -= DIST;
+                this.checkTiles(p.left,p.top);
+                this._elems.container.animate({top:p.top},'fast');
+                break;
+            case 'Left':
+                p.left += DIST;
+                this.checkTiles(p.left,p.top);
+                this._elems.container.animate({left:p.left},'fast');
+                break;
+            case 'Right':
+                p.left -= DIST;
+                this.checkTiles(p.left,p.top);
+                this._elems.container.animate({left:p.left},'fast');
+                break;
+            case 'Minus':
+                this.loadLayer(this._activeLayerNum - 1, {
+                    x:this._elems.container.width()/2,
+                    y:this._elems.container.height()/2});
+                break;
+            case 'Plus':
+                this.loadLayer(this._activeLayerNum + 1, {
+                    x:this._elems.container.width()/2,
+                    y:this._elems.container.height()/2});
+                break;
+        }
+        this._elems.navigatorOverlay.fadeOut('fast',this._navigatorFadeDone);
+    },
+    _navigatorFadeDoneEvt: function() {
+        this._elems.navigatorOverlay.attr('class','').show();
     }
 });
 
