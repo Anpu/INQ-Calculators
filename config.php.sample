@@ -6,6 +6,8 @@ return (object)array(
   // Currently, enabling debug mode enabled FirePHP calls
   'debug' => false,
 
+  'title' => 'Regnum Tools',
+
   // Set to a string to show in the top header of the installation
   'devheader' => false,
 

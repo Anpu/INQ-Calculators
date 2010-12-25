@@ -56,6 +56,7 @@ if (empty($_GET['PATH_INFO'])) {
         );
         // Load enablement of tools
         $tpl->tools = $config->tools;
+        $tpl->title = $config->title;
         $tpl->devheader = $config->devheader;
         $tpl->credits = is_array($config->credits)
                 ? $config->credits
