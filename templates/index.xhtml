@@ -237,10 +237,10 @@
       <ul class="navigation">
         <li><a href="#home" data-logo="center">Home</a></li>
         <li tal:condition="notempty: tools/grinding"><a href="#grinding" widgets="level,levelrange,region,gogrind" callback="cbGrinding">Grinding</a></li>
-        <li tal:condition="notempty: tools/areas"><a href="#areas" widgets="area_search,region,go" callback="cbAreas">Areas</a></li>
-        <li tal:condition="notempty: tools/mobs"><a href="#mobs" widgets="mob_search,region,go" callback="cbMobs">Mobs</a></li>
         <li tal:condition="notempty: tools/pets"><a href="#pets" widgets="level,power,region,go" callback="cbPets">Pets</a></li>
         <li tal:condition="notempty: tools/npcs"><a href="#npcs" widgets="npc_search,profession,region,go" callback="cbNPCs">NPCs</a></li>
+        <li tal:condition="notempty: tools/mobs"><a href="#mobs" widgets="mob_search,region,go" callback="cbMobs">Mobs</a></li>
+        <li tal:condition="notempty: tools/areas"><a href="#areas" widgets="area_search,region,go" callback="cbAreas">Areas</a></li>
         <li tal:condition="notempty: tools/map"><a href="#map" load="refreshMaps">Map</a></li>
         <li tal:condition="notempty: tools/shops"><a href="#shops">Shops</a></li>
         <li tal:condition="notempty: tools/armor"><a href="#armor">Armor</a></li>
@@ -364,10 +364,11 @@
             List of the tools:<br />
             <ul class="legend">
               <li tal:condition="notempty: tools/grinding"><a class="tablink" href="#grinding">Grinding</a> - calculate the number of mob kills till you level up as well as the best areas.</li>
-              <li tal:condition="notempty: tools/areas"><a class="tablink" href="#mobs">Areas</a> - search for areas by name.</li>
-              <li tal:condition="notempty: tools/mobs"><a class="tablink" href="#mobs">Mobs</a> - search for mobs by name.</li>
               <li tal:condition="notempty: tools/pets"><a class="tablink" href="#pets">Pets</a> - find the pet for your hunter.</li>
               <li tal:condition="notempty: tools/npcs"><a class="tablink" href="#npcs">NPCs</a> - search for quest NPCs.</li>
+              <li tal:condition="notempty: tools/mobs"><a class="tablink" href="#mobs">Mobs</a> - search for mobs by name.</li>
+              <li tal:condition="notempty: tools/areas"><a class="tablink" href="#mobs">Areas</a> - search for areas by name.</li>
+              <li tal:condition="notempty: tools/map"><a class="tablink" href="#map">Map</a> - an interactive map of the world.</li>
               <li tal:condition="notempty: tools/shops"><a class="tablink" href="#shops">Shops</a> - find out which merchants sell stuff for your class.</li>
               <li tal:condition="notempty: tools/armor"><a class="tablink" href="#armor">Armor</a> - calculate armor points per damage type of your armor set.</li>
               <li tal:condition="notempty: tools/trainer"><a class="tablink" href="#trainer">Trainer</a> - build the setup for your character.</li>
