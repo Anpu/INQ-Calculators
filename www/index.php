@@ -45,6 +45,11 @@ if ($config->memcache) {
 
 if (empty($_GET['PATH_INFO'])) {
     try {
+        if ($config->cachehome) {
+            header("Pragma: public");
+            header("Cache-Control: maxage=".$config->cachehome);
+            header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
+        }
         $tpl = new Template("index.xhtml");
         $tpl->js = array(
             'ajaxRoot'=>json_encode(Util::AjaxBaseURI())
@@ -60,11 +65,6 @@ if (empty($_GET['PATH_INFO'])) {
                 ? $config->analytics
                 : array('enabled'=>false);
         $tpl->echoExecute();
-        if ($config->cachehome) {
-            header("Pragma: public");
-            header("Cache-Control: maxage=".$config->cachehome);
-            header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
-        }
     } catch (Exception $ex) {
         die ((string)$ex);
     }
