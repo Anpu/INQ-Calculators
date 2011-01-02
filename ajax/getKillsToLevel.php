@@ -56,7 +56,7 @@ function phptal_func_calcxp($xp, $chg) {
 }
 
 function phptal_tales_calcxp($src, $nothrow) {
-    $exp = Template::SplitSRC($src);
+    $exp = Template::SplitSRC($src, $nothrow);
 
     $args = explode(' ',trim($src));
     if (count($args)!==2) {
