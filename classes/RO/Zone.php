@@ -44,7 +44,8 @@ class RO_Zone extends RO_Base {
 
     protected function configSQL()
     {
-        return "SELECT * FROM zones WHERE zone_id = ?";
+        /** Don't pull back geomertry by default */
+        return "SELECT zone_id, name, realm, region FROM zones WHERE zone_id = ?";
     }
 
     protected function configCache()
