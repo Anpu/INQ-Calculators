@@ -61,14 +61,20 @@ class RO_Zone extends RO_Base {
         return self::$zone_map[$this->shortID()];
     }
 
+    private $mobs_cache = null;
     protected function mobs()
     {
-        $min_level = empty($this->extra->min_level) ? null : $this->extra->min_level;
-        $max_level = empty($this->extra->max_level) ? null : $this->extra->max_level;
-        $only_grinding = empty($this->extra->only_grinding) ? null : $this->extra->only_grinding;
-        $stmt = Database::query("CALL GetAreaMobs(?,?,?,?)",$this->ID(),$min_level, $max_level, $only_grinding);
-        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
-        return new ResultIterator($rows,'RO_Mob');
+        if (is_null($this->mobs_cache)) {
+            $min_level = empty($this->extra->min_level) ? null : $this->extra->min_level;
+            $max_level = empty($this->extra->max_level) ? null : $this->extra->max_level;
+            $only_grinding = empty($this->extra->only_grinding) ? null : $this->extra->only_grinding;
+            $stmt = Database::query("CALL GetAreaMobs(?,?,?,?)",$this->ID(),$min_level, $max_level, $only_grinding);
+            $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            $this->mobs_cache = new ResultIterator($rows,'RO_Mob');
+        }
+        return $this->mobs_cache;
+    }
+
     /*
      * returns data formatted for use on throw map
      */
