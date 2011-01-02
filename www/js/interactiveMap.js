@@ -263,11 +263,17 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
             .appendTo(this._elems.navigator);
         this._navigatorFadeDone = $.proxy(this._navigatorFadeDoneEvt,this);
         this.overlay();
-        this.loadMap();
+        if (!this.element.is(':hidden')) {
+            this.loadMap();
+        }
     },
     render: function() {
-        if (this.element.is(':hidden') || !this._map) {
+        if (this.element.is(':hidden') || !this.options.map) {
             // nothing to see here move along
+            return;
+        }
+        if (!this._map) {
+            this.loadMap();
             return;
         }
         // Called when the display needs to be recalculated (resize or show when previously hidden)
