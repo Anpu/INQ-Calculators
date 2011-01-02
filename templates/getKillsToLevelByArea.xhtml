@@ -1,6 +1,9 @@
 <tal:block metal:define-macro="entry">
-    <tr tal:attributes="class string:search_result_row ${EvenOdd}">
-        <td><span class="toggle_icon" /></td>
+    <tr tal:attributes="class string:search_result_row ${EvenOdd};">
+        <td>
+            <span class="toggle_icon" />
+            <tal:block metal:use-macro="library.xhtml/throwonmap" tal:define="mapData entry/zone/mapGrindingData"/>
+        </td>
         <td>${entry/zone/name} in the ${entry/zone/realm} ${entry/zone/region}</td>
         <td>${entry/mob_types}</td>
         <td tal:content="nozero:entry/avg_xp | default"><em>No XP</em></td>

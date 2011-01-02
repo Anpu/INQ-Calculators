@@ -46,13 +46,34 @@ class RO_Mob extends RO_Base {
 
     protected function zoneOverview() {
         $zone_summary = array();
-        foreach($this->zones() as $zone) {
+        foreach ($this->zones() as $zone) {
             if (!isset($zone_summary[$zone->shortID])) {
                 $zone_summary[$zone->shortID] = $zone->shortName;
             }
         }
         ksort($zone_summary);
         return $zone_summary;
+    }
+
+    /*
+     * returns data formatted for use on throw map
+     */
+    protected function mapData() {
+        $ret = array('zones'=>array());
+        foreach ($this->zones() as $_zone) {
+            $ret['zones'][] = array(
+                'zone_id'=>$_zone->ID(),
+                'name'=>$_zone->name,
+                'data'=>array(
+                    'mobs'=>array(
+                        array(
+                            'name'=>$this->name
+                        ),
+                    ),
+                ),
+            );
+        }
+        return $ret;
     }
 
     protected function tameSpell()

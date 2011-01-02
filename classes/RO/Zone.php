@@ -69,6 +69,35 @@ class RO_Zone extends RO_Base {
         $stmt = Database::query("CALL GetAreaMobs(?,?,?,?)",$this->ID(),$min_level, $max_level, $only_grinding);
         $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return new ResultIterator($rows,'RO_Mob');
+    /*
+     * returns data formatted for use on throw map
+     */
+    protected function mapData() {
+        return array(
+            'zones'=>array(array(
+                'zone_id'=>$this->zone_id,
+                'name'=>$this->name,
+            )),
+        );
+    }
+
+    /*
+     * returns data formatted for use on throw map
+     */
+    protected function mapGrindingData() {
+        $data = array();
+        foreach ($this->mobs() as $_mob) {
+            $data[] = array(
+                'name'=>$_mob->name,
+            );
+        }
+        return array('zones'=>array(array(
+            'zone_id'=>$this->zone_id,
+            'name'=>$this->name,
+            'data'=>array(
+                'mobs'=>$data,
+            ),
+        )));
     }
 
     /**

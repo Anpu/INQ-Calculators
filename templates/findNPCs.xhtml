@@ -1,5 +1,8 @@
 <tal:block metal:define-macro="entry">
     <tr tal:attributes="class string:search_result_row ${EvenOdd}">
+        <td>
+            <tal:block metal:use-macro="library.xhtml/throwonmap" tal:define="mapData entry/mapData"/>
+        </td>
         <td>${entry/name}</td>
         <td>${entry/profession}</td>
         <td>${entry/zone/realm}</td>
@@ -10,10 +13,11 @@
         </td>
     </tr>
 </tal:block>
-<tal:block tal:define="item_name string:NPCs; colspan string:6; entry_macro string:findNPCs.xhtml/entry"
+<tal:block tal:define="item_name string:NPCs; colspan '7'; entry_macro string:findNPCs.xhtml/entry"
            metal:use-macro="library.xhtml/resultiterator">
     <thead metal:fill-slot="header">
         <tr>
+            <th></th>
             <th>Name</th>
             <th>Profession</th>
             <th>Realm</th>

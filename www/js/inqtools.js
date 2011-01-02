@@ -186,7 +186,9 @@ $(function() {
         return false;
     });
 
-    $('div.results').delegate('.search_result_row:has(.toggle_icon)','click', function(e) {
+    $('div.results').delegate('.search_result_row .throwOnMap','click',function(e) {
+        e.stopPropagation();
+    }).delegate('.search_result_row:has(.toggle_icon)','click', function(e) {
         $(this).next('.search_result_detail')
             .find('div.detail_content')
             .slideToggle('fast');

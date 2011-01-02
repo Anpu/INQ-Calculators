@@ -37,6 +37,23 @@ class RO_NPC extends RO_Base {
         return new RO_Zone($this->zone_id);
     }
 
+    /*
+     * returns data formatted for use on throw map
+     */
+    protected function mapData() {
+        return array(
+            'npcs'=>array(array(
+                'npc_id'=>$this->npc_id,
+                'name'=>$this->name,
+                'profession'=>$this->profession,
+                'position'=>array(
+                    'x'=>$this->x,
+                    'z'=>$this->z,
+                ),
+            )),
+        );
+    }
+
     /**
      * Find NPCs
      *

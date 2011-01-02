@@ -98,6 +98,11 @@ class Template_Tales implements PHPTAL_Tales {
                 'Template_Tales::nozeroFUNC('.phptal_tale($src, $nothrow). ')');
         return $exp;
     }
+
+    public static function json($src, $nothrow)
+    {
+        return 'json_encode('.phptal_tale($src, $nothrow). ')';
+    }
 }
 
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("limit", array('Template_Tales','limit'));
@@ -106,4 +111,5 @@ PHPTAL_TalesRegistry::getInstance()->registerPrefix("notempty", array('Template_
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("count", array('Template_Tales','count'));
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("cssodd", array('Template_Tales','cssodd'));
 PHPTAL_TalesRegistry::getInstance()->registerPrefix("nozero", array('Template_Tales','nozero'));
+PHPTAL_TalesRegistry::getInstance()->registerPrefix("json", array('Template_Tales','json'));
 ?>

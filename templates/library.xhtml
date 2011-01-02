@@ -53,6 +53,13 @@
     <tal:block tal:condition="offset" metal:use-macro="body"/>
 </tal:block>
 
+<!-- Generates a "throw on map" button
+    mapData            the data to be thrown on the map
+-->
+<tal:block metal:define-macro="throwonmap">
+    <span class="ui-icon ui-icon-cart throwOnMap" style="display: inline-block" tal:attributes="data-map json: mapData"/>
+</tal:block>
+
 <tal:block metal:define-macro="toggleicon">
     <span style="display: inline-block" class="ui-icon ui-icon-circle-plus toggle_icon"/>
 </tal:block>
