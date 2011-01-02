@@ -281,24 +281,11 @@ ul.legend a {
     color: #EFC325;
 }
 
-.toggle_icon {
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  background-position: 0 -192px;
-  background-image: url(themes/inquisition/images/ui-icons_9fda58_256x240.png);
-}
-
 .search_result_row:hover {
   color: #FFFFFF;
 }
-
-.search_result_row:hover .toggle_icon {
-  background-image: url(themes/inquisition/images/ui-icons_ffffff_256x240.png);
-}
-
-.expanded .toggle_icon {
-  background-position: -16px -192px;
+.search_result_row:hover .ui-icon {
+    background-image: url(themes/inquisition/images/ui-icons_ffffff_256x240.png);
 }
 
 

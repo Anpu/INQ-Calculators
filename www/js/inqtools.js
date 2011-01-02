@@ -180,21 +180,22 @@ $(function() {
     $('ul.navigation li:first-child').addClass('first-item');
     $('ul.navigation li:last-child').addClass('last-item');
 
-    $('a.tablink').live('click',function(e) {
+    $('#home').delegate('a.tablink', 'click',function(e) {
         if (e.button !=0) return false;
         $('#main').tabs('select',this.hash);
         return false;
     });
 
-    $('.search_result_row').live('click', function(e) {
-        $(this).toggleClass('expanded')
-        .next('.search_result_detail').find('div.detail_content').slideToggle('fast');
-        });
-
-    $('.search_result_detail').live('click', function(e) {
-        $(this).prev('.search_result_row').toggleClass('expanded');
+    $('div.results').delegate('.search_result_row:has(.toggle_icon)','click', function(e) {
+        $(this).next('.search_result_detail')
+            .find('div.detail_content')
+            .slideToggle('fast');
+        $(this).find('.toggle_icon').toggleClass('ui-icon-circle-minus');
+    }).delegate('.search_result_detail','click', function(e) {
+        $(this).prev('.search_result_toggle')
+            .find('.toggle_icon').toggleClass('ui-icon-circle-minus');
         $(this).find('div.detail_content').slideToggle('fast');
-        });
+    });
 
     $('table.search_results > .moreresults > tr').live('click', function(e) {
        var fetchCall = $(this).closest('div.results').data('fetchCall');
@@ -485,6 +486,19 @@ $(function() {
             }
         }
     });
+
+    // Magic help interaction
+    $('#helpDialog').delegate('area','mouseover',function() {
+        $('#help_layout').addClass('pointer');
+    }).delegate('area','mouseout',function() {
+        $('#help_layout').removeClass('pointer');
+    }).delegate('area','click',function(e) {
+        e.preventDefault();
+        var o = $( $(this).attr('href') );
+        if (o.length) o[0].scrollIntoView(false);
+        o.effect('pulsate',{times:2},200);
+    });
+
     $('#licenseDialog').dialog({
         autoOpen: false,
         modal: true,
@@ -687,17 +701,6 @@ $(function() {
     _gaq.push(['_setCustomVar',2,'Inline SVG Support',inlinesvg?'Yes':'No',1]);
 });
 
-// Magic help interaction
-$('#helpDialog area').live('mouseover',function() {
-    $('#help_layout').addClass('pointer');
-}).live('mouseout',function() {
-    $('#help_layout').removeClass('pointer');
-}).live('click',function(e) {
-    e.preventDefault();
-    var o = $( $(this).attr('href') );
-    if (o.length) o[0].scrollIntoView(false);
-    o.effect('pulsate',{times:2},200);
-});
 
 function trackEvent(category, action, label, value) {
     window._gaq && _gaq.push(['_trackEvent',category, action, label && label.toString(), value]);
