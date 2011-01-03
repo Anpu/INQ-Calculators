@@ -89,15 +89,6 @@ if (window.console == undefined) {
     };
 }
 
-function prefixNumber(number, prefix, digits) {
-    var n = parseInt(number).toString();
-    var ret = '';
-    for (var i=0,l=digits-n.length; i<l; i++) {
-        ret += prefix;
-    }
-    return ret + n;
-}
-
 // JQuery on ready event
 $(function() {
     $.ajaxSetup({
@@ -1267,4 +1258,13 @@ function ShowError(aMessage, aParent, aReplace) {
             .data('error',{message:aMessage})
             .dialog('open');
     }
+}
+
+function prefixNumber(number, prefix, digits) {
+    var n = parseInt(number).toString();
+    var ret = '';
+    for (var i=0,l=digits-n.length; i<l; i++) {
+        ret += prefix;
+    }
+    return ret + n;
 }
