@@ -93,17 +93,15 @@ class RO_Zone extends RO_Base {
     protected function mapGrindingData() {
         $data = array();
         foreach ($this->mobs() as $_mob) {
-            $data[] = array(
-                'name'=>$_mob->name,
-            );
+            $data[] = $_mob->name;
         }
-        return array('zones'=>array(array(
-            'zone_id'=>$this->zone_id,
-            'name'=>$this->name,
-            'data'=>array(
+        return array('zones'=>array(
+            $this->zone_id=>array(
+                'zone_id'=>$this->zone_id,
+                'name'=>$this->name,
                 'mobs'=>$data,
-            ),
-        )));
+            )
+        ));
     }
 
     /**

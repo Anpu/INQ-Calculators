@@ -42,15 +42,17 @@ class RO_NPC extends RO_Base {
      */
     protected function mapData() {
         return array(
-            'npcs'=>array(array(
-                'npc_id'=>$this->npc_id,
-                'name'=>$this->name,
-                'profession'=>$this->profession,
-                'position'=>array(
-                    'x'=>$this->x,
-                    'z'=>$this->z,
-                ),
-            )),
+            'npcs'=>array(
+                $this->npc_id => array(
+                    'npc_id'=>$this->npc_id,
+                    'name'=>$this->name,
+                    'profession'=>$this->profession,
+                    'position'=>array(
+                        'x'=>$this->x,
+                        'z'=>$this->z,
+                    ),
+                )
+            ),
         );
     }
 

@@ -61,15 +61,11 @@ class RO_Mob extends RO_Base {
     protected function mapData() {
         $ret = array('zones'=>array());
         foreach ($this->zones() as $_zone) {
-            $ret['zones'][] = array(
+            $ret['zones'][$_zone->ID()] = array(
                 'zone_id'=>$_zone->ID(),
                 'name'=>$_zone->name,
-                'data'=>array(
-                    'mobs'=>array(
-                        array(
-                            'name'=>$this->name
-                        ),
-                    ),
+                'mobs'=>array(
+                    $this->name
                 ),
             );
         }

@@ -44,6 +44,19 @@ if (!Array.prototype.indexOf)
   };
 }
 
+if (!Array.prototype.concatUnique) {
+    Array.prototype.concatUnique = function (arr) {
+        var ret = this.slice();
+        for (var i=0,l=arr.length; i<l; ++i) {
+            if (ret.indexOf(arr[i]) == -1) {
+                ret.push(arr[i]);
+            }
+        }
+        return ret;
+    }
+}
+
+
 if (!Object.keys)
 {
   Object.keys = function(obj)
@@ -178,6 +191,7 @@ $(function() {
     });
 
     $('div.results').delegate('.search_result_row .throwOnMap','click',function(e) {
+        ROMapData.add($(this).data('map'));
         e.stopPropagation();
     }).delegate('.search_result_row:has(.toggle_icon)','click', function(e) {
         $(this).next('.search_result_detail')
@@ -452,6 +466,7 @@ $(function() {
     $('#RO_InteractiveMap').interactiveMap({
         map: 'images/map/map.xml'
     });
+    window.ROMapData = new cROMapData('#RO_InteractiveMap', 'images/map/zones/overlay.json');
 
     $('#errorDialog').dialog({
         autoOpen: false,
@@ -693,6 +708,95 @@ $(function() {
     _gaq.push(['_setCustomVar',1,'SVG Support',svg?'Yes':'No',1]);
     _gaq.push(['_setCustomVar',2,'Inline SVG Support',inlinesvg?'Yes':'No',1]);
 });
+
+(function($) {
+    function cROMapData(map, zoneURL) {
+        this.overlay = $(map).interactiveMap('overlay');
+        this.initialize();
+        this.zoneURL = zoneURL;
+        this.data = {zones:{},npcs:{}};
+    }
+
+    $.extend(cROMapData.prototype,{
+        initialize:function() {
+            this.npc = {width:16,height:16};
+            this.overlay.addSymbol('romap_npc',function(svg, parent, color) {
+                var s = svg.symbol(parent, 'temp',0,0,16,16);
+                svg.circle(s,8,8,8,{fill:'#ff0000',stroke:'none'});
+                return s;
+            });
+        },
+        load:function() {
+            if (!this.zones) {
+                $.getJSON(this.zoneURL,$.proxy(this._loadCB,this));
+            }
+        },
+        _loadCB: function(json) {
+            this.zones = json;
+            var k = Object.keys(this.data.zones);
+            if (k.length) {
+                this.addZones(k);
+            }
+        },
+        zoneSVG:function(zoneID) {
+            if (zoneID in this.zones) {
+                return this.zones[zoneID];
+            }
+            return null;
+        },
+        add:function(data) {
+            var add = {zones:[],npcs:[]};
+            for (var type in data) {
+                for (var o in data[type]) {
+                    if (o in this.data[type]) {
+                        switch (type) {
+                            case 'zones':
+                                // Merge any mob data
+                                if (data[type][o].mobs) {
+                                    this.data[type][o].mobs =
+                                        (this.data[type][o].mobs || []).concatUnique(data[type][o].mobs);
+                                }
+                                break;
+                            case 'npcs':
+                            default:
+                                // data is just duplicate no merging needed
+                        }
+                    } else {
+                        this.data[type][o] = $.extend(true,{},data[type][o]);
+                        add[type].push(o);
+                    }
+                }
+            }
+            this.addZones(add.zones);
+            this.addNPCs(add.npcs);
+        },
+        addZones: function(zones) {
+            if (!this.zones) {
+                this.load();
+                return;
+            }
+            // iterate through newly added entities
+            for (var i=0; i< zones.length; ++i) {
+                var d = this.zoneSVG(zones[i]);
+                if (d) {
+                    this.overlay.addPath('romap_zone_'+zones[i],d);
+                }
+            }
+        },
+        addNPCs: function(npcs) {
+            for (var i=0; i< npcs.length; ++i) {
+                var d = this.data.npcs[npcs[i]];
+                this.overlay.addReference('romap_npc_'+npcs[i],'#romap_npc',{
+                    x: d.position.x,
+                    y: d.position.z,
+                    width: this.npc.width,
+                    height: this.npc.height
+                });
+            }
+        }
+    });
+    window.cROMapData = cROMapData;
+})(jQuery);
 
 
 function trackEvent(category, action, label, value) {
