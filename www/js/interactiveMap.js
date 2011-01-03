@@ -133,14 +133,20 @@ $.extend(OverlayContainer.prototype, {
             this._toPreDraw = Object.keys(this._preElems);
             this._toDraw = Object.keys(this._elems);
         }
-        var o;
+        var o,n;
         while (this._toPreDraw.length) {
-            o = this._preElems[this._toPreDraw.shift()];
-            this._draw_object(o,d);
+            n = this._toPreDraw.shift();
+            if (n in this._preElems) {
+                o = this._preElems[n];
+                this._draw_object(o,d);
+            }
         }
         while (this._toDraw.length) {
-            o = this._elems[this._toDraw.shift()];
-            this._draw_object(o,g);
+            n = this._toDraw.shift();
+            if (n in this._elems) {
+                o = this._elems[n];
+                this._draw_object(o,g);
+            }
         }
         return this;
     },
@@ -230,6 +236,31 @@ $.extend(OverlayContainer.prototype, {
                 this._toDraw.push(name);
             }
         }
+    },
+    removeObject: function(name) {
+        if (name in this._preElems) {
+            delete this._preElems[name];
+        }
+        if (name in this._elems) {
+            delete this._elems[name];
+        }
+        if (this.svgReady) {
+            var e = this.svg.getElementById(name);
+            if (e) this.svg.remove(e);
+        }
+    },
+    objectNames: function(pre) {
+        return Object.keys(pre ? this._preElems : this._elems);
+    },
+    clear: function() {
+        // Clear all objects
+        if (this.svgReady) {
+            this.svg.clear();
+        }
+        this._preElems = {};
+        this._toPreDraw = [];
+        this._elems = {};
+        this._toDraw = [];
     }
 });
 
@@ -309,10 +340,7 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         if (map) {
             this._setOption('map',map);
         }
-        var self = this;
-        $.get(this.options.map,undefined,function(xml) {
-            self._loadXML(xml);
-        },'xml');
+        $.get(this.options.map,undefined,$.proxy(this._loadXML,this),'xml');
     },
     _loadXML: function(xml) {
         var layers = $(xml).find("layer");
