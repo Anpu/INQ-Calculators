@@ -241,7 +241,7 @@
         <li tal:condition="notempty: tools/npcs"><a href="#npcs" widgets="npc_search,profession,region,go" callback="cbNPCs">NPCs</a></li>
         <li tal:condition="notempty: tools/mobs"><a href="#mobs" widgets="mob_search,region,go" callback="cbMobs">Mobs</a></li>
         <li tal:condition="notempty: tools/areas"><a href="#areas" widgets="area_search,region,go" callback="cbAreas">Areas</a></li>
-        <li tal:condition="notempty: tools/map"><a href="#map" load="refreshMaps">Map</a></li>
+        <li tal:condition="notempty: tools/map" id="mapTab"><a href="#map" load="refreshMaps">Map</a></li>
         <li tal:condition="notempty: tools/shops"><a href="#shops">Shops</a></li>
         <li tal:condition="notempty: tools/armor"><a href="#armor">Armor</a></li>
         <li tal:condition="notempty: tools/trainer"><a href="#trainer" widgets="class,go" callback="cbTrainer" load="cbInitTrainer">Trainer</a></li>

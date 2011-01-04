@@ -288,6 +288,10 @@ ul.legend a {
     background-image: url(themes/inquisition/images/ui-icons_ffffff_256x240.png);
 }
 
+.ui-effects-transfer {
+    border: 1px #a0a0a0 dashed;
+}
+
 
 /* Tool Options */
 

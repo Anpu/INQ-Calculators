@@ -192,6 +192,7 @@ $(function() {
 
     $('div.results').delegate('.search_result_row .throwOnMap','click',function(e) {
         ROMapData.add($(this).data('map'));
+        $(this).effect('transfer',{to:'#mapTab',className:'ui-effects-transfer ui-widget-overlay ui-corner-all'},1000);
         e.stopPropagation();
     }).delegate('.search_result_row:has(.toggle_icon)','click', function(e) {
         $(this).next('.search_result_detail')
