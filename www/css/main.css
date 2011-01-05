@@ -39,6 +39,9 @@ a:hover, a:active {
     cursor: url('../images/links.cur'), pointer !important;
 }
 
+a:focus {
+    outline: none;
+}
 
 /* Make Option Font Styles Consistent */
 
