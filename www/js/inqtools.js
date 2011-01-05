@@ -668,7 +668,9 @@ $(function() {
         minLength: 0
     });
 
-    window.Trainer = new cTrainer('#trainer_tool');
+    if ('cTrainer' in window) {
+        window.Trainer = new cTrainer('#trainer_tool');
+    }
 
     $(window).scroll(function() {
         if ($(window).scrollTop() >= ($(document).height() - $(window).height() - 5)) {
