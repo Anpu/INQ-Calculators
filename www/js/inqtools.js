@@ -286,7 +286,8 @@ $(function() {
         animate: true,
         value: 1,
         slide: function(e, ui) {
-            $('#player_level_display').text(prefixNumber(ui.value,'0',2));
+            var val = prefixNumber(ui.value,'0',2);
+            $('#player_level_display').text(val);
             var o = $('#level_range');
             var v = o.slider('values');
             var d = ui.value - v[0];
@@ -303,12 +304,28 @@ $(function() {
             if (!a) {
                 o.slider('option','animate',true);
             }
+            $(ui.handle).qtip('option','content.text',val);
         },
         change: function(e, ui) {
             trackEvent('Option', 'Set Player Level', ui.value);
         }
     });
     $('#player_level_display').text('01');
+    $('#player_level .ui-slider-handle').qtip({
+        content:'01',
+        position:{
+            at:'bottom center',
+            my:'top center',
+            container: $('#player_level .ui-slider-handle')
+        },
+        hide: {
+            delay:500
+        },
+        style: {
+            classes: 'ui-tooltip-slider',
+            widget: true
+        }
+    });
 
     $('#level_range').slider({
         orientation: 'horizontal',
@@ -318,22 +335,40 @@ $(function() {
         range: true,
         values: [1,3],
         slide: function(e, ui) {
-            $('#level_range_display').text(
-                    prefixNumber(ui.values[0],'0',2)
-                        +'-'
-                        +prefixNumber(ui.values[1],'0',2));
+            var valMin = prefixNumber(ui.values[0],'0',2);
+            var valMax = prefixNumber(ui.values[1],'0',2);
+
+            $('#level_range_display').text(valMin+'-'+valMax);
+
+            $(ui.handle).qtip('option','content.text',prefixNumber(ui.value,'0',2));
         },
         change: function(e, ui) {
             if (e.originalEvent) {
                 trackEvent('Option', 'Set Mob Level Range', ui.value, ui.values[1] - ui.value[0]);
+            } else {
+                $(this).slider('option','slide').call(this, e, ui);
             }
-            $('#level_range_display').text(
-                    prefixNumber(ui.values[0],'0',2)
-                        +'-'
-                        +prefixNumber(ui.values[1],'0',2));
         }
     });
     $('#level_range_display').text('01-03');
+    $('#level_range .ui-slider-handle').first().addClass('minSlider')
+            .end().each(function() {
+         $(this).qtip({
+            content:$(this).hasClass('minSlider') ? '01' : '03',
+            position:{
+                at:'bottom center',
+                my:'top center',
+                container: $(this)
+            },
+            hide: {
+                delay:500
+            },
+            style: {
+                classes: 'ui-tooltip-slider',
+                widget: true
+            }
+        });
+    });
 
     $('#max_power').slider({
         orientation: 'horizontal',
@@ -343,13 +378,29 @@ $(function() {
         value: 5,
         slide: function(e, ui) {
             $('#max_power_display').text(ui.value);
+            $(ui.handle).qtip('option','content.text',ui.value);
         },
         change: function(e, ui) {
             trackEvent('Option', 'Set Tame Power Level', ui.value);
             $('#max_power_display').text(ui.value);
         }
     });
-    $('#max_power_display').text('05');
+    $('#max_power_display').text('5');
+    $('#max_power .ui-slider-handle').qtip({
+        content:'5',
+        position:{
+            at:'bottom center',
+            my:'top center',
+            container: $('#max_power .ui-slider-handle')
+        },
+        hide: {
+            delay:1000
+        },
+        style: {
+            classes: 'ui-tooltip-slider',
+            widget: true
+        }
+    });
 
     $('#profession').change(function(e) {
         trackEvent('Option', 'Set Profession', $(this).val());
