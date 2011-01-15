@@ -231,14 +231,17 @@ $(function() {
                     ]));
                 $(document.body).append(p);
             }
-            p.css({
-                    left:o.offset().left,
-                    top:$(window).scrollTop() - o.height()})
-                .show()
-                .data('item',$(this))
-                .animate({top:$(window).scrollTop()},'fast',throwMapStart);
+            if (p.is(':visible')) {
+                p.data('item',$(this));
+                throwMapStart.call(p);
+            } else {
+                p.css(o.offset())
+                    .show()
+                    .data('item',$(this))
+                    .animate({top:$(window).scrollTop()},'fast',throwMapStart);
+            }
         } else {
-            $(this).effect('transfer',{to:'#mapTab',className:'ui-effects-transfer ui-widget-overlay ui-corner-all'},1000);
+            $(this).effect('transfer',{to:'#mapTab',className:'ui-effects-transfer ui-widget-overlay ui-corner-all'},750);
         }
         e.stopPropagation();
     }).delegate('.search_result_row:has(.toggle_icon)','click', function(e) {
@@ -1024,13 +1027,23 @@ function doSearch(alt) {
 }
 
 function throwMapStart() {
-    $(this).data('item').effect('transfer',{to:'#mapTabClone',
+    var o = $('#mapTabClone');
+    var c = o.data('count') || 0;
+    ++c;
+    o.data('count',c);
+    o.data('item').effect('transfer',{to:'#mapTabClone',
                     className:'ui-effects-transfer ui-widget-overlay ui-corner-all'}
-                    ,1000,throwMapComplete);
+                    ,750,throwMapComplete);
 }
 
 function throwMapComplete() {
-    $('#mapTabClone').animate({top:'-='+$('#mapTabClone').height()}).hide('fast');
+    var o = $('#mapTabClone');
+    var c = o.data('count');
+    --c;
+    o.data('count',c);
+    if (c==0) {
+        o.animate({top:$('#mapTab').offset().top}).hide('fast');
+    }
 }
 
 function animateLogo() {
