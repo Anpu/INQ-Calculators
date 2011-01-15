@@ -833,15 +833,23 @@ $(function() {
 
     $.extend(cROMapData.prototype,{
         initialize:function() {
-            this.npc = {width:16,height:16};
+            this.npc = {width:75,height:150};
             this.overlay.addSymbol('romap_npc',function(svg, parent, color) {
-                var s = svg.symbol(parent, 'temp',0,0,16,16);
-                svg.circle(s,8,8,8,{fill:'#ff0000',stroke:'none'});
+                var s = svg.symbol(parent, 'temp',0,0,100,200,{'class':'item'});
+                svg.circle(s,50,20,20);
+                svg.path(s,'m 79.787032,45.908714 c 0,0 8.54,-1.064'
+                    +' 8.54,8.542 0,9.606 0,58.719996 0,58.719996 0,0'
+                    +' 2.141,8.008 -6.937,8.008 h -5.876 v 78.107'
+                    +' h -51.248 v -77.037 h -6.406 c 0,0 -6.407,2.14'
+                    +' -6.407,-6.406 V 54.450714 c 0,0 0,-8.809 8.81,-8.809'
+                    +' l 59.524,0.267 z');
                 return s;
             });
+            this.loading = false;
         },
         load:function() {
-            if (!this.zones) {
+            if (!this.zones && !this.loading) {
+                this.loading = true;
                 $.getJSON(this.zoneURL,$.proxy(this._loadCB,this));
             }
         },
@@ -893,7 +901,7 @@ $(function() {
             for (var i=0; i< zones.length; ++i) {
                 var d = this.zoneSVG(zones[i]);
                 if (d) {
-                    this.overlay.addPath('romap_zone_'+zones[i],d);
+                    this.overlay.addPath('romap_zone_'+zones[i],d,{'class':'zone'});
                 }
             }
         },
@@ -904,7 +912,9 @@ $(function() {
                     x: d.position.x,
                     y: d.position.z,
                     width: this.npc.width,
-                    height: this.npc.height
+                    height: this.npc.height,
+                    fill:(d.realm == 'Syrtis' ? '#00ff00' : (d.realm == 'Ignis' ? '#ff0000' : '#0000ff')),
+                    'class':'npc'
                 });
             }
         }
