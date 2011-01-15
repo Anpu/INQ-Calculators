@@ -46,6 +46,7 @@ class RO_NPC extends RO_Base {
                 $this->npc_id => array(
                     'npc_id'=>$this->npc_id,
                     'name'=>$this->name,
+                    'realm'=>$this->zone()->realm,
                     'profession'=>$this->profession,
                     'position'=>array(
                         'x'=>$this->x,
