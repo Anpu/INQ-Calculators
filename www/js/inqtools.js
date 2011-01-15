@@ -102,6 +102,23 @@ if (window.console == undefined) {
     };
 }
 
+(function($) {
+    $.fn.cssCopy = function(element,styles){
+        var self = $(this);
+        if (element instanceof $) {
+            if (styles instanceof Array) {
+                $.each(styles,function(i,val){
+                    self.css(val,element.css(val));
+                });
+            } else if (typeof styles==="string") {
+                self.css(styles,element.css(styles));
+            }
+        }
+        return this;
+    };
+})(jQuery);
+
+
 // JQuery on ready event
 $(function() {
     $.ajaxSetup({
@@ -192,7 +209,37 @@ $(function() {
 
     $('div.results').delegate('.search_result_row .throwOnMap','click',function(e) {
         ROMapData.add($(this).data('map'));
-        $(this).effect('transfer',{to:'#mapTab',className:'ui-effects-transfer ui-widget-overlay ui-corner-all'},1000);
+        var o = $('#mapTab');
+        if ( $(window).scrollTop() > o.offset().top) {
+            var p = $('#mapTabClone');
+            if (!p.length) {
+                p = $('<div/>')
+                    .hide()
+                    .attr('id','mapTabClone')
+                    .css({
+                        position:'absolute'
+                    })
+                    .cssCopy(o,['backgroundImage','backgroundColor','width','height',
+                        'lineHeight','color',
+                        'fontSize','fontStyle','fontWeight','fontFamily']);
+                var c = $('#mapTab > a');
+                p.append($('<span/>')
+                    .text(c.text())
+                    .cssCopy(c, [
+                        'paddingLeft','paddingTop','paddingRight','paddingBottom',
+                        'color','display'
+                    ]));
+                $(document.body).append(p);
+            }
+            p.css({
+                    left:o.offset().left,
+                    top:$(window).scrollTop() - o.height()})
+                .show()
+                .data('item',$(this))
+                .animate({top:$(window).scrollTop()},'fast',throwMapStart);
+        } else {
+            $(this).effect('transfer',{to:'#mapTab',className:'ui-effects-transfer ui-widget-overlay ui-corner-all'},1000);
+        }
         e.stopPropagation();
     }).delegate('.search_result_row:has(.toggle_icon)','click', function(e) {
         $(this).next('.search_result_detail')
@@ -951,6 +998,16 @@ function doSearch(alt) {
     if ($.isFunction(window[cb])) {
         window[cb](alt);
     }
+}
+
+function throwMapStart() {
+    $(this).data('item').effect('transfer',{to:'#mapTabClone',
+                    className:'ui-effects-transfer ui-widget-overlay ui-corner-all'}
+                    ,1000,throwMapComplete);
+}
+
+function throwMapComplete() {
+    $('#mapTabClone').animate({top:'-='+$('#mapTabClone').height()}).hide('fast');
 }
 
 function animateLogo() {
