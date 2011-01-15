@@ -32,10 +32,6 @@
     position: absolute;
 }
 
-.interactiveMap .overlay svg > g > g{
-    fill-opacity: 0.5;
-}
-
 .interactiveMap .tileCache > .tile {
     position: absolute;
     overflow: hidden;

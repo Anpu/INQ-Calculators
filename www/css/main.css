@@ -579,6 +579,18 @@ select option.category {
     margin: 0 auto;
     border: 1px solid red;
 }
+#RO_InteractiveMap .overlay svg .zone {
+    fill-opacity: 0.5;
+    stroke-width: 5;
+    cursor: url('../images/links.cur'), pointer;
+}
+
+#RO_InteractiveMap .overlay svg .npc {
+    fill-opacity: 0.5;
+    stroke: #000000;
+    stroke-width: 5;
+    cursor: url('../images/links.cur'), pointer;
+}
 
 /** Trainer */
 #trainer_tool .discipline {

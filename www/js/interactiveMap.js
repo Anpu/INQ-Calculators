@@ -39,8 +39,8 @@ function OverlayPath(aPath) {
     this.path = aPath;
 }
 $.extend(OverlayPath.prototype, {
-    drawSVG: function(svg, aParent, aColor) {
-        var g = svg.group(aParent, {fill:aColor});
+    drawSVG: function(svg, aParent, aColor, props) {
+        var g = svg.group(aParent, $.extend({fill:aColor},props || {}));
         svg.path(g,this.path);
         return g;
     }
@@ -83,11 +83,7 @@ $.extend(OverlayContainer.prototype, {
         if (error) alert(error);
         svg.root().setAttribute('width','100%');
         svg.root().setAttribute('height','100%');
-        this.svg = svg;
-        this.element.delegate('#SVGScale > g',
-                'mouseover',$.proxy(this._mouseSVGIn,this));
-        this.element.delegate('#SVGScale > g',
-                'mouseout',$.proxy(this._mouseSVGOut,this));
+        this._svg = svg;
         this.svgReady = true;
         if (this.drawCalled) {
             this.draw();
@@ -99,8 +95,8 @@ $.extend(OverlayContainer.prototype, {
                 this._scale.num = scale.num;
                 this._scale.den = scale.den;
                 if (this.svgReady) {
-                    var g = this.svg.getElementById('SVGScale');
-                    this.svg.change(g, {transform:'scale('+(this._scale.num/this._scale.den)+')'});
+                    var g = this._svg.getElementById('SVGScale');
+                    this._svg.change(g, {transform:'scale('+(this._scale.num/this._scale.den)+')'});
                 }
             }
             return this;
@@ -116,7 +112,7 @@ $.extend(OverlayContainer.prototype, {
             this.drawCalled = true;
             return this;
         }
-        var svg = this.svg;
+        var svg = this._svg;
 
         var g, d;
         if (svg) {
@@ -152,8 +148,8 @@ $.extend(OverlayContainer.prototype, {
     },
     _draw_object: function(o, svgParent) {
         if (this.svgReady && o.data.drawSVG) {
-            var g = o.data.drawSVG(this.svg, svgParent, this.nextColor(), o.offset);
-            this.svg.change(g,{id:o.name});
+            var g = o.data.drawSVG(this._svg, svgParent, this.nextColor(), o.offset);
+            this._svg.change(g,{id:o.name});
 //        } else if (o.data.draw) {
             // Disable non SVG fallback for now
 //            if (!o.wrapper) {
@@ -164,13 +160,6 @@ $.extend(OverlayContainer.prototype, {
         } else {
             throw new TypeError("No Draw Routine for object");
         }
-    },
-    // Events
-    _mouseSVGIn: function(e) {
-        this.svg.change(e.currentTarget,{stroke:'#FFFFFF','stroke-width':5});
-    },
-    _mouseSVGOut: function(e) {
-        this.svg.change(e.currentTarget,{stroke:null,'stroke-width':null});
     },
     // Big set of colors to pick from.
     colors: [
@@ -196,6 +185,12 @@ $.extend(OverlayContainer.prototype, {
     nextColor: function() {
         this.color = ((this.color || 0) + 1) % this.colors.length;
         return this.colors[this.color];
+    },
+    svg: function() {
+        return this._svg;
+    },
+    svgChange: function(e, o) {
+        return this._svg.change(e, o);
     },
     addPolygon: function(name, polygon, offset) {
         if (!(polygon instanceof Polygon)) {
@@ -245,8 +240,8 @@ $.extend(OverlayContainer.prototype, {
             delete this._elems[name];
         }
         if (this.svgReady) {
-            var e = this.svg.getElementById(name);
-            if (e) this.svg.remove(e);
+            var e = this._svg.getElementById(name);
+            if (e) this._svg.remove(e);
         }
     },
     objectNames: function(pre) {
@@ -255,7 +250,7 @@ $.extend(OverlayContainer.prototype, {
     clear: function() {
         // Clear all objects
         if (this.svgReady) {
-            this.svg.clear();
+            this._svg.clear();
         }
         this._preElems = {};
         this._toPreDraw = [];

@@ -564,6 +564,19 @@ $(function() {
     /** Interactive Map */
     $('#RO_InteractiveMap').interactiveMap({
         map: 'images/map/map.xml'
+    }).delegate('.overlay svg .zone','hover',function(e) {
+        var o = $('#RO_InteractiveMap').interactiveMap('overlay');
+        if (e.type == 'mouseenter') {
+            o.svgChange(this,{stroke:'#FFFFFF'});
+        } else {
+            o.svgChange(this,{stroke:null});
+        }
+    }).delegate('.overlay svg .npc','hover',function(e) {
+        if (e.type == 'mouseenter') {
+            $(this).css('stroke','#ffffff');
+        } else {
+            $(this).css('stroke','#000000');
+        }
     });
     window.ROMapData = new cROMapData('#RO_InteractiveMap', 'images/map/zones/overlay.json');
 
