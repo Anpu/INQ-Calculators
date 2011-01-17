@@ -64,6 +64,7 @@ class RO_Mob extends RO_Base {
             $ret['zones'][$_zone->ID()] = array(
                 'zone_id'=>$_zone->ID(),
                 'name'=>$_zone->name,
+                'realm'=>$_zone->realm,
                 'mobs'=>array(
                     $this->name
                 ),

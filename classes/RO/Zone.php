@@ -84,6 +84,7 @@ class RO_Zone extends RO_Base {
                 $this->zone_id=>array(
                     'zone_id'=>$this->zone_id,
                     'name'=>$this->name,
+                    'realm'=>$this->realm,
             )),
         );
     }
@@ -100,6 +101,7 @@ class RO_Zone extends RO_Base {
             $this->zone_id=>array(
                 'zone_id'=>$this->zone_id,
                 'name'=>$this->name,
+                'realm'=>$this->realm,
                 'mobs'=>$data,
             )
         ));
