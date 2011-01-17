@@ -217,6 +217,26 @@ div.content.ui-widget-content a {
 div.content.ui-widget-content a:hover {
     text-shadow: 0px 0px 1em white, 0px 0px 0.2em white;
 }
+/** Tooltip styles */
+.ui-tooltip-content dl {
+    margin: 0px;
+    padding: 0px;
+}
+.ui-tooltip-content dl dt {
+    float: left;
+    clear: left;
+    width: 6em;
+    text-align: right;
+    font-weight: bold;
+}
+.ui-tooltip-content dl dt:after {
+    content: ':';
+}
+.ui-tooltip-content dl dd {
+    margin: 0 0 0 6.2em;
+    padding: 0 0 0.5em 0;
+}
+
 /** horizontal UL */
 .horizontal-list {
     list-style: none;

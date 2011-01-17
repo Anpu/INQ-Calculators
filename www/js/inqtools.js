@@ -207,7 +207,31 @@ $(function() {
         return false;
     });
 
-    $('div.results').delegate('.search_result_row .throwOnMap','click',function(e) {
+    $('div.results').qtip({
+        prerender: true,
+        content: {text:'Click to add Result to Map'},
+        position: {
+            my:'bottom right',
+            at:'top center',
+            adjust: {y:-2}
+        },
+        show:false,
+        hide:{
+            event:false,
+            effect:false
+        }
+    }).delegate('.search_result_row .throwOnMap,.search_result_row .toggle_icon','hover',function(e) {
+        if (e.type == 'mouseenter') {
+            $(this).closest('div.results')
+                .qtip('option','content.text',$(this).hasClass('throwOnMap')
+                    ? 'Click to add result to Map'
+                    : 'Click to show Details')
+                .qtip('option','position.target',$(this))
+                .qtip('show');
+        } else {
+            $(this).closest('div.results').qtip('hide');
+        }
+    }).delegate('.search_result_row .throwOnMap','click',function(e) {
         ROMapData.add($(this).data('map'));
         var o = $('#mapTab');
         if ( $(window).scrollTop() > o.offset().top) {
@@ -567,12 +591,35 @@ $(function() {
     /** Interactive Map */
     $('#RO_InteractiveMap').interactiveMap({
         map: 'images/map/map.xml'
+    }).qtip({
+        prerender: true,
+        content: {title:'Map Info',text:'Info'},
+        position: {
+            my: 'bottom right',
+            at: 'top left',
+            target: 'mouse',
+            viewport: $('#RO_InteractiveMap .viewPort'),
+            //container: $('bo'),
+            adjust: { mouse: false, x:-2,y:-2 }
+        },
+        show: false,
+        hide: {
+            event:'mouseleave',
+            effect: false // So hiding works reliably below
+        }
     }).delegate('.overlay svg .zone','hover',function(e) {
         var o = $('#RO_InteractiveMap').interactiveMap('overlay');
         if (e.type == 'mouseenter') {
             o.svgChange(this,{stroke:'#FFFFFF'});
+            var zID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
+            var zInfo = ROMapData.zoneInfo(zID);
+            $('#RO_InteractiveMap')
+                .qtip('option','content.text',zInfo.text || 'Unknown')
+                .qtip('option','content.title.text',zInfo.title)
+                .qtip('toggle',true,e);
         } else {
             o.svgChange(this,{stroke:null});
+            $('#RO_InteractiveMap').qtip('hide');
         }
     }).delegate('.overlay svg .npc','hover',function(e) {
         if (e.type == 'mouseenter') {
@@ -868,6 +915,21 @@ $(function() {
                 return this.zones[zoneID];
             }
             return null;
+        },
+        zoneInfo:function(zoneID) {
+            var z = this.data.zones[zoneID];
+            if (!z) return {title:'Unknown Zone',text:''};
+            var ret = {title:z.name};
+            ret.text = '<dl><dt>Realm</dt><dd>'+z.realm+'</dd>';
+            if (z.mobs) {
+                ret.text+='<dt>Mobs</dt><dd>'+z.mobs.join(', ')+'</dd>';
+            }
+            ret.text += '</dl>';
+            return ret;
+        },
+        clear: function() {
+            this.data = {zones:{},npcs:{}};
+            this.overlay.clear();
         },
         add:function(data) {
             var add = {zones:[],npcs:[]};
