@@ -169,7 +169,7 @@ $(function() {
         select:function (event, ui) {
             trackEvent('Tools', 'Select', ui.tab.hash.substr(1));
             var o = $(ui.tab);
-            switchTool(o, false);
+            switchTool(o);
             if (ui.tab.hash.length > 0) {
                 locationHashChanged.UPDATE_TO = '#/'+ui.tab.hash.substr(1);
                 location.hash = '/'+ui.tab.hash.substr(1);
@@ -1047,32 +1047,24 @@ locationLabel.labels = {
     0x400: "Syrtis Warzone"
 }
 
-function switchTool(optObj, animate) {
+function switchTool(optObj) {
     $('#header')
         .data('logo',optObj.data('logo') || 'side')
         .delay(100)
         .queue(animateLogo);
 
-    animate = (animate === false) ? false : true;
     var aWidgets = optObj.attr('widgets') || '';
     var w = aWidgets.split(/[, ]+/); // Split on space or comma
     $('.tool_popup_wrapper').stop(true,true).slideUp({queue:false});
     $('#tool_options *[widget]').each(function() {
         var o = $(this);
         if (w.indexOf(o.attr('widget')) > -1) {
-            if (animate) {
-                o.slideDown('fast');
-            } else {
-                o.show();
-            }
+            o.show();
         } else {
-            if (animate) {
-                o.slideUp('fast');
-            } else {
-                o.hide();
-            }
+            o.hide();
         }
     });
+    $('#tool_options input:visible').focus();
     var unloadcb = $('#tool_options').data('unloadcb');
     if ($.isFunction(window[unloadcb])) {
         window[unloadcb].call(optObj);
