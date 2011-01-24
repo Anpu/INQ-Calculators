@@ -597,14 +597,11 @@ $(function() {
         position: {
             my: 'bottom right',
             at: 'top left',
-            target: 'mouse',
-            viewport: $('#RO_InteractiveMap .viewPort'),
-            //container: $('bo'),
-            adjust: { mouse: false, x:-2,y:-2 }
+            target: false
         },
         show: false,
         hide: {
-            event:'mouseleave',
+            event:false,
             effect: false // So hiding works reliably below
         }
     }).delegate('.overlay svg .zone','hover',function(e) {
@@ -616,7 +613,8 @@ $(function() {
             $('#RO_InteractiveMap')
                 .qtip('option','content.text',zInfo.text || 'Unknown')
                 .qtip('option','content.title.text',zInfo.title)
-                .qtip('toggle',true,e);
+                .qtip('option','position.target',$(this))
+                .qtip('show');
         } else {
             o.svgChange(this,{stroke:null});
             $('#RO_InteractiveMap').qtip('hide');
