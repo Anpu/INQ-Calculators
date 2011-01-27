@@ -604,7 +604,7 @@ $(function() {
             event:false,
             effect: false // So hiding works reliably below
         }
-    }).delegate('.overlay svg .zone','hover',function(e) {
+    }).delegate('.overlay .zone','hover',function(e) {
         var o = $('#RO_InteractiveMap').interactiveMap('overlay');
         if (e.type == 'mouseenter') {
             o.svgChange(this,{stroke:'#FFFFFF'});
@@ -619,11 +619,19 @@ $(function() {
             o.svgChange(this,{stroke:null});
             $('#RO_InteractiveMap').qtip('hide');
         }
-    }).delegate('.overlay svg .npc','hover',function(e) {
+    }).delegate('.overlay .npc','hover',function(e) {
         if (e.type == 'mouseenter') {
             $(this).css('stroke','#ffffff');
+            var nID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
+            var nInfo = ROMapData.npcInfo(nID);
+            $('#RO_InteractiveMap')
+                .qtip('option','content.text',nInfo.text || 'Unknown')
+                .qtip('option','content.title.text',nInfo.title)
+                .qtip('option','position.target',$(this))
+                .qtip('show');
         } else {
             $(this).css('stroke','#000000');
+            $('#RO_InteractiveMap').qtip('hide');
         }
     });
     window.ROMapData = new cROMapData('#RO_InteractiveMap', 'images/map/zones/overlay.json');
@@ -913,6 +921,15 @@ $(function() {
                 return this.zones[zoneID];
             }
             return null;
+        },
+        npcInfo:function(npcID) {
+            var n = this.data.npcs[npcID];
+            if (!n) return {title:'Unknown NPC',text:''};
+            var ret = {title:n.name};
+            ret.text = '<dl><dt>Profession</dt><dd>'+n.profession+'</dd>';
+            ret.text += '<dt>Position</dt><dd>'+n.position.x+', '+n.position.z+'</dd>';
+            ret.text += '</dl>';
+            return ret;
         },
         zoneInfo:function(zoneID) {
             var z = this.data.zones[zoneID];
