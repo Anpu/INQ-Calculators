@@ -438,9 +438,12 @@
                 </div>
             </div>
           </div>
-          <div tal:condition="notempty: tools/map" id="map" class="content">
-              <h2>Look at the pretty map!</h2>
-              <div id="RO_InteractiveMap"/>
+          <div tal:condition="notempty: tools/map" id="map" class="content-full">
+              <h2>Regnum World Map!</h2>
+              <div id="RO_MapWrapper">
+                <div id="RO_InteractiveMap"/>
+                <ul id="RO_MapItems"/>
+              </div>
           </div>
       </div>
     </div>

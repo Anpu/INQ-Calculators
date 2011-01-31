@@ -1486,7 +1486,7 @@ switch ($args->command_name) {
         }
         $sdb = new SQLite3($args->command->options['spatialite']);
         $sdb->loadExtension($config->spatialite);
-        $allzones = $sdb->prepare(sprintf("SELECT zone_id, NumGeometries(polygon) FROM %s"
+        $allzones = $sdb->prepare(sprintf("SELECT zone_id, NumGeometries(polygon),AsText(StartPoint(ExteriorRing(Envelope(polygon)))) FROM %s"
                .(empty($args->command->options['filter']) ? "" : " WHERE %s"),
             $args->command->options['table'], $args->command->options['filter']));
         $getPolygon = $sdb->prepare(sprintf("SELECT AsText(ExteriorRing(GeometryN(polygon,:poly))),"
@@ -1530,7 +1530,12 @@ switch ($args->command_name) {
                 //$_zone->polygons[] = $polygon;
             }
             //$_zone->svg = implode('',$svg);
-            $zones[$row[0]] = implode('',$svg);;
+            $pos = explode(' ',substr($row[2],6,-1));
+            $zones[$row[0]] = array(
+                'left'=>$pos[0],
+                'top'=>$pos[1],
+                'svg'=>implode('',$svg),
+            );
         }
         $res->finalize();
         echo "Exported ".count($zones)." zones to ".$args->command->options['outputfile']."\n";

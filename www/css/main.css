@@ -72,6 +72,7 @@ option, optgroup, optgroup > option {
     display: none;
     margin-left: auto;
     margin-right: auto;
+    padding: 0;
     overflow: hidden;
     border: none;
     background: transparent none;
@@ -196,6 +197,9 @@ ul.navigation li.ui-state-hover a {
     text-decoration: none !important;
 }
 
+.ui-icon-inline {
+    display: inline-block;
+}
 
 div.content {
     clear: left;
@@ -203,18 +207,21 @@ div.content {
     margin: 0 auto;
 }
 
-div.content.ui-tabs-panel {
+div.content-full {
+}
+
+div.content.ui-tabs-panel, div.content-full.ui-tabs-panel {
     padding: 0;
 }
 
-div.content.ui-widget-content {
+div.content.ui-widget-content, div.content-full.ui-widget-content {
     color: #EFC235;
 }
 
-div.content.ui-widget-content a {
+div.content.ui-widget-content a, div.content-full.ui-widget-content a {
     color: #EFC235;
 }
-div.content.ui-widget-content a:hover {
+div.content.ui-widget-content a:hover, div.content-full.ui-widget-content a:hover {
     text-shadow: 0px 0px 1em white, 0px 0px 0.2em white;
 }
 /** Tooltip styles */
@@ -593,11 +600,57 @@ select option.category {
     background-position: -48px -24px;
 }
 /* Interactive World Map */
+#RO_MapWrapper {
+    position: relative;
+    border-color: #777;
+    border-style: solid;
+    border-width: 1px 0;
+}
+#RO_MapItems {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 20em;
+    margin: 0px;
+    padding: 0px;
+}
+#RO_MapItems li {
+    list-style: none;
+    margin: 0.5ex;
+    padding: 0 0.5em;
+    border-bottom: 1px dotted #EFC235;
+    border-top: 1px dotted transparent;
+    position: relative;
+    overflow-x: auto;
+    cursor: url('../images/links.cur'), pointer;
+}
+#RO_MapItems li span.ui-icon-close {
+    margin: auto 0;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+}
+#RO_MapItems li:hover {
+    background-color: #333333;
+    border-top-color: #EFC325;
+}
+#RO_MapItems li.zone:before {
+    padding-right: 0.5ex;
+    content: "Z:";
+}
+#RO_MapItems li.npc:before {
+    padding-right: 0.5ex;
+    content: "N:";
+}
 #RO_InteractiveMap {
-    width: 100%;
-    height: 450px;
-    margin: 0 auto;
-    border: 1px solid red;
+    position: absolute;
+    top: 0px;
+    right: 20em;
+    bottom: 0px;
+    left: 0px;
+    border-right: 1px solid #777;
 }
 #RO_InteractiveMap .overlay svg .zone {
     fill-opacity: 0.5;

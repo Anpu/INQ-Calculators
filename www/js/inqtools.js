@@ -175,7 +175,7 @@ $(function() {
                 location.hash = '/'+ui.tab.hash.substr(1);
             }
         }
-    });
+    }).removeClass('ui-corner-all');
 
     $('#helpmenu')
         .addClass('ui-helper-reset ui-helper-clearfix')
@@ -634,7 +634,7 @@ $(function() {
             $('#RO_InteractiveMap').qtip('hide');
         }
     });
-    window.ROMapData = new cROMapData('#RO_InteractiveMap', 'images/map/zones/overlay.json');
+    window.ROMapData = new cROMapData('#RO_InteractiveMap', '#RO_MapItems', 'images/map/zones/overlay.json');
 
     $('#errorDialog').dialog({
         autoOpen: false,
@@ -846,6 +846,9 @@ $(function() {
             }
         }
     });
+    $(window).resize(function() {
+        refreshMaps();
+    });
 
     // Do this AFTER all widgets are setup to insure they "hide" correctly
     var curpage = '#home';
@@ -880,50 +883,62 @@ $(function() {
 });
 
 (function($) {
-    function cROMapData(map, zoneURL) {
-        this.overlay = $(map).interactiveMap('overlay');
-        this.initialize();
-        this.zoneURL = zoneURL;
-        this.data = {zones:{},npcs:{}};
+    function cROMapData(map, list, zoneURL) {
+        this._map = $(map);
+        this._overlay = this._map.interactiveMap('overlay');
+        this._list = $(list);
+        this._list.delegate('li.zone,li.npc','click',$.proxy(this._evtListClick, this));
+        this._zoneURL = zoneURL;
+        this._npc = {width:75,height:150};
+        this._loading = false;
+        this.clear();
     }
 
     $.extend(cROMapData.prototype,{
-        initialize:function() {
-            this.npc = {width:75,height:150};
-            this.overlay.addSymbol('romap_npc',function(svg, parent, color) {
-                var s = svg.symbol(parent, 'temp',0,0,100,200,{'class':'item'});
-                svg.circle(s,50,20,20);
-                svg.path(s,'m 79.787032,45.908714 c 0,0 8.54,-1.064'
-                    +' 8.54,8.542 0,9.606 0,58.719996 0,58.719996 0,0'
-                    +' 2.141,8.008 -6.937,8.008 h -5.876 v 78.107'
-                    +' h -51.248 v -77.037 h -6.406 c 0,0 -6.407,2.14'
-                    +' -6.407,-6.406 V 54.450714 c 0,0 0,-8.809 8.81,-8.809'
-                    +' l 59.524,0.267 z');
-                return s;
-            });
-            this.loading = false;
-        },
         load:function() {
-            if (!this.zones && !this.loading) {
-                this.loading = true;
-                $.getJSON(this.zoneURL,$.proxy(this._loadCB,this));
+            if (!this._zones && !this._loading) {
+                this._loading = true;
+                $.getJSON(this._zoneURL,$.proxy(this._loadCB,this));
             }
         },
         _loadCB: function(json) {
-            this.zones = json;
-            var k = Object.keys(this.data.zones);
+            this._zones = json;
+            var k = Object.keys(this._data.zones);
             if (k.length) {
                 this.addZones(k);
             }
         },
+        _evtListClick: function(e) {
+            if ($(e.target).hasClass('ui-icon-close')) return;
+            var t = $(e.currentTarget);
+            if (t.hasClass('zone')) {
+                var zID = $(e.currentTarget).attr('zone');
+                var z = this.zoneOffset(zID);
+                if (z) {
+                    this._map.interactiveMap('center',z.left, z.top, true);
+                }
+            } else {
+                var npcID = $(e.currentTarget).attr('npc');
+                var n = this._data.npcs[npcID];
+                if (n) {
+                    this._map.interactiveMap('center',n.position.x, n.position.z, true);
+                }
+            }
+        },
         zoneSVG:function(zoneID) {
-            if (zoneID in this.zones) {
-                return this.zones[zoneID];
+            if (zoneID in this._zones) {
+                return this._zones[zoneID].svg;
+            }
+            return null;
+        },
+        zoneOffset:function(zoneID) {
+            if (zoneID in this._zones) {
+                return {left:this._zones[zoneID].left, top: this._zones[zoneID].top};
             }
             return null;
         },
         npcInfo:function(npcID) {
-            var n = this.data.npcs[npcID];
+            var n = this._data.npcs[npcID];
             if (!n) return {title:'Unknown NPC',text:''};
             var ret = {title:n.name};
             ret.text = '<dl><dt>Profession</dt><dd>'+n.profession+'</dd>';
@@ -932,7 +947,7 @@ $(function() {
             return ret;
         },
         zoneInfo:function(zoneID) {
-            var z = this.data.zones[zoneID];
+            var z = this._data.zones[zoneID];
             if (!z) return {title:'Unknown Zone',text:''};
             var ret = {title:z.name};
             ret.text = '<dl><dt>Realm</dt><dd>'+z.realm+'</dd>';
@@ -943,20 +958,34 @@ $(function() {
             return ret;
         },
         clear: function() {
-            this.data = {zones:{},npcs:{}};
-            this.overlay.clear();
+            this._data = {zones:{},npcs:{}};
+            this._overlay.clear();
+            this._overlay.addSymbol('romap_npc',function(svg, parent, color) {
+                var s = svg.symbol(parent, 'temp',0,0,100,200,{'class':'item'});
+                svg.circle(s,50,20,20);
+                svg.path(s,'m 79.787032,45.908714 c 0,0 8.54,-1.064'
+                    +' 8.54,8.542 0,9.606 0,58.719996 0,58.719996 0,0'
+                    +' 2.141,8.008 -6.937,8.008 h -5.876 v 78.107'
+                    +' h -51.248 v -77.037 h -6.406 c 0,0 -6.407,2.14'
+                    +' -6.407,-6.406 V 54.450714 c 0,0 0,-8.809 8.81,-8.809'
+                    +' l 59.524,0.267 z');
+                return s;
+            });
+            this._list.empty()
+                .append('<li class="help">Click the <span class="ui-icon ui-icon-star ui-icon-inline"/>'
+                    +' icon in search results to visualize them on this map.</li>');
         },
         add:function(data) {
             var add = {zones:[],npcs:[]};
             for (var type in data) {
                 for (var o in data[type]) {
-                    if (o in this.data[type]) {
+                    if (o in this._data[type]) {
                         switch (type) {
                             case 'zones':
                                 // Merge any mob data
                                 if (data[type][o].mobs) {
-                                    this.data[type][o].mobs =
-                                        (this.data[type][o].mobs || []).concatUnique(data[type][o].mobs);
+                                    this._data[type][o].mobs =
+                                        (this._data[type][o].mobs || []).concatUnique(data[type][o].mobs);
                                 }
                                 break;
                             case 'npcs':
@@ -964,7 +993,7 @@ $(function() {
                                 // data is just duplicate no merging needed
                         }
                     } else {
-                        this.data[type][o] = $.extend(true,{},data[type][o]);
+                        this._data[type][o] = $.extend(true,{},data[type][o]);
                         add[type].push(o);
                     }
                 }
@@ -973,26 +1002,36 @@ $(function() {
             this.addNPCs(add.npcs);
         },
         addZones: function(zones) {
-            if (!this.zones) {
+            if (!this._zones) {
                 this.load();
                 return;
             }
             // iterate through newly added entities
             for (var i=0; i< zones.length; ++i) {
+                this._list
+                    .append($('<li class="zone"/>')
+                        .attr('zone',zones[i])
+                        .text(this._data.zones[zones[i]].name)
+                        .append('<span class="ui-icon ui-icon-close"/>'));
                 var d = this.zoneSVG(zones[i]);
                 if (d) {
-                    this.overlay.addPath('romap_zone_'+zones[i],d,{'class':'zone'});
+                    this._overlay.addPath('romap_zone_'+zones[i],d,{'class':'zone'});
                 }
             }
         },
         addNPCs: function(npcs) {
             for (var i=0; i< npcs.length; ++i) {
-                var d = this.data.npcs[npcs[i]];
-                this.overlay.addReference('romap_npc_'+npcs[i],'#romap_npc',{
+                var d = this._data.npcs[npcs[i]];
+                this._list
+                    .append($('<li class="npc"/>')
+                        .attr('npc',npcs[i])
+                        .text(d.name)
+                        .append('<span class="ui-icon ui-icon-close"/>'));
+                this._overlay.addReference('romap_npc_'+npcs[i],'#romap_npc',{
                     x: d.position.x,
                     y: d.position.z,
-                    width: this.npc.width,
-                    height: this.npc.height,
+                    width: this._npc.width,
+                    height: this._npc.height,
                     fill:(d.realm == 'Syrtis' ? '#00ff00' : (d.realm == 'Ignis' ? '#ff0000' : '#0000ff')),
                     'class':'npc'
                 });
@@ -1190,8 +1229,10 @@ function animateLogoToSide() {
             $(this).dequeue();
         })
         .animate({
-            width:$('#logo').width()*0.7,
-            height:$('#logo').height()*0.7
+            width:$('#logo').width()*0.6,
+            height:$('#logo').height()*0.6
+        },function() {
+            refreshMaps(true);
         });
 }
 
@@ -1416,8 +1457,20 @@ function cbInitTrainer(loadSetup) {
     }
     Trainer.loadData(temp);
 }
-function refreshMaps() {
-    $('#RO_InteractiveMap').interactiveMap('render');
+function refreshMaps(animate) {
+    if (animate) {
+        $('#RO_MapWrapper')
+            .animate({
+                height:$(window).height()-
+                        ( $('#RO_MapWrapper').offset().top + $('#footer').height() ) - 5
+                },200,function() {
+                $('#RO_InteractiveMap').interactiveMap('render');
+            });
+    } else {
+        $('#RO_MapWrapper').height($(window).height()-
+                        ( $('#RO_MapWrapper').offset().top + $('#footer').height() ) - 5);
+        $('#RO_InteractiveMap').interactiveMap('render');
+    }
 }
 
 function CreditsAnimation() {
