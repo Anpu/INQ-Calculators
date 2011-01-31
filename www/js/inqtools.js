@@ -887,6 +887,7 @@ $(function() {
         this._map = $(map);
         this._overlay = this._map.interactiveMap('overlay');
         this._list = $(list);
+        this._list.delegate('li span.ui-icon-close','click',$.proxy(this._evtListClose, this));
         this._list.delegate('li.zone,li.npc','click',$.proxy(this._evtListClick, this));
         this._zoneURL = zoneURL;
         this._npc = {width:75,height:150};
@@ -912,18 +913,27 @@ $(function() {
             if ($(e.target).hasClass('ui-icon-close')) return;
             var t = $(e.currentTarget);
             if (t.hasClass('zone')) {
-                var zID = $(e.currentTarget).attr('zone');
+                var zID = t.attr('zone');
                 var z = this.zoneOffset(zID);
                 if (z) {
                     this._map.interactiveMap('center',z.left, z.top, true);
                 }
             } else {
-                var npcID = $(e.currentTarget).attr('npc');
+                var npcID = t.attr('npc');
                 var n = this._data.npcs[npcID];
                 if (n) {
                     this._map.interactiveMap('center',n.position.x, n.position.z, true);
                 }
             }
+        },
+        _evtListClose: function(e) {
+            var t = $(e.currentTarget).closest('li');
+            if (t.hasClass('zone')) {
+                this.removeZone(t.attr('zone'));
+            } else {
+                this.removeNPC(t.attr('npc'));
+            }
+            e.stopPropagation();
         },
         zoneSVG:function(zoneID) {
             if (zoneID in this._zones) {
@@ -1000,6 +1010,20 @@ $(function() {
             }
             this.addZones(add.zones);
             this.addNPCs(add.npcs);
+        },
+        removeZone: function(zoneID) {
+            if (zoneID in this._data.zones) {
+                delete this._data.zones[zoneID];
+            }
+            this._overlay.removeObject('romap_zone_'+zoneID);
+            this._list.find('li.zone[zone="'+zoneID+'"]').remove();
+        },
+        removeNPC: function(npcID) {
+            if (npcID in this._data.npcs) {
+                delete this._data.npcs[npcID];
+            }
+            this._overlay.removeObject('romap_npc_'+npcID);
+            this._list.find('li.npc[npc="'+npcID+'"]').remove();
         },
         addZones: function(zones) {
             if (!this._zones) {
