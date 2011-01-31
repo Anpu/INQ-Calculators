@@ -310,6 +310,8 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         var tiles_x = Math.ceil(_viewwidth / this._map.tilesize) + 1;
         var tiles_y = Math.ceil(_viewheight / this._map.tilesize) + 1;
         this._view = {
+            rw: _viewwidth,
+            rh: _viewheight,
             w: (tiles_x + 1) * this._map.tilesize,
             h: (tiles_y + 1) * this._map.tilesize
         };
@@ -517,6 +519,20 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
                 this._createTile(needed[idx][0],needed[idx][1]);
             }
         }
+    },
+    // Center on the specified X and Y coords
+    center: function(aX, aY, adjustScale) {
+        if (adjustScale) {
+            var s = this._activeLayer.scale;
+            aX = aX * s.num / s.den;
+            aY = aY * s.num / s.den;
+        }
+        var p = {
+            left: -aX + (this._view.rw / 2),
+            top: -aY + (this._view.rh / 2)
+        }
+        this.checkTiles(p.left,p.top);
+        this._elems.container.animate({top:p.top, left:p.left},'fast');
     },
     _mouseStart: function(aEvt) {
         this._navigatorHit = false;
