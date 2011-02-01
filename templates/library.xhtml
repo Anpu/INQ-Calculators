@@ -57,9 +57,13 @@
     mapData            the data to be thrown on the map
 -->
 <tal:block metal:define-macro="throwonmap">
-    <span class="ui-icon ui-icon-star throwOnMap" style="display: inline-block" tal:attributes="data-map json: mapData"/>
+    <div class="buttonWrapper throwOnMap" tal:attributes="data-map json: mapData">
+        <span class="ui-icon ui-icon-star"/>
+    </div>
 </tal:block>
 
 <tal:block metal:define-macro="toggleicon">
-    <span style="display: inline-block" class="ui-icon ui-icon-circle-plus toggle_icon"/>
+    <div class="buttonWrapper toggle_icon">
+        <span class="ui-icon ui-icon-circle-plus"/>
+    </div>
 </tal:block>

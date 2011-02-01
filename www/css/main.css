@@ -324,7 +324,24 @@ ul.legend a {
 .search_result_row:hover {
   color: #FFFFFF;
 }
-.search_result_row:hover .ui-icon {
+.search_result_row div.buttonWrapper {
+    height: 32px;
+    width: 32px;
+    position: relative;
+    display: inline-block;
+}
+.search_result_row div.buttonWrapper > span.ui-icon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: auto;
+}
+.search_result_row div.buttonWrapper:hover {
+    background-color: #555555;
+}
+.search_result_row div.buttonWrapper:hover > span.ui-icon {
     background-image: url(themes/inquisition/images/ui-icons_ffffff_256x240.png);
 }
 
