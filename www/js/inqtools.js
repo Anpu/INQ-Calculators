@@ -887,7 +887,11 @@ $(function() {
         this._map = $(map);
         this._overlay = this._map.interactiveMap('overlay');
         this._list = $(list);
-        this._list.delegate('li span.ui-icon-close','click',$.proxy(this._evtListClose, this));
+        this._list.empty().append('<li class="help">Click the <span class="ui-icon ui-icon-star ui-icon-inline"/>'
+                    +' icon in search results to visualize them on this map.'
+                    +' <span class="removeAll">[Clear All]</span></li>');
+        this._list.find('.removeAll').click($.proxy(this._evtListClear, this));
+        this._list.delegate('li div.remove','click',$.proxy(this._evtListClose, this));
         this._list.delegate('li.zone,li.npc','click',$.proxy(this._evtListClick, this));
         this._zoneURL = zoneURL;
         this._npc = {width:75,height:150};
@@ -910,7 +914,7 @@ $(function() {
             }
         },
         _evtListClick: function(e) {
-            if ($(e.target).hasClass('ui-icon-close')) return;
+            if ($(e.target).hasClass('remove')) return;
             var t = $(e.currentTarget);
             if (t.hasClass('zone')) {
                 var zID = t.attr('zone');
@@ -934,6 +938,9 @@ $(function() {
                 this.removeNPC(t.attr('npc'));
             }
             e.stopPropagation();
+        },
+        _evtListClear: function(e) {
+            this.clear();
         },
         zoneSVG:function(zoneID) {
             if (zoneID in this._zones) {
@@ -981,9 +988,7 @@ $(function() {
                     +' l 59.524,0.267 z');
                 return s;
             });
-            this._list.empty()
-                .append('<li class="help">Click the <span class="ui-icon ui-icon-star ui-icon-inline"/>'
-                    +' icon in search results to visualize them on this map.</li>');
+            this._list.find('li:gt(0)').remove();
         },
         add:function(data) {
             var add = {zones:[],npcs:[]};
@@ -1036,7 +1041,7 @@ $(function() {
                     .append($('<li class="zone"/>')
                         .attr('zone',zones[i])
                         .text(this._data.zones[zones[i]].name)
-                        .append('<span class="ui-icon ui-icon-close"/>'));
+                        .append('<div class="remove"><span class="ui-icon ui-icon-closethick"/></div>'));
                 var d = this.zoneSVG(zones[i]);
                 if (d) {
                     this._overlay.addPath('romap_zone_'+zones[i],d,{'class':'zone'});
@@ -1050,7 +1055,7 @@ $(function() {
                     .append($('<li class="npc"/>')
                         .attr('npc',npcs[i])
                         .text(d.name)
-                        .append('<span class="ui-icon ui-icon-close"/>'));
+                        .append('<div class="remove"><span class="ui-icon ui-icon-closethick"/></div>'));
                 this._overlay.addReference('romap_npc_'+npcs[i],'#romap_npc',{
                     x: d.position.x,
                     y: d.position.z,
