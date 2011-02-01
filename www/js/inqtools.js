@@ -611,6 +611,7 @@ $(function() {
             var zID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
             var zInfo = ROMapData.zoneInfo(zID);
             $('#RO_InteractiveMap')
+                .qtip('option','position.target',false)
                 .qtip('option','content.text',zInfo.text || 'Unknown')
                 .qtip('option','content.title.text',zInfo.title)
                 .qtip('option','position.target',$(this))
@@ -625,6 +626,7 @@ $(function() {
             var nID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
             var nInfo = ROMapData.npcInfo(nID);
             $('#RO_InteractiveMap')
+                .qtip('option','position.target',false)
                 .qtip('option','content.text',nInfo.text || 'Unknown')
                 .qtip('option','content.title.text',nInfo.title)
                 .qtip('option','position.target',$(this))
