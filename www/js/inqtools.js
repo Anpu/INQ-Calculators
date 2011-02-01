@@ -635,6 +635,14 @@ $(function() {
             $(this).css('stroke','#000000');
             $('#RO_InteractiveMap').qtip('hide');
         }
+    }).delegate('.overlay .npc, .overlay .zone','click',function(e) {
+        var t = $(this);
+        var ID = t.attr('id').match(/^.+?_(\w+)_(\d+)$/);
+        if (ID[1] == 'zone') {
+            ROMapData.highlightZone(ID[2]);
+        } else {
+            ROMapData.highlightNPC(ID[2]);
+        }
     });
     window.ROMapData = new cROMapData('#RO_InteractiveMap', '#RO_MapItems', 'images/map/zones/overlay.json');
 
@@ -975,6 +983,20 @@ $(function() {
             }
             ret.text += '</dl>';
             return ret;
+        },
+        highlightZone:function(zoneID) {
+            var o = this._list.find('li[zone="'+zoneID+'"]');
+            if (o.length) {
+                o[0].scrollIntoView(true);
+                o.effect('highlight',{color:'#EFC325'},300);
+            }
+        },
+        highlightNPC:function(npcID) {
+            var o = this._list.find('li[npc="'+npcID+'"]');
+            if (o.length) {
+                o[0].scrollIntoView(true);
+                o.effect('highlight',{color:'#EFC325'},300);
+            }
         },
         clear: function() {
             this._data = {zones:{},npcs:{}};
