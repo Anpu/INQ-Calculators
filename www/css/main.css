@@ -232,7 +232,7 @@ div.content.ui-widget-content a:hover, div.content-full.ui-widget-content a:hove
 .ui-tooltip-content dl dt {
     float: left;
     clear: left;
-    width: 6em;
+    width: 7em;
     text-align: right;
     font-weight: bold;
 }
@@ -240,7 +240,7 @@ div.content.ui-widget-content a:hover, div.content-full.ui-widget-content a:hove
     content: ':';
 }
 .ui-tooltip-content dl dd {
-    margin: 0 0 0 6.2em;
+    margin: 0 0 0 7.2em;
     padding: 0 0 0.5em 0;
 }
 
@@ -248,6 +248,7 @@ div.content.ui-widget-content a:hover, div.content-full.ui-widget-content a:hove
 .horizontal-list {
     list-style: none;
     position: relative;
+    margin: 0px;
 }
 .horizontal-list li {
     float: left;
@@ -269,16 +270,6 @@ ul.legend a {
   text-decoration: underline;
   font-weight: bold;
 }
-
-/** horizontal UL */
-.horizontal-list {
-    list-style: none;
-    position: relative;
-}
-.horizontal-list li {
-    float: left;
-}
-
 
 /* Result Set Styles */
 
@@ -324,11 +315,14 @@ ul.legend a {
 .search_result_row:hover {
   color: #FFFFFF;
 }
+.search_result_row td:first-child {
+    padding-left: 0.5ex;
+}
 .search_result_row div.buttonWrapper {
-    height: 32px;
-    width: 32px;
+    height: 24px;
+    width: 24px;
     position: relative;
-    display: inline-block;
+    float: left;
 }
 .search_result_row div.buttonWrapper > span.ui-icon {
     position: absolute;
@@ -595,7 +589,8 @@ select option.category {
 .zone-icon {
     width: 24px;
     height: 24px;
-    display: inline-block;
+    display: block;
+    float: left;
     background-image: url(../images/zoneshields.png);
 }
 .zone-icon.alsius_inner {
