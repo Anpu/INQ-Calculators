@@ -1,9 +1,3 @@
-/**
- * Auto complete widget with multiple entry support
- * Based on the example http://jqueryui.com/demos/autocomplete/multiple-remote.html
- * @copyright Copyright 2010
- * @author Edward Rudd <urkle at outoforder.cc>
- */
 /*
  * This file is part of INQ Calculators.
  *
@@ -21,6 +15,12 @@
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Auto complete widget with multiple entry support
+ * Based on the example http://jqueryui.com/demos/autocomplete/multiple-remote.html
+ * @copyright Copyright 2010
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
 (function($) { // hide namespace
 
 $.widget('ooo.basecomplete', $.ui.autocomplete, {

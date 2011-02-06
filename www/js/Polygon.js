@@ -1,12 +1,4 @@
 /*
- * Polgon, Point, and Rectangle wrapper classes
- *
- * Contains Point algorithm Generously borrowed and rewritten from http://dawsdesign.com/drupal/google_maps_point_in_polygon
- *
- * @copyright Copyright 2010
- * @author Edward Rudd <urkle at outoforder.cc>
- */
-/*
  * This file is part of INQ Calculators.
  *
  * INQ Calculators is free software: you can redistribute it and/or modify
@@ -23,6 +15,14 @@
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Polgon, Point, and Rectangle wrapper classes
+ *
+ * Contains Point algorithm Generously borrowed and rewritten from http://dawsdesign.com/drupal/google_maps_point_in_polygon
+ *
+ * @copyright Copyright 2010
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
 (function($) {
 
 //shared utility functions

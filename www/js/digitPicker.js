@@ -1,9 +1,3 @@
-/**
- * Digit picker Widget
- *
- * @copyright Copyright 2010
- * @author Edward Rudd <urkle at outoforder.cc>
- */
 /*
  * This file is part of INQ Calculators.
  *
@@ -19,6 +13,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Digit picker Widget
+ *
+ * @copyright Copyright 2010
+ * @author Edward Rudd <urkle at outoforder.cc>
  */
 (function($) { //hide namespace
 

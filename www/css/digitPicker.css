@@ -1,9 +1,10 @@
 /*
+ * This file is part of INQ Calculators and is covered under the AGPL v3
+ */
+
+/**
  * @copyright Copyright 2010
  * @author Edward Rudd <urkle at outoforder.cc>
- */
-/*
- * This file is part of INQ Calculators and is covered under the AGPL v3
  */
 .digitPicker {
     font-size: 2em;

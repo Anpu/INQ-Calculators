@@ -1,10 +1,4 @@
 /*
- * Main Javascript code
- * @copyright Copyright 2010
- * @author Xia
- * @author Edward Rudd <urkle at outoforder.cc>
- */
-/*
  * This file is part of INQ Calculators.
  *
  * INQ Calculators is free software: you can redistribute it and/or modify
@@ -19,6 +13,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Main Javascript code
+ * @copyright Copyright 2010
+ * @author Xia
+ * @author Edward Rudd <urkle at outoforder.cc>
  */
 // Compatibility for "older browsers"
 if (!Array.prototype.indexOf)

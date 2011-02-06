@@ -1,8 +1,4 @@
 <?php
-/**
- * @copyright Copyright 2010
- * @author Edward Rudd <urkle at outoforder.cc>
- */
 /*
  * This file is part of INQ Calculators.
  *
@@ -20,6 +16,10 @@
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @copyright Copyright 2010
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
 define("CLASS_ROOT",dirname(__FILE__).DIRECTORY_SEPARATOR);
 set_include_path(CLASS_ROOT . PATH_SEPARATOR . get_include_path());
 

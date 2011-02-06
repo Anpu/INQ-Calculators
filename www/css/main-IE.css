@@ -1,11 +1,12 @@
+/*
+ * This file is part of INQ Calculators and is covered under the AGPL v3
+ */
+
 /**
  * IE specific CSS
  *
  * @copyright Copyright 2010
  * @author Edward Rudd <urkle at outoforder.cc>
- */
-/*
- * This file is part of INQ Calculators and is covered under the AGPL v3
  */
 div.content.ui-widget-content a:hover {
     color: white;

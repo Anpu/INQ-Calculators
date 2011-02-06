@@ -1,10 +1,4 @@
 <?php
-/**
- * Main Controller
- *
- * @copyright Copyright 2010
- * @author Edward Rudd <urkle at outoforder.cc>
- */
 /*
  * This file is part of INQ Calculators.
  *
@@ -22,6 +16,12 @@
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Main Controller
+ *
+ * @copyright Copyright 2010
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
 define('APP_ROOT', dirname(__FILE__) . '/..');
 
 $config = include(APP_ROOT . "/config.php");

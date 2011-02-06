@@ -1,10 +1,4 @@
 <?php
-/**
- * Basic iterator to generate a sequence of numbers
- *
- * @copyright Copyright 2010
- * @author Edward Rudd <urkle at outoforder.cc>
- */
 /*
  * This file is part of INQ Calculators.
  *
@@ -20,6 +14,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Basic iterator to generate a sequence of numbers
+ *
+ * @copyright Copyright 2010
+ * @author Edward Rudd <urkle at outoforder.cc>
  */
 class RangeIterator implements Iterator {
     private $start;

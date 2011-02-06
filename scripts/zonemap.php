@@ -1,9 +1,5 @@
 #!/usr/bin/php
 <?php
-/**
- * @copyright Copyright 2010
- * @author Edward Rudd <urkle at outoforder.cc>
- */
 /*
  * This file is part of INQ Calculators.
  *
@@ -19,6 +15,11 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with INQ Calculators.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @copyright Copyright 2010
+ * @author Edward Rudd <urkle at outoforder.cc>
  */
 if (!defined('__DIR__')) {
     define('__DIR__',dirname(__FILE__));
