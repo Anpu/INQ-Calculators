@@ -18,7 +18,7 @@
 /**
  * Auto complete widget with multiple entry support
  * Based on the example http://jqueryui.com/demos/autocomplete/multiple-remote.html
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 (function($) { // hide namespace

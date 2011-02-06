@@ -20,7 +20,7 @@
  *
  * Contains Point algorithm Generously borrowed and rewritten from http://dawsdesign.com/drupal/google_maps_point_in_polygon
  *
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 (function($) {

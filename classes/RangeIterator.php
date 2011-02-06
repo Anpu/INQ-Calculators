@@ -19,7 +19,7 @@
 /**
  * Basic iterator to generate a sequence of numbers
  *
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 class RangeIterator implements Iterator {

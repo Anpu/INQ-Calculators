@@ -18,7 +18,7 @@
 /**
  * Custom Result class
  *
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 class CustomResultSet implements ResultIteratorObject {

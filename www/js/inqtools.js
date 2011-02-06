@@ -17,7 +17,7 @@
 
 /**
  * Main Javascript code
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Xia
  * @author Edward Rudd <urkle at outoforder.cc>
  */

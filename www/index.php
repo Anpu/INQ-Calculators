@@ -19,7 +19,7 @@
 /**
  * Main Controller
  *
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 define('APP_ROOT', dirname(__FILE__) . '/..');

@@ -19,7 +19,7 @@
 /**
  * Template class to setup PHP TAL
  *
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 class Template extends PHPTAL {

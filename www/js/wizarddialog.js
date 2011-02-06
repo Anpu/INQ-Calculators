@@ -17,7 +17,7 @@
 
 /**
  * Wizard Dialog
- * @copyright Copyright 2010
+ * @copyright Copyright 2010-2011
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 (function($) { //hide namespace
