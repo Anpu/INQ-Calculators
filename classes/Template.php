@@ -26,11 +26,12 @@ class Template extends PHPTAL {
     static private $_template_dirs = array();
 
     public function __construct($template = false) {
+        parent::__construct($template);
         $this->setTemplateRepository(self::$_template_dirs);
         if (DEBUG) {
             $this->setForceReparse(true);
         }
-        parent::__construct($template);
+        $this->static = new Template_StaticContext();
     }
 
     public static function addTemplatePath($templatedir) {
@@ -48,6 +49,36 @@ class Template extends PHPTAL {
         }
         return $exp;
     }
+}
+
+final class Template_StaticContext {
+        public function __isset($name)
+        {
+                return class_exists($name);
+        }
+
+        public function __get($name)
+        {
+                return new Template_StaticContextWrapper($name);
+        }
+}
+
+final class Template_StaticContextWrapper {
+        private $__class;
+
+        public function __construct($class) {
+                $this->__class = $class;
+        }
+
+        public function __isset($name)
+        {
+                return is_callable($this->__class.'::'.$name);
+        }
+
+        public function __get($name)
+        {
+                return call_user_func($this->__class.'::'.$name);
+        }
 }
 
 class Template_Tales implements PHPTAL_Tales {
