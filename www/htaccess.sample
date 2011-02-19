@@ -5,3 +5,19 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?PATH_INFO=$1 [L,QSA]
+
+FileETag None
+ExpiresActive On
+ExpiresByType image/png "access plus 1 month"
+ExpiresByType image/jpeg "access plus 2 month"
+AddType image/vnd.microsoft.icon .cur .ico
+ExpiresByType image/vnd.microsoft.icon "access plus 1 month"
+
+# JS and CSS can be a LONG time since they are now tagged with mod time
+ExpiresByType text/css "access plus 1 year"
+ExpiresByType application/x-javascript "access plus 1 year"
+ExpiresByType application/javascript "access plus 1 year"
+
+ExpiresByType application/xml "access plus 1 week"
+AddType application/json .json
+ExpiresByType application/json "access plus 1 week"
