@@ -23,6 +23,7 @@
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 define('APP_ROOT', dirname(__FILE__) . '/..');
+define('WEB_ROOT', dirname(__FILE__));
 
 $config = include(APP_ROOT . "/config.php");
 
@@ -33,6 +34,7 @@ define('DEBUG',!empty($config->debug));
 require_once(APP_ROOT . "/classes/Init.php");
 
 FB::setEnabled(DEBUG);
+Head::setDebug(DEBUG);
 
 Template::addTemplatePath(APP_ROOT . '/templates');
 Database::setDSN($config->db->dsn, $config->db->user, $config->db->password);
@@ -50,6 +52,9 @@ if (empty($_GET['PATH_INFO'])) {
             header("Cache-Control: maxage=".$config->cachehome);
             header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
         }
+        // Include the JS/CSS definitions from shared config file
+        include '../head.php';
+
         $tpl = new Template("index.xhtml");
         $tpl->js = array(
             'ajaxRoot'=>json_encode(Util::AjaxBaseURI())
@@ -126,6 +131,22 @@ if (empty($_GET['PATH_INFO'])) {
             $tpl = new Template("license.xhtml");
             $tpl->license = new FileLoader("http://www.gnu.org/licenses/agpl-3.0-standalone.html");
             $tpl->echoExecute();
+        } elseif ($path_info[0]=='css') {
+            // Include the JS/CSS definitions from shared config file
+            include '../head.php';
+
+            header("Pragma: public");
+            header("Content-Type: text/css; charset=UTF-8");
+            header("Expires: ".gmdate('D, d M Y H:i:s',  strtotime('+1 year')).' GMT');
+            Head::OutputCombined($_GET['PATH_INFO']);
+        } elseif ($path_info[0]=='js') {
+            // Include the JS/CSS definitions from shared config file
+            include '../head.php';
+
+            header("Pragma: public");
+            header("Content-Type: application/x-javascript; charset=UTF-8");
+            header("Expires: ".gmdate('D, d M Y H:i:s',  strtotime('+1 year')).' GMT');
+            Head::OutputCombined($_GET['PATH_INFO']);
         } else {
             throw new Exception("Invalid Request");
         }

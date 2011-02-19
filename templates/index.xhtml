@@ -5,29 +5,12 @@
     <title tal:content="title | default">Clan Tools</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="shortcut icon" href="favicon.ico"/>
-    <link rel="stylesheet" type="text/css" href="css/themes/inquisition/jquery-ui-1.8.8.custom.css"/>
-    <link rel="stylesheet" type="text/css" href="css/jquery.qtip.css"/>
-    <link rel="stylesheet" type="text/css" href="css/jquery.svg.css"/>
-    <link rel="stylesheet" type="text/css" href="css/mapWidget.css"/>
-    <link rel="stylesheet" type="text/css" href="css/interactiveMap.css"/>
-    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+    <link rel="stylesheet" type="text/css"
+          tal:repeat="file static/Head/CSS"
+          tal:attributes="href file"/>
     <!--[if IE]>
     <link rel="stylesheet" type="text/css" href="css/main-IE.css"/>
     <![endif]-->
-    <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
-    <script type="text/javascript" src="js/jquery.mousewheel.min.js"></script>
-    <script type="text/javascript" src="js/jquery.json.js"></script>
-    <script type="text/javascript" src="js/jquery.timers-1.2.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
-    <script type="text/javascript" src="js/jquery.qtip.min.js"></script>
-    <script type="text/javascript" src="js/jquery.svg.min.js"/>
-    <script type="text/javascript" src="js/inqtools.js"></script>
-    <script tal:condition="notempty: tools/trainer" type="text/javascript" src="js/Trainer.js"></script>
-    <script type="text/javascript" src="js/mapWidget.js"></script>
-    <script type="text/javascript" src="js/Polygon.js"></script>
-    <script type="text/javascript" src="js/interactiveMap.js"></script>
-    <script type="text/javascript" src="js/multicomplete.js"></script>
-    <script type="text/javascript" src="js/wizarddialog.js"></script>
     <script type="text/javascript">
       <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
     </script>
@@ -451,5 +434,8 @@
         <p>INQ Calculators Copyright &copy; 2010. <a id="license" href="license">Read License Information</a></p>
         <p>Data Copyright <a href="http://www.claninquisition.org/">Clan Inquisition</a> &copy; 2007-2010 and portions Copyright &copy; <a href="http://www.ngdstudios.com.ar/">NGD Studios</a>.</p>
     </div>
+    <script type="text/javascript"
+            tal:repeat="file static/Head/JS"
+            tal:attributes="src file"/>
   </body>
 </html>
