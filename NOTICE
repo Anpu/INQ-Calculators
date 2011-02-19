@@ -5,20 +5,26 @@ their respective licences.
 
 PHPTAL
 ------
-PHPTAL version 1.2.1 is licensed under the GNU Lesser General Public License
+PHPTAL is licensed under the GNU Lesser General Public License
 
 http://phptal.org/
 
+FirePHP
+-------
+Fire PHP is licensed under the New BSD License
+
+http://www.firephp.org/Wiki/Main/License
+
 jQuery
 ------
-jQuery version 1.4.3 is licensed under the MIT License and
+jQuery is licensed under the MIT License and
 GNU General Public License Version 2
 
 http://jquery.org/license
 
 jQuery UI
 ---------
-jQuery UI version 1.8.6 is licensed under the MIT License and
+jQuery UI is licensed under the MIT License and
 GNU General Public License Version 2.
 
 http://jquery.org/license
@@ -30,14 +36,27 @@ jQuery.timers is included and licensed under the WTFPL
 http://sam.zoy.org/wtfpl/
 
 jQuery Mouse Wheel
-------------
+------------------
 A jQuery mousewheel event wrapper is licensed under the MIT License and GNU
 General Public License Version 2
 
 http://brandonaaron.net/code/mousewheel/docs
 
-jquery.qTip
------------
+jquery.qTip2
+------------
 jquery.qtip is licensed under the MIT License
 
-http://craigsworks.com/projects/qtip/download/#license
+http://craigsworks.com/projects/qtip2/download/#license
+
+jquery json
+-----------
+jquery json is licensed under the MIT License
+
+http://www.rahulsingla.com/blog/2010/05/jquery-encode-decode-arbitrary-objects-to-and-from-json
+
+jQuery.SVG
+----------
+
+jQuery SVG Plugin is licensed under the MIT License
+
+http://keith-wood.name/svg.html
