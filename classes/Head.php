@@ -37,21 +37,29 @@ class Head {
     const ADD_FIRST     = 0x0100;
     const ADD_LAST      = 0x0200;
 
+    const TYPE_CSS      = 1;
+    const TYPE_JS       = 3;
+
     private static $links;
     private static $combined;
-    private static $debugmode = false;
+    private static $debug = false;
+    private static $memcached = false;
 
+    public static function setMemecache(Memcached $obj)
+    {
+        self::$memcached = $obj;
+    }
     /**
      * If debug mode is enabled, then file combining and minification is not done
      */
     public static function setDebug($debug = true)
     {
-        self::$debugmode = $debug;
+        self::$debug = $debug;
     }
 
     public static function addCSS($link, $flags = Head::ADD_LAST)
     {
-        $data = (object)array('link'=>$link,'flags'=>$flags);
+        $data = (object)array('link'=>$link,'flags'=>$flags,'type'=>self::TYPE_CSS);
         if ($flags & self::ADD_FIRST) {
             array_unshift(self::$links->css, $data);
         } else { // The default is add last
@@ -61,7 +69,7 @@ class Head {
 
     public static function addJS($link, $flags = Head::ADD_LAST)
     {
-        $data = (object)array('link'=>$link,'flags'=>$flags);
+        $data = (object)array('link'=>$link,'flags'=>$flags,'type'=>self::TYPE_JS);
         if ($flags & self::ADD_FIRST) {
             array_unshift(self::$links->js, $data);
         } else { // The default is add last
@@ -92,10 +100,42 @@ class Head {
         } else {
             self::ProcessJS();
         }
+        if (self::$memcached) {
+            $ret = self::$memcached->get($tag);
+            if ($ret) {
+                echo $ret;
+                return;
+            }
+            ob_start();
+        }
         if (isset(self::$combined[$tag])) {
             foreach (self::$combined[$tag] as $_f) {
-                readfile(WEB_ROOT.DIRECTORY_SEPARATOR.$_f->link);
+                if ($_f->flags & self::NO_MINIFY) {
+                    readfile(WEB_ROOT.DIRECTORY_SEPARATOR.$_f->link);
+                } else {
+                    if ($_f->type == self::TYPE_JS) {
+                        try {
+                            echo JSMin::minify(
+                                    file_get_contents(WEB_ROOT.DIRECTORY_SEPARATOR.$_f->link)
+                            );
+                        } catch(Exception $ex) {
+                            error_log((string)$ex);
+                        }
+                    } elseif ($_f->type == self::TYPE_CSS) {
+                        try {
+                            echo Minify_CSS_Compressor::process(
+                                    file_get_contents(WEB_ROOT.DIRECTORY_SEPARATOR.$_f->link)
+                            );
+                        } catch(Exception $ex) {
+                            error_log((string)$ex);
+                        }
+                    }
+                }
             }
+        }
+        if (self::$memcached) {
+            self::$memcached->set($tag, ob_get_contents());
+            ob_end_flush();
         }
     }
 
@@ -122,30 +162,53 @@ class Head {
         }
     }
 
+    private static function getModStamp($file)
+    {
+        $real = WEB_ROOT.DIRECTORY_SEPARATOR.$file;
+        if (file_exists($real)) {
+            return @filemtime($real);
+        } else {
+            return 0;
+        }
+    }
+
     private static function ProcessCSS()
     {
         $ret = array();
-        $combine = array();
-        $tag = '';
+        $combine = (object)array(
+            'files'=>array(),
+            'tag'=>'',
+            'stamp'=>'',
+        );
         foreach (self::$links->css as $_css) {
-            if ($_css->flags & self::NO_COMBINE) {
-                if (!empty($combine)) {
-                    $tag = 'css/COMBINED_'.md5($tag);
-                    self::$combined[$tag] = $combine;
-                    $ret[] = $tag;
-                    $combine = array();
-                    $tag = '';
-                }
+            if (self::$debug) {
                 $ret[] = self::GetVersionLink($_css->link);
+            } elseif ($_css->flags & self::NO_COMBINE) {
+                if (!empty($combine->files)) {
+                    $tag = 'css/COMBINED_'.md5($combine->tag);
+                    self::$combined[$tag] = $combine->files;
+                    $ret[] = $tag.'?'.md5($combine->stamp);
+                    $combine->files = array();
+                    $combine->tag = '';
+                    $combine->last = '';
+                }
+                if ($_css->flags & self::NO_MINIFY) {
+                    $ret[] = self::GetVersionLink($_css->link);
+                } else {
+                    $tag = 'js/MINIFIED_'.md5($_css->link);
+                    self::$combined[$tag] = array($_css);
+                    $ret[] = $tag.'?'.self::getModStamp($_css->link);
+                }
             } else {
-                $tag .= self::GetVersionLink($_css->link).':';
-                $combine[] = $_css;
+                $combine->tag .= $_css->link.':';
+                $combine->stamp .= self::getModStamp($_css->link);
+                $combine->files[] = $_css;
             }
         }
-        if (!empty($combine)) {
-            $tag = 'css/COMBINED_'.md5($tag);
-            self::$combined[$tag] = $combine;
-            $ret[] = $tag;
+        if (!empty($combine->files)) {
+            $tag = 'css/COMBINED_'.md5($combine->tag);
+            self::$combined[$tag] = $combine->files;
+            $ret[] = $tag.'?'.md5($combine->stamp);
         }
         return $ret;
     }
@@ -153,27 +216,40 @@ class Head {
     private static function ProcessJS()
     {
         $ret = array();
-        $combine = array();
-        $tag = '';
+        $combine = (object)array(
+            'files'=>array(),
+            'tag'=>'',
+            'stamp'=>'',
+        );
         foreach (self::$links->js as $_js) {
-            if ($_js->flags & self::NO_COMBINE) {
-                if (!empty($combine)) {
-                    $tag = 'js/COMBINED_'.md5($tag);
-                    self::$combined[$tag] = $combine;
-                    $ret[] = $tag;
-                    $combine = array();
-                    $tag = '';
-                }
+            if (self::$debug) {
                 $ret[] = self::GetVersionLink($_js->link);
+            } elseif ($_js->flags & self::NO_COMBINE) {
+                if (!empty($combine->files)) {
+                    $tag = 'js/COMBINED_'.md5($combine->tag);
+                    self::$combined[$tag] = $combine->files;
+                    $ret[] = $tag.'?'.md5($combine->stamp);
+                    $combine->files = array();
+                    $combine->tag = '';
+                    $combine->last = '';
+                }
+                if ($_js->flags & self::NO_MINIFY) {
+                    $ret[] = self::GetVersionLink($_js->link);
+                } else {
+                    $tag = 'js/MINIFIED_'.md5($_js->link);
+                    self::$combined[$tag] = array($_js);
+                    $ret[] = $tag.'?'.self::getModStamp($_js->link);
+                }
             } else {
-                $tag .= self::GetVersionLink($_js->link).':';
-                $combine[] = $_js;
+                $combine->tag .= $_js->link.':';
+                $combine->stamp .= self::getModStamp($_js->link);
+                $combine->files[] = $_js;
             }
         }
-        if (!empty($combine)) {
-            $tag = 'js/COMBINED_'.md5($tag);
-            self::$combined[$tag] = $combine;
-            $ret[] = $tag;
+        if (!empty($combine->files)) {
+            $tag = 'js/COMBINED_'.md5($combine->tag);
+            self::$combined[$tag] = $combine->files;
+            $ret[] = $tag.'?'.md5($combine->stamp);
         }
         return $ret;
     }

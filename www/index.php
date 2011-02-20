@@ -43,6 +43,7 @@ if ($config->memcache) {
     $memcache = new Memcached();
     $memcache->addServer($config->memcache->host, $config->memcache->port);
     RO_Base::setMemcache($memcache, $config->memcache->expire);
+    Head::setMemecache($memcache);
 }
 
 if (empty($_GET['PATH_INFO'])) {
