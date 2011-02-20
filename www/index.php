@@ -139,7 +139,7 @@ if (empty($_GET['PATH_INFO'])) {
             header("Pragma: public");
             header("Content-Type: text/css; charset=UTF-8");
             header("Expires: ".gmdate('D, d M Y H:i:s',  strtotime('+1 year')).' GMT');
-            Head::OutputCombined($_GET['PATH_INFO']);
+            Head::OutputCombined($_GET['PATH_INFO'],$_GET['t']);
         } elseif ($path_info[0]=='js') {
             // Include the JS/CSS definitions from shared config file
             include '../head.php';
@@ -147,7 +147,7 @@ if (empty($_GET['PATH_INFO'])) {
             header("Pragma: public");
             header("Content-Type: application/x-javascript; charset=UTF-8");
             header("Expires: ".gmdate('D, d M Y H:i:s',  strtotime('+1 year')).' GMT');
-            Head::OutputCombined($_GET['PATH_INFO']);
+            Head::OutputCombined($_GET['PATH_INFO'],$_GET['t']);
         } else {
             throw new Exception("Invalid Request");
         }

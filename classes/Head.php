@@ -93,7 +93,7 @@ class Head {
         return self::ProcessJS();
     }
 
-    public static function OutputCombined($tag)
+    public static function OutputCombined($tag, $modstamp = 0)
     {
         if (substr($tag,0,3)=='css') {
             self::ProcessCSS();
@@ -101,7 +101,7 @@ class Head {
             self::ProcessJS();
         }
         if (self::$memcached) {
-            $ret = self::$memcached->get($tag);
+            $ret = self::$memcached->get($tag.'-'.$modstamp);
             if ($ret) {
                 echo $ret;
                 return;
@@ -134,7 +134,7 @@ class Head {
             }
         }
         if (self::$memcached) {
-            self::$memcached->set($tag, ob_get_contents());
+            self::$memcached->set($tag.'-'.$modstamp, ob_get_contents());
             ob_end_flush();
         }
     }
@@ -156,7 +156,7 @@ class Head {
         $real = WEB_ROOT.DIRECTORY_SEPARATOR.$file;
         if (file_exists($real)) {
             $time = @filemtime($real);
-            return $file .'?'.$time;
+            return $file .'?t='.$time;
         } else {
             return $file;
         }
@@ -187,7 +187,7 @@ class Head {
                 if (!empty($combine->files)) {
                     $tag = 'css/COMBINED_'.md5($combine->tag);
                     self::$combined[$tag] = $combine->files;
-                    $ret[] = $tag.'?'.md5($combine->stamp);
+                    $ret[] = $tag.'?t='.md5($combine->stamp);
                     $combine->files = array();
                     $combine->tag = '';
                     $combine->last = '';
@@ -197,7 +197,7 @@ class Head {
                 } else {
                     $tag = 'js/MINIFIED_'.md5($_css->link);
                     self::$combined[$tag] = array($_css);
-                    $ret[] = $tag.'?'.self::getModStamp($_css->link);
+                    $ret[] = $tag.'?t='.self::getModStamp($_css->link);
                 }
             } else {
                 $combine->tag .= $_css->link.':';
@@ -208,7 +208,7 @@ class Head {
         if (!empty($combine->files)) {
             $tag = 'css/COMBINED_'.md5($combine->tag);
             self::$combined[$tag] = $combine->files;
-            $ret[] = $tag.'?'.md5($combine->stamp);
+            $ret[] = $tag.'?t='.md5($combine->stamp);
         }
         return $ret;
     }
@@ -228,7 +228,7 @@ class Head {
                 if (!empty($combine->files)) {
                     $tag = 'js/COMBINED_'.md5($combine->tag);
                     self::$combined[$tag] = $combine->files;
-                    $ret[] = $tag.'?'.md5($combine->stamp);
+                    $ret[] = $tag.'?t='.md5($combine->stamp);
                     $combine->files = array();
                     $combine->tag = '';
                     $combine->last = '';
@@ -238,7 +238,7 @@ class Head {
                 } else {
                     $tag = 'js/MINIFIED_'.md5($_js->link);
                     self::$combined[$tag] = array($_js);
-                    $ret[] = $tag.'?'.self::getModStamp($_js->link);
+                    $ret[] = $tag.'?t='.self::getModStamp($_js->link);
                 }
             } else {
                 $combine->tag .= $_js->link.':';
@@ -249,7 +249,7 @@ class Head {
         if (!empty($combine->files)) {
             $tag = 'js/COMBINED_'.md5($combine->tag);
             self::$combined[$tag] = $combine->files;
-            $ret[] = $tag.'?'.md5($combine->stamp);
+            $ret[] = $tag.'?t='.md5($combine->stamp);
         }
         return $ret;
     }
