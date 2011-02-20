@@ -374,7 +374,6 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         this._map.layers.sort(this._sortLayers);
         this._setupTiles();
     },
-    /** Need to toggle a Loading/notile graphic when changing zoom levels */
     loadLayer: function(layer, center) {
         var cur_scale;
         if (layer === this._activeLayerNum) return;
