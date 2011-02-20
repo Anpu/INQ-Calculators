@@ -97,7 +97,7 @@ if (empty($_GET['PATH_INFO'])) {
                 $data = $class::request(array_slice($path_info,2));
 
                 if ($config->memcache && $class::$cache) {
-                    $memcache->set($key, $data, 0, $config->memcache->expire);
+                    $memcache->set($key, $data, $config->memcache->expire);
                 }
             }
             if (DEBUG) {

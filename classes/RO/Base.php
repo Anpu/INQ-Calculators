@@ -61,7 +61,7 @@ abstract class RO_Base {
     {
         list($name, $key) = $this->configCache();
         if (self::$memcache) {
-            self::$memcache->set($name.':'.$data->$key, $data, 0, self::$memcache_expire);
+            self::$memcache->set($name.':'.$data->$key, $data, self::$memcache_expire);
         } else {
             self::$cache[$name][$data->$key] = $data;
         }
