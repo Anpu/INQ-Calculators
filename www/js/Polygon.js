@@ -313,8 +313,7 @@ $.extend(Polygon.prototype, {
             var vertex2 = this.getPoint(j);
             if (vertex1.y < point.y && vertex2.y >= point.y
                     || vertex2.y < point.y && vertex1.y >= point.y)  {
-                if (vertex1.x + (point.y - vertex1.y)
-                            / (vertex2.y - vertex1.y)
+                if (vertex1.x + (point.y - vertex1.y) / (vertex2.y - vertex1.y)
                             * (vertex2.x - vertex1.x) < point.x) {
                     inPoly = !inPoly;
                 }
