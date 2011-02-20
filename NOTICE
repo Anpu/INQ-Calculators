@@ -56,7 +56,12 @@ http://www.rahulsingla.com/blog/2010/05/jquery-encode-decode-arbitrary-objects-t
 
 jQuery.SVG
 ----------
-
 jQuery SVG Plugin is licensed under the MIT License
 
 http://keith-wood.name/svg.html
+
+minify
+------
+minify is licensed under the New BSD License
+
+http://code.google.com/p/minify/
