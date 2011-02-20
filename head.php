@@ -39,9 +39,9 @@ Head::addCSS('css/main.css');
 Head::addJS('js/jquery-1.4.4.min.js',HEAD::STANDALONE);
 Head::addJS('js/jquery-ui-1.8.8.custom.min.js',HEAD::STANDALONE);
 Head::addJS('js/jquery.mousewheel.min.js',HEAD::NO_MINIFY);
-Head::addJS('js/jquery.json.js');
 Head::addJS('js/jquery.timers-1.2.min.js',HEAD::NO_MINIFY);
 Head::addJS('js/jquery.qtip.min.js',HEAD::NO_MINIFY);
+Head::addJS('js/jquery.json.min.js',Head::NO_MINIFY);
 if (!empty($config->tools['trainer'])) {
     Head::addJS('js/Trainer.js');
 }
