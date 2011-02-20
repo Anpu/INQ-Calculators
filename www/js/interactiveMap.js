@@ -335,6 +335,10 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         $.Widget.prototype.destroy.apply(this, arguments);
     },
     loadMap: function(map) {
+        if (this._loading) {
+            return;
+        }
+        this._loading = true;
         if (map) {
             this._setOption('map',map);
         }
@@ -373,6 +377,7 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         }
         this._map.layers.sort(this._sortLayers);
         this._setupTiles();
+        this.render();
     },
     loadLayer: function(layer, center) {
         var cur_scale;
