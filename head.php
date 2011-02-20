@@ -33,6 +33,10 @@ Head::addCSS('css/mapWidget.css');
 if (!empty($config->tools['map'])) {
     Head::addCSS('css/jquery.svg.css');
     Head::addCSS('css/interactiveMap.css');
+    Head::addCSS('css/inqtools-map.css');
+}
+if (!empty($config->tools['trainer'])) {
+    Head::addCSS('css/inqtools-trainer.css');
 }
 Head::addCSS('css/main.css');
 
@@ -44,12 +48,14 @@ Head::addJS('js/jquery.json.min.js',Head::NO_MINIFY);
 Head::addJS('js/jquery.timers-1.2.min.js',Head::NO_MINIFY);
 if (!empty($config->tools['trainer'])) {
     Head::addJS('js/Trainer.js');
+    Head::addJS('js/inqtools-trainer.js');
 }
 Head::addJS('js/Polygon.js');
 Head::addJS('js/mapWidget.js');
 if (!empty($config->tools['map'])) {
     Head::addJS('js/jquery.svg.min.js',Head::NO_MINIFY);
     Head::addJS('js/interactiveMap.js');
+    Head::addJS('js/inqtools-map.js');
 }
 Head::addJS('js/multicomplete.js');
 Head::addJS('js/wizarddialog.js');

@@ -1,0 +1,88 @@
+/*
+ * This file is part of INQ Calculators and is covered under the AGPL v3
+ */
+/**
+ * @copyright Copyright 2010-2011
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
+#RO_MapWrapper {
+    position: relative;
+    border-color: #777;
+    border-style: solid;
+    border-width: 1px 0;
+}
+#RO_MapItems {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 20em;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: auto;
+}
+#RO_MapItems li {
+    list-style: none;
+    margin: 0.5ex;
+    padding: 0 0.5em;
+    border-bottom: 1px dotted #EFC235;
+    border-top: 1px dotted transparent;
+    position: relative;
+    cursor: url('../images/links.cur'), pointer;
+}
+#RO_MapItems li div.remove {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 32px;
+}
+#RO_MapItems li div.remove:hover {
+    background-color: #555555;
+}
+#RO_MapItems li div.remove > span.ui-icon {
+    margin: auto;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+}
+#RO_MapItems li span.removeAll {
+    padding: 0.5ex;
+}
+#RO_MapItems li span.removeAll:hover {
+    background-color: #555555;
+}
+#RO_MapItems li:hover {
+    background-color: #222222;
+    border-top-color: #EFC325;
+}
+#RO_MapItems li.zone:before {
+    padding-right: 0.5ex;
+    content: "Z:";
+}
+#RO_MapItems li.npc:before {
+    padding-right: 0.5ex;
+    content: "N:";
+}
+#RO_InteractiveMap {
+    position: absolute;
+    top: 0px;
+    right: 20em;
+    bottom: 0px;
+    left: 0px;
+    border-right: 1px solid #777;
+}
+#RO_InteractiveMap .overlay svg .zone {
+    fill-opacity: 0.5;
+    stroke-width: 5;
+    cursor: url('../images/links.cur'), pointer;
+}
+
+#RO_InteractiveMap .overlay svg .npc {
+    fill-opacity: 0.5;
+    stroke: #000000;
+    stroke-width: 5;
+    cursor: url('../images/links.cur'), pointer;
+}
