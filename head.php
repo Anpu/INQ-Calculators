@@ -27,7 +27,7 @@
 if (empty($config)) {
     throw new Exception("Global Config Object not setup!");
 }
-Head::addCSS('css/themes/inquisition/jquery-ui-1.8.8.custom.css',HEAD::STANDALONE);
+Head::addCSS('css/themes/inquisition/jquery-ui-1.8.8.custom.css',Head::STANDALONE);
 Head::addCSS('css/jquery.qtip.css');
 Head::addCSS('css/mapWidget.css');
 if (!empty($config->tools['map'])) {
@@ -36,19 +36,19 @@ if (!empty($config->tools['map'])) {
 }
 Head::addCSS('css/main.css');
 
-Head::addJS('js/jquery-1.4.4.min.js',HEAD::STANDALONE);
-Head::addJS('js/jquery-ui-1.8.8.custom.min.js',HEAD::STANDALONE);
-Head::addJS('js/jquery.mousewheel.min.js',HEAD::NO_MINIFY);
-Head::addJS('js/jquery.timers-1.2.min.js',HEAD::NO_MINIFY);
-Head::addJS('js/jquery.qtip.min.js',HEAD::NO_MINIFY);
+Head::addJS('js/jquery-1.4.4.min.js',Head::STANDALONE);
+Head::addJS('js/jquery-ui-1.8.8.custom.min.js',Head::STANDALONE);
+Head::addJS('js/jquery.qtip.min.js',Head::STANDALONE);
+Head::addJS('js/jquery.mousewheel.min.js',Head::NO_MINIFY);
 Head::addJS('js/jquery.json.min.js',Head::NO_MINIFY);
+Head::addJS('js/jquery.timers-1.2.min.js',Head::NO_MINIFY);
 if (!empty($config->tools['trainer'])) {
     Head::addJS('js/Trainer.js');
 }
 Head::addJS('js/Polygon.js');
 Head::addJS('js/mapWidget.js');
 if (!empty($config->tools['map'])) {
-    Head::addJS('js/jquery.svg.min.js',HEAD::NO_MINIFY);
+    Head::addJS('js/jquery.svg.min.js',Head::NO_MINIFY);
     Head::addJS('js/interactiveMap.js');
 }
 Head::addJS('js/multicomplete.js');
