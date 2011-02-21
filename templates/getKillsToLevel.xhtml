@@ -2,7 +2,7 @@
     <tr tal:attributes="class string:search_result_row ${EvenOdd};" tal:define="totalxp calcxp: entry/base_xp entry/chg_xp">
         <td>
             <tal:block metal:use-macro="library.xhtml/toggleicon"/>
-            <tal:block metal:use-macro="library.xhtml/throwonmap" tal:define="mapData entry/mob/mapData"/>
+            <tal:block tal:condition="notempty: global/config/tools/map" metal:use-macro="library.xhtml/throwonmap" tal:define="mapData entry/mob/mapData"/>
         </td>
         <td>${entry/mob/name}</td>
         <td>${entry/mob/level}</td>

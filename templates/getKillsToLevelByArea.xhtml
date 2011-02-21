@@ -2,7 +2,7 @@
     <tr tal:attributes="class string:search_result_row ${EvenOdd};">
         <td>
             <tal:block metal:use-macro="library.xhtml/toggleicon"/>
-            <tal:block metal:use-macro="library.xhtml/throwonmap" tal:define="mapData entry/zone/mapGrindingData"/>
+            <tal:block tal:condition="notempty: global/config/tools/map" metal:use-macro="library.xhtml/throwonmap" tal:define="mapData entry/zone/mapGrindingData"/>
         </td>
         <td>${entry/zone/name} in the ${entry/zone/realm} ${entry/zone/region}</td>
         <td>${entry/mob_types}</td>
