@@ -1,0 +1,36 @@
+/*
+ * This file is part of INQ Calculators and is covered under the AGPL v3
+ */
+
+/**
+ * @copyright Copyright 2011
+ * @author Edward Rudd <urkle at outoforder.cc>
+ */
+.ui-state-disabled { cursor: url('../../../images/normal.cur'), default !important; }
+.ui-accordion .ui-accordion-header { cursor: url('../../../images/links.cur'), pointer; }
+.ui-autocomplete { position: absolute; cursor: url('../../../images/normal.cur'), default; }
+.ui-button { cursor: url('../../../images/links.cur'), pointer; }
+.ui-dialog .ui-dialog-buttonpane button { cursor: url('../../../images/links.cur'), pointer; }
+.ui-slider .ui-slider-handle { cursor: url('../../../images/normal.cur'), default; }
+.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: url('../../../images/links.cur'), pointer; }
+.ui-datepicker .ui-datepicker-buttonpane button { cursor: url('../../../images/links.cur'), pointer; }
+
+/* Override buttons */
+.ui-button-text-only .ui-button-text {
+    padding: 0.1em 0.5em;
+}
+
+/** Override auto complete */
+.ui-autocomplete {
+    max-height: 12em;
+    overflow-y: auto;
+}
+
+.ui-autocomplete .ui-menu-item {
+    font-size: 0.8em;
+}
+
+.ui-autocomplete .ui-menu-item .subtitle {
+    font-style: italic;
+    font-size: 0.8em;
+}

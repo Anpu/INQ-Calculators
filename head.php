@@ -27,7 +27,8 @@
 if (empty($config)) {
     throw new Exception("Global Config Object not setup!");
 }
-Head::addCSS('css/themes/inquisition/jquery-ui-1.8.8.custom.css',Head::STANDALONE);
+Head::addCSS('css/themes/inquisition/jquery-ui-1.8.9.custom.css',Head::STANDALONE);
+Head::addCSS('css/theme-override.css');
 Head::addCSS('css/jquery.qtip.css');
 Head::addCSS('css/mapWidget.css');
 if (!empty($config->tools['map'])) {
@@ -41,7 +42,7 @@ if (!empty($config->tools['trainer'])) {
 Head::addCSS('css/main.css');
 
 Head::addJS('js/jquery-1.4.4.min.js',Head::STANDALONE);
-Head::addJS('js/jquery-ui-1.8.8.custom.min.js',Head::STANDALONE);
+Head::addJS('js/jquery-ui-1.8.9.custom.min.js',Head::STANDALONE);
 Head::addJS('js/jquery.qtip.min.js',Head::STANDALONE);
 Head::addJS('js/jquery.mousewheel.min.js',Head::NO_MINIFY);
 Head::addJS('js/jquery.json.min.js',Head::NO_MINIFY);

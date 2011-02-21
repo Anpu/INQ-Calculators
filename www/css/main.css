@@ -153,10 +153,6 @@ ul.navigation li.last-item, button.last-item {
     background-position: top right !important;
 }
 
-.ui-tabs .ui-tabs-hide {
-    display: none;
-}
-
 ul.navigation li.ui-state-default, ul.navigation li.ui-state-active {
     border: none;
     background-color: transparent;
@@ -169,24 +165,6 @@ ul.navigation li.ui-state-default a, ul.navigation li.ui-state-active a {
 }
 ul.navigation li.ui-state-hover a {
     text-shadow: 0px 0px 1em white, 0px 0px 0.2em white;
-}
-
-.ui-button-text-only .ui-button-text {
-    padding: 0.1em 0.5em;
-}
-
-.ui-autocomplete {
-    max-height: 12em;
-    overflow-y: auto;
-}
-
-.ui-autocomplete .ui-menu-item {
-    font-size: 0.8em;
-}
-
-.ui-autocomplete .ui-menu-item .subtitle {
-    font-style: italic;
-    font-size: 0.8em;
 }
 
 .ui-slider-handle .ui-tooltip-content > a {
