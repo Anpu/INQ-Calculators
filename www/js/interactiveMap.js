@@ -151,6 +151,9 @@ $.extend(OverlayContainer.prototype, {
         if (this.svgReady && o.data.drawSVG) {
             var g = o.data.drawSVG(this._svg, svgParent, this.nextColor(), o.offset);
             this._svg.change(g,{id:o.name});
+            for (var k in o.events) {
+                $(g).bind(k, o.events[k]);
+            }
 //        } else if (o.data.draw) {
             // Disable non SVG fallback for now
 //            if (!o.wrapper) {
@@ -193,33 +196,34 @@ $.extend(OverlayContainer.prototype, {
     svgChange: function(e, o) {
         return this._svg.change(e, o);
     },
-    addPolygon: function(name, polygon, offset) {
+    addPolygon: function(name, polygon, offset, events) {
         if (!(polygon instanceof Polygon)) {
             throw new TypeError('Must pass in an instance of a Polygon object');
         }
-        return this.addObject(name, 'polygon', polygon, offset, true);
+        return this.addObject(name, 'polygon', polygon, offset, events, true);
     },
-    addCustom: function(name, drawSVG, offset) {
-        return this.addObject(name, 'custom', new OverlayCustom(drawSVG), offset, true);
+    addCustom: function(name, drawSVG, offset, events) {
+        return this.addObject(name, 'custom', new OverlayCustom(drawSVG), offset, events, true);
     },
     addSymbol: function(name, drawSVG) {
-        return this.addObject(name, 'symbol', new OverlayCustom(drawSVG),true);
+        return this.addObject(name, 'symbol', new OverlayCustom(drawSVG), {}, {}, true);
     },
-    addPath: function(name, path, offset) {
+    addPath: function(name, path, offset, events) {
         if (!path || typeof path != 'string') {
             throw new TypeError('Must pass in a string containing the SVG Path');
         }
-        return this.addObject(name, 'path', new OverlayPath(path), offset, true);
+        return this.addObject(name, 'path', new OverlayPath(path), offset, events, true);
     },
-    addReference: function(name, reference, offset) {
-        return this.addObject(name, 'use', new OverlayReference(reference), offset, true);
+    addReference: function(name, reference, offset, events) {
+        return this.addObject(name, 'use', new OverlayReference(reference), offset, events, true);
     },
-    addObject: function(name, type, data, offset, toDraw) {
+    addObject: function(name, type, data, offset, events, toDraw) {
         var o = {
             name: name,
             type: type,
             data: data,
-            offset: offset
+            offset: offset,
+            events: events
         };
         if (type=='symbol') {
             this._preElems[name] = o;
@@ -238,6 +242,7 @@ $.extend(OverlayContainer.prototype, {
             delete this._preElems[name];
         }
         if (name in this._elems) {
+            $('#'+this._elems[name].name).unbind();
             delete this._elems[name];
         }
         if (this.svgReady) {
@@ -249,6 +254,10 @@ $.extend(OverlayContainer.prototype, {
         return Object.keys(pre ? this._preElems : this._elems);
     },
     clear: function() {
+        for (var k in this._elems) {
+            $('#'+this._elems[k].name).unbind();
+        }
+
         // Clear all objects
         if (this.svgReady) {
             this._svg.clear();
