@@ -35,45 +35,6 @@ $(function() {
             event:false,
             effect: false // So hiding works reliably below
         }
-    }).delegate('.overlay .zone','hover',function(e) {
-        var o = $('#RO_InteractiveMap').interactiveMap('overlay');
-        if (e.type == 'mouseenter') {
-            o.svgChange(this,{stroke:'#FFFFFF'});
-            var zID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
-            var zInfo = ROMapData.zoneInfo(zID);
-            $('#RO_InteractiveMap')
-                .qtip('option','position.target',false)
-                .qtip('option','content.text',zInfo.text || 'Unknown')
-                .qtip('option','content.title.text',zInfo.title)
-                .qtip('option','position.target',$(this))
-                .qtip('show');
-        } else {
-            o.svgChange(this,{stroke:null});
-            $('#RO_InteractiveMap').qtip('hide');
-        }
-    }).delegate('.overlay .npc','hover',function(e) {
-        if (e.type == 'mouseenter') {
-            $(this).css('stroke','#ffffff');
-            var nID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
-            var nInfo = ROMapData.npcInfo(nID);
-            $('#RO_InteractiveMap')
-                .qtip('option','position.target',false)
-                .qtip('option','content.text',nInfo.text || 'Unknown')
-                .qtip('option','content.title.text',nInfo.title)
-                .qtip('option','position.target',$(this))
-                .qtip('show');
-        } else {
-            $(this).css('stroke','#000000');
-            $('#RO_InteractiveMap').qtip('hide');
-        }
-    }).delegate('.overlay .npc, .overlay .zone','click',function(e) {
-        var t = $(this);
-        var ID = t.attr('id').match(/^.+?_(\w+)_(\d+)$/);
-        if (ID[1] == 'zone') {
-            ROMapData.highlightZone(ID[2]);
-        } else {
-            ROMapData.highlightNPC(ID[2]);
-        }
     });
 
 
@@ -192,6 +153,48 @@ $(function() {
         _evtListClear: function(e) {
             this.clear();
         },
+        _evtZoneHover: function(e) {
+            var o = $('#RO_InteractiveMap').interactiveMap('overlay');
+            if (e.type == 'mouseenter') {
+                o.svgChange(this,{stroke:'#FFFFFF'});
+                var zID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
+                var zInfo = ROMapData.zoneInfo(zID);
+                $('#RO_InteractiveMap')
+                    .qtip('option','position.target',false)
+                    .qtip('option','content.text',zInfo.text || 'Unknown')
+                    .qtip('option','content.title.text',zInfo.title)
+                    .qtip('option','position.target',$(this))
+                    .qtip('show');
+            } else {
+                o.svgChange(this,{stroke:null});
+                $('#RO_InteractiveMap').qtip('hide');
+            }
+        },
+        _evtNPCHover: function(e) {
+            if (e.type == 'mouseenter') {
+                $(this).css('stroke','#ffffff');
+                var nID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
+                var nInfo = ROMapData.npcInfo(nID);
+                $('#RO_InteractiveMap')
+                    .qtip('option','position.target',false)
+                    .qtip('option','content.text',nInfo.text || 'Unknown')
+                    .qtip('option','content.title.text',nInfo.title)
+                    .qtip('option','position.target',$(this))
+                    .qtip('show');
+            } else {
+                $(this).css('stroke','#000000');
+                $('#RO_InteractiveMap').qtip('hide');
+            }
+        },
+        _evtOverlayClick: function(e) {
+            var t = $(this);
+            var ID = t.attr('id').match(/^.+?_(\w+)_(\d+)$/);
+            if (ID[1] == 'zone') {
+                ROMapData.highlightZone(ID[2]);
+            } else {
+                ROMapData.highlightNPC(ID[2]);
+            }
+        },
         zoneSVG:function(zoneID) {
             if (zoneID in this._zones) {
                 return this._zones[zoneID].svg;
@@ -308,7 +311,10 @@ $(function() {
                         .append('<div class="remove"><span class="ui-icon ui-icon-closethick"/></div>'));
                 var d = this.zoneSVG(zones[i]);
                 if (d) {
-                    this._overlay.addPath('romap_zone_'+zones[i],d,{'class':'zone'});
+                    this._overlay.addPath('romap_zone_'+zones[i],d,{'class':'zone'},{
+                        'mouseenter mouseleave':this._evtZoneHover,
+                        'click':this._evtOverlayClick
+                    });
                 }
             }
         },
@@ -327,6 +333,9 @@ $(function() {
                     height: this._npc.height,
                     fill:(d.realm == 'Syrtis' ? '#00ff00' : (d.realm == 'Ignis' ? '#ff0000' : '#0000ff')),
                     'class':'npc'
+                },{
+                    'mouseenter mouseleave':this._evtNPCHover,
+                    'click':this._evtOverlayClick
                 });
             }
         }
