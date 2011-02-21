@@ -50,8 +50,9 @@ if (empty($_GET['PATH_INFO'])) {
     try {
         if ($config->cachehome) {
             header("Pragma: public");
-            header("Cache-Control: maxage=".$config->cachehome);
             header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
+        } elseif (DEBUG) {
+            header("Expires: ".gmdate('D, d M Y H:i:s',time()-86400). ' GMT');
         }
         // Include the JS/CSS definitions from shared config file
         include '../head.php';
@@ -108,8 +109,9 @@ if (empty($_GET['PATH_INFO'])) {
             header("Content-Type: application/json; charset=UTF-8");
             if ($class::$cache && $config->ajaxexpires) {
                 header("Pragma: public");
-                header("Cache-Control: maxage=".$config->ajaxexpires);
                 header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->ajaxexpires). ' GMT');
+            } elseif (DEBUG) {
+                header("Expires: ".gmdate('D, d M Y H:i:s',time()-86400). ' GMT');
             }
             echo json_encode(array(
                 'response'=>'success',
@@ -118,15 +120,15 @@ if (empty($_GET['PATH_INFO'])) {
         } elseif ($path_info[0]=='help') {
             if ($config->cachehome) {
                 header("Pragma: public");
-                header("Cache-Control: maxage=".$config->cachehome);
                 header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
+            } elseif (DEBUG) {
+                header("Expires: ".gmdate('D, d M Y H:i:s',time()-86400). ' GMT');
             }
             $tpl = new Template("help.xhtml");
             $tpl->echoExecute();
         } elseif ($path_info[0]=='license') {
             if ($config->cachehome) {
                 header("Pragma: public");
-                header("Cache-Control: maxage=".$config->cachehome);
                 header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->cachehome). ' GMT');
             }
             $tpl = new Template("license.xhtml");
