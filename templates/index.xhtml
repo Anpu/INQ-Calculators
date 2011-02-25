@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="css/main-IE.css"/>
     <![endif]-->
     <script type="text/javascript">
-      <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${name};"/>
+      <tal:block tal:repeat="name js" tal:content="structure string:var ${repeat/name/key} = ${json:name};"/>
     </script>
     <tal:block tal:condition="notempty:analytics/enabled" metal:use-macro="analytics.xhtml/analytics"/>
   </head>

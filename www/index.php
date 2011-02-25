@@ -59,7 +59,7 @@ if (empty($_GET['PATH_INFO'])) {
 
         $tpl = new Template("index.xhtml");
         $tpl->js = array(
-            'ajaxRoot'=>json_encode(Util::AjaxBaseURI())
+            'ajaxRoot'=>Util::AjaxBaseURI(),
         );
         // Load enablement of tools
         $tpl->tools = $config->tools;
