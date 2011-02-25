@@ -881,6 +881,8 @@ function doSearch(alt) {
     if ($.isFunction(window[cb])) {
         window[cb](alt);
     }
+    // animate away the help to free more space
+    var o = $('#main div.ui-tabs-panel:not(.ui-tabs-hide) .help:visible').slideUp();
 }
 
 function animateLogo() {
