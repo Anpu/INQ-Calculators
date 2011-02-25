@@ -1479,52 +1479,45 @@ switch ($args->command_name) {
         fclose($fp);
         break;
     case 'mapoverlay':
-        if (empty($args->command->options['spatialite'])) {
-            throw new Exception("Must specify spatialite DB");
-        }
-        if (empty($args->command->options['table'])) {
-            throw new Exception("Must specify Table Name");
-        }
-        $sdb = new SQLite3($args->command->options['spatialite']);
-        $sdb->loadExtension($config->spatialite);
-        $allzones = $sdb->prepare(sprintf("SELECT zone_id, NumGeometries(polygon),AsText(StartPoint(ExteriorRing(Envelope(polygon)))) FROM %s"
-               .(empty($args->command->options['filter']) ? "" : " WHERE %s"),
-            $args->command->options['table'], $args->command->options['filter']));
-        $getPolygon = $sdb->prepare(sprintf("SELECT AsText(ExteriorRing(GeometryN(polygon,:poly))),"
-                ."NumInteriorRings(GeometryN(polygon,:poly)) FROM %s WHERE zone_id = :zone",
-            $args->command->options['table']));
-        $getPolygonHole = $sdb->prepare(sprintf("SELECT AsText(InteriorRingN(GeometryN(polygon,:poly),:hole))"
+        $allzones = $dbh->prepare(sprintf("SELECT zone_id, NumGeometries(geometry), AsText(StartPoint(ExteriorRing(Envelope(geometry)))), "
+                ."AsText(PointN(ExteriorRing(Envelope(geometry)),3))"
+                ." FROM %s WHERE geometry IS NOT NULL".(empty($args->command->options['filter']) ? "" : " AND %s"),
+            $zonestable, $args->command->options['filter']));
+        $getPolygon = $dbh->prepare(sprintf("SELECT AsText(ExteriorRing(GeometryN(geometry,:poly))),"
+                ."NumInteriorRings(GeometryN(geometry,:poly)) FROM %s WHERE zone_id = :zone",
+            $zonestable));
+        $getPolygonHole = $dbh->prepare(sprintf("SELECT AsText(InteriorRingN(GeometryN(geometry,:poly),:hole))"
                 ." FROM %s WHERE zone_id = :zone",
-            $args->command->options['table']));
+            $zonestable));
 
 
-        $res = $allzones->execute();
+        $allzones->execute();
         $zones = array();
-        while ($row = $res->fetchArray(SQLITE3_NUM)) {
+        while ($row = $allzones->fetch(PDO::FETCH_NUM)) {
             //$_zone = new stdClass();
             //$_zone->id = $row[0];
 
             $svg = array();
             $state = array();
             //$_zone->polygons = array();
-            $getPolygon->bindValue('zone',$row[0],SQLITE3_INTEGER);
-            $getPolygonHole->bindValue('zone',$row[0],SQLITE3_INTEGER);
+            $getPolygon->bindValue('zone',$row[0],PDO::PARAM_INT);
+            $getPolygonHole->bindValue('zone',$row[0],PDO::PARAM_INT);
             // Iterate Polygons
             for ($p=1; $p<=$row[1]; ++$p) {
                 $polygon = new stdClass();
-                $getPolygon->bindValue('poly',$p,SQLITE3_INTEGER);
-                $res2 = $getPolygon->execute();
-                $poly = $res2->fetchArray(SQLITE3_NUM);
-                $res2->finalize();
+                $getPolygon->bindValue('poly',$p,PDO::PARAM_INT);
+                $getPolygon->execute();
+                $poly = $getPolygon->fetch(PDO::FETCH_NUM);
+                $getPolygon->closeCursor();
                 $polygon->exterior = ParseLineString($poly[0]);
                 // Iterate Holes
                 $polygon->holes = array();
-                $getPolygonHole->bindValue('poly',$p,SQLITE3_INTEGER);
+                $getPolygonHole->bindValue('poly',$p,PDO::PARAM_INT);
                 for ($h=1; $h<=$poly[1]; ++$h) {
-                    $getPolygonHole->bindValue('hole',$h,SQLITE3_INTEGER);
-                    $res2 = $getPolygonHole->execute();
-                    $hole = $res2->fetchArray(SQLITE3_NUM);
-                    $res2->finalize();
+                    $getPolygonHole->bindValue('hole',$h,PDO::PARAM_INT);
+                    $getPolygonHole->execute();
+                    $hole = $getPolygonHole->fetch(PDO::FETCH_NUM);
+                    $getPolygonHole->closeCursor();
                     $polygon->holes[] = ParseLineString($hole[0]);
                 }
                 $svg[] = PolygonToSVGPath($polygon->exterior, $polygon->holes, $state);
@@ -1532,13 +1525,16 @@ switch ($args->command_name) {
             }
             //$_zone->svg = implode('',$svg);
             $pos = explode(' ',substr($row[2],6,-1));
+            $pos2 = explode(' ',substr($row[3],6,-1));
             $zones[$row[0]] = array(
-                'left'=>$pos[0],
-                'top'=>$pos[1],
+                'left'=>(int)$pos[0],
+                'top'=>(int)$pos[1],
+                'width'=>$pos2[0]-$pos[0],
+                'height'=>$pos2[1]-$pos[1],
                 'svg'=>implode('',$svg),
             );
         }
-        $res->finalize();
+        $allzones->closeCursor();
         echo "Exported ".count($zones)." zones to ".$args->command->options['outputfile']."\n";
         file_put_contents($args->command->options['outputfile'], json_encode($zones));
         break;
