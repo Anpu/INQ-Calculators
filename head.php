@@ -43,6 +43,11 @@ Head::addCSS('css/main.css');
 
 Head::addJS('js/jquery-1.4.4.min.js',Head::STANDALONE);
 Head::addJS('js/jquery-ui-1.8.9.custom.min.js',Head::STANDALONE);
+if (!empty($config->tools['map'])) {
+    Head::addJS('js/jquery.svg.min.js',Head::STANDALONE);
+    Head::addJS('js/jquery.svgfilter.min.js',Head::STANDALONE);
+    Head::addJS('js/jquery.svganim.min.js',Head::STANDALONE);
+}
 Head::addJS('js/jquery.qtip.min.js',Head::STANDALONE);
 Head::addJS('js/jquery.mousewheel.min.js',Head::NO_MINIFY);
 Head::addJS('js/jquery.json.min.js',Head::NO_MINIFY);
@@ -54,9 +59,6 @@ if (!empty($config->tools['trainer'])) {
 Head::addJS('js/Polygon.js');
 Head::addJS('js/mapWidget.js');
 if (!empty($config->tools['map'])) {
-    Head::addJS('js/jquery.svg.min.js',Head::NO_MINIFY);
-    Head::addJS('js/jquery.svgfilter.min.js',Head::NO_MINIFY);
-    Head::addJS('js/jquery.svganim.min.js',Head::NO_MINIFY);
     Head::addJS('js/interactiveMap.js');
     Head::addJS('js/inqtools-map.js');
 }
