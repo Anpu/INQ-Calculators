@@ -21,7 +21,7 @@
 $(function() {
         /** Interactive Map */
     $('#RO_InteractiveMap').interactiveMap({
-        map: 'images/map/map.xml'
+        map: datapaths.mapdata
     }).qtip({
         prerender: true,
         content: {title:'Map Info',text:'Info'},
@@ -86,7 +86,7 @@ $(function() {
         e.stopPropagation();
     });
 
-    window.ROMapData = new cROMapData('#RO_InteractiveMap', '#RO_MapItems', 'images/map/zones/overlay.json');
+    window.ROMapData = new cROMapData('#RO_InteractiveMap', '#RO_MapItems', datapaths.mapoverlay);
 
     $(window).resize(function() {
         refreshMaps();

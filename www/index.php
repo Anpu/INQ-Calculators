@@ -58,8 +58,14 @@ if (empty($_GET['PATH_INFO'])) {
         include '../head.php';
 
         $tpl = new Template("index.xhtml");
+        $datapaths = array();
+        if (!empty($config->tools['map'])) {
+            $datapaths['mapdata'] = Head::GetVersionLink('images/map/map.xml');
+            $datapaths['mapoverlay'] = Head::GetVersionLink('images/map/zones/overlay.json');
+        }
         $tpl->js = array(
             'ajaxRoot'=>Util::AjaxBaseURI(),
+            'datapaths'=>$datapaths,
         );
         // Load enablement of tools
         $tpl->tools = $config->tools;
