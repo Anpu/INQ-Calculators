@@ -40,15 +40,34 @@ class Head {
     const TYPE_CSS      = 1;
     const TYPE_JS       = 3;
 
+    const FEAT_COMBINE  = 0x01;
+    const FEAT_MINIFY   = 0x02;
+    const FEAT_DEFAULT  = 0x01;
+
     private static $links;
     private static $combined;
     private static $debug = false;
     private static $memcached = false;
+    private static $features = self::FEAT_DEFAULT;
 
+    /**
+     * Configure what features are enabled (minification, combination)
+     * @param integer $flags  And ored list of Head::FEAT_*  flags
+     */
+    public static function setFeatures($flags)
+    {
+        self::$features = $flags;
+    }
+
+    /**
+     * Configure the caching in memcached
+     * @param Memcached $obj  The memcached object to use
+     */
     public static function setMemecache(Memcached $obj)
     {
         self::$memcached = $obj;
     }
+
     /**
      * If debug mode is enabled, then file combining and minification is not done
      */
@@ -110,7 +129,7 @@ class Head {
         }
         if (isset(self::$combined[$tag])) {
             foreach (self::$combined[$tag] as $_f) {
-                if ($_f->flags & self::NO_MINIFY) {
+                if ($_f->flags & self::NO_MINIFY || (self::$features & self::FEAT_MINIFY) == 0) {
                     readfile(WEB_ROOT.DIRECTORY_SEPARATOR.$_f->link);
                 } else {
                     if ($_f->type == self::TYPE_JS) {
@@ -151,7 +170,7 @@ class Head {
         self::$combined = array();
     }
 
-    private static function GetVersionLink($file)
+    public static function GetVersionLink($file)
     {
         $real = WEB_ROOT.DIRECTORY_SEPARATOR.$file;
         if (file_exists($real)) {
@@ -183,7 +202,7 @@ class Head {
         foreach (self::$links->css as $_css) {
             if (self::$debug) {
                 $ret[] = self::GetVersionLink($_css->link);
-            } elseif ($_css->flags & self::NO_COMBINE) {
+            } elseif ($_css->flags & self::NO_COMBINE || (self::$features & self::FEAT_COMBINE)==0) {
                 if (!empty($combine->files)) {
                     $tag = 'css/COMBINED_'.md5($combine->tag);
                     self::$combined[$tag] = $combine->files;
@@ -192,7 +211,7 @@ class Head {
                     $combine->tag = '';
                     $combine->last = '';
                 }
-                if ($_css->flags & self::NO_MINIFY) {
+                if ($_css->flags & self::NO_MINIFY || (self::$features & self::FEAT_MINIFY)==0) {
                     $ret[] = self::GetVersionLink($_css->link);
                 } else {
                     $tag = 'js/MINIFIED_'.md5($_css->link);
@@ -224,7 +243,7 @@ class Head {
         foreach (self::$links->js as $_js) {
             if (self::$debug) {
                 $ret[] = self::GetVersionLink($_js->link);
-            } elseif ($_js->flags & self::NO_COMBINE) {
+            } elseif ($_js->flags & self::NO_COMBINE || (self::$features & self::FEAT_COMBINE)==0) {
                 if (!empty($combine->files)) {
                     $tag = 'js/COMBINED_'.md5($combine->tag);
                     self::$combined[$tag] = $combine->files;
@@ -233,7 +252,7 @@ class Head {
                     $combine->tag = '';
                     $combine->last = '';
                 }
-                if ($_js->flags & self::NO_MINIFY) {
+                if ($_js->flags & self::NO_MINIFY || (self::$features & self::FEAT_MINIFY)==0) {
                     $ret[] = self::GetVersionLink($_js->link);
                 } else {
                     $tag = 'js/MINIFIED_'.md5($_js->link);
