@@ -98,14 +98,29 @@ $(function() {
         this._map = $(map);
         this._overlay = this._map.interactiveMap('overlay');
         this._list = $(list);
+        this._list.qtip({
+            prerender: true,
+            content: {title:'Info',text:'Info'},
+            position: {
+                my: 'center right',
+                at: 'bottom left',
+                target: false
+            },
+            show: false,
+            hide: {
+                event:false,
+                effect: false // So hiding works reliably below
+            }
+        });
         this._list.empty().append('<li class="help">Click the <span class="ui-icon ui-icon-star ui-icon-inline"/>'
                     +' icon in search results to visualize them on this map.'
                     +' <span class="removeAll">[Clear All]</span></li>');
         this._list.find('.removeAll').click($.proxy(this._evtListClear, this));
         this._list.delegate('li div.remove','click',$.proxy(this._evtListClose, this));
         this._list.delegate('li.zone,li.npc','click',$.proxy(this._evtListClick, this));
+        this._list.delegate('li.zone,li.npc','hover',$.proxy(this._evtListHover, this));
         this._zoneURL = zoneURL;
-        this._npc = {width:75,height:150};
+        this._npc = {width:75,height:150,cx:75/2,cy:75/2};
         this._loading = false;
         this.clear();
     }
@@ -124,21 +139,35 @@ $(function() {
                 this.addZones(k);
             }
         },
+        _evtListHover: function(e) {
+            var o = $(e.currentTarget);
+            if (e.type == 'mouseenter') {
+                var info;
+                if (o.hasClass('zone')) {
+                    var zoneID = o.attr('zone');
+                    info = ROMapData.zoneInfo(zoneID);
+                } else {
+                    var npcID = o.attr('npc');
+                    info = ROMapData.npcInfo(npcID);
+                }
+                this._list
+                    .qtip('option','content.text',info.text || 'Unknown')
+                    .qtip('option','content.title.text',info.title)
+                    .qtip('option','position.target',o)
+                    .qtip('show');
+            } else {
+                this._list.qtip('hide');
+            }
+        },
         _evtListClick: function(e) {
             if ($(e.target).hasClass('remove')) return;
             var t = $(e.currentTarget);
             if (t.hasClass('zone')) {
-                var zID = t.attr('zone');
-                var z = this.zoneOffset(zID);
-                if (z) {
-                    this._map.interactiveMap('center',z.left, z.top, true);
-                }
+                var zoneID = t.attr('zone');
+                this.highlightZoneInMap(zoneID);
             } else {
                 var npcID = t.attr('npc');
-                var n = this._data.npcs[npcID];
-                if (n) {
-                    this._map.interactiveMap('center',n.position.x, n.position.z, true);
-                }
+                this.highlightNPCInMap(npcID);
             }
         },
         _evtListClose: function(e) {
@@ -156,7 +185,7 @@ $(function() {
         _evtZoneHover: function(e) {
             var o = $('#RO_InteractiveMap').interactiveMap('overlay');
             if (e.type == 'mouseenter') {
-                o.svgChange(this,{stroke:'#FFFFFF'});
+                o.svgChange(this,{stroke:'#FFFFFF',filter:'url(#romap_BLUR)'});
                 var zID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
                 var zInfo = ROMapData.zoneInfo(zID);
                 $('#RO_InteractiveMap')
@@ -166,13 +195,14 @@ $(function() {
                     .qtip('option','position.target',$(this))
                     .qtip('show');
             } else {
-                o.svgChange(this,{stroke:null});
+                o.svgChange(this,{stroke:null,filter:null});
                 $('#RO_InteractiveMap').qtip('hide');
             }
         },
         _evtNPCHover: function(e) {
+            var o = $('#RO_InteractiveMap').interactiveMap('overlay');
             if (e.type == 'mouseenter') {
-                $(this).css('stroke','#ffffff');
+                o.svgChange(this, {stroke:'#ffffff'});
                 var nID = $(this).attr('id').replace(/^.+?(\d+)$/,'$1');
                 var nInfo = ROMapData.npcInfo(nID);
                 $('#RO_InteractiveMap')
@@ -182,7 +212,7 @@ $(function() {
                     .qtip('option','position.target',$(this))
                     .qtip('show');
             } else {
-                $(this).css('stroke','#000000');
+                o.svgChange(this, {stroke:'#000000'});
                 $('#RO_InteractiveMap').qtip('hide');
             }
         },
@@ -190,9 +220,9 @@ $(function() {
             var t = $(this);
             var ID = t.attr('id').match(/^.+?_(\w+)_(\d+)$/);
             if (ID[1] == 'zone') {
-                ROMapData.highlightZone(ID[2]);
+                ROMapData.highlightZoneInList(ID[2]);
             } else {
-                ROMapData.highlightNPC(ID[2]);
+                ROMapData.highlightNPCInList(ID[2]);
             }
         },
         zoneSVG:function(zoneID) {
@@ -203,7 +233,11 @@ $(function() {
         },
         zoneOffset:function(zoneID) {
             if (zoneID in this._zones) {
-                return {left:this._zones[zoneID].left, top: this._zones[zoneID].top};
+                return {
+                        left:this._zones[zoneID].left,
+                        top: this._zones[zoneID].top,
+                        width:this._zones[zoneID].width || 0,
+                        height:this._zones[zoneID].height || 0};
             }
             return null;
         },
@@ -227,14 +261,61 @@ $(function() {
             ret.text += '</dl>';
             return ret;
         },
-        highlightZone:function(zoneID) {
+        zoomTransform:function(s, cx, cy) {
+            return 'translate('+-cx*(s-1)+','+-cy*(s-1)+') scale('+s+')';
+        },
+        highlightZoneInMap:function(zoneID) {
+            var z = this.zoneOffset(zoneID);
+            if (z) {
+                var cx = z.left + (z.width / 2),
+                    cy = z.top + (z.height / 2);
+                this._map.interactiveMap('center', cx, cy, true);
+                var o = $('#romap_zone_'+zoneID);
+                if (o.length) {
+                    if (!o.data('oldColor')) {
+                        o.data('oldColor',o.attr('fill'));
+                    }
+                    o.animate({
+                            svgFill:'#ffffff',
+                            svgTransform:this.zoomTransform(2,cx,cy)
+                        },400)
+                        .animate({
+                            svgFill:o.data('oldColor'),
+                            svgTransform:'translate(0,0) scale(1)'
+                        },400);
+                }
+            }
+        },
+        highlightNPCInMap:function(npcID) {
+            var n = this._data.npcs[npcID];
+            if (n) {
+                var cx = n.position.x - this._npc.cx,
+                    cy = n.position.z - this._npc.cy;
+                this._map.interactiveMap('center', cx, cy, true);
+                var o = $('#romap_npc_'+npcID);
+                if (o.length) {
+                    if (!o.data('oldColor')) {
+                        o.data('oldColor',o.attr('fill'));
+                    }
+                    o.animate({
+                            svgFill:'#ffffff',
+                            svgTransform:this.zoomTransform(2,cx,cy)
+                        },400)
+                        .animate({
+                            svgFill:o.data('oldColor'),
+                            svgTransform:'translate(0,0) scale(1)'
+                        },400);
+                }
+            }
+        },
+        highlightZoneInList:function(zoneID) {
             var o = this._list.find('li[zone="'+zoneID+'"]');
             if (o.length) {
                 o[0].scrollIntoView(true);
                 o.effect('highlight',{color:'#EFC325'},300);
             }
         },
-        highlightNPC:function(npcID) {
+        highlightNPCInList:function(npcID) {
             var o = this._list.find('li[npc="'+npcID+'"]');
             if (o.length) {
                 o[0].scrollIntoView(true);
@@ -253,6 +334,11 @@ $(function() {
                     +' h -51.248 v -77.037 h -6.406 c 0,0 -6.407,2.14'
                     +' -6.407,-6.406 V 54.450714 c 0,0 0,-8.809 8.81,-8.809'
                     +' l 59.524,0.267 z');
+                return s;
+            });
+            this._overlay.addSymbol('romap_BLUR',function(svg, parent, color) {
+                var s = svg.filter(parent, 'temp');
+                svg.filters.gaussianBlur(s, '','SourceGraphic',4);
                 return s;
             });
             this._list.find('li:gt(0)').remove();
@@ -311,7 +397,10 @@ $(function() {
                         .append('<div class="remove"><span class="ui-icon ui-icon-closethick"/></div>'));
                 var d = this.zoneSVG(zones[i]);
                 if (d) {
-                    this._overlay.addPath('romap_zone_'+zones[i],d,{'class':'zone'},{
+                    this._overlay.addPath('romap_zone_'+zones[i],d,{
+                        transform:'translate(0,0) scale(1)',
+                        'class':'zone'
+                    },{
                         'mouseenter mouseleave':this._evtZoneHover,
                         'click':this._evtOverlayClick
                     });
@@ -327,10 +416,11 @@ $(function() {
                         .text(d.name)
                         .append('<div class="remove"><span class="ui-icon ui-icon-closethick"/></div>'));
                 this._overlay.addReference('romap_npc_'+npcs[i],'#romap_npc',{
-                    x: d.position.x,
-                    y: d.position.z,
+                    x: d.position.x - this._npc.cx,
+                    y: d.position.z - this._npc.cy,
                     width: this._npc.width,
                     height: this._npc.height,
+                    transform:'translate(0,0) scale(1)',
                     fill:(d.realm == 'Syrtis' ? '#00ff00' : (d.realm == 'Ignis' ? '#ff0000' : '#0000ff')),
                     'class':'npc'
                 },{

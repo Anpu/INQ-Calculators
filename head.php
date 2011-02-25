@@ -55,6 +55,8 @@ Head::addJS('js/Polygon.js');
 Head::addJS('js/mapWidget.js');
 if (!empty($config->tools['map'])) {
     Head::addJS('js/jquery.svg.min.js',Head::NO_MINIFY);
+    Head::addJS('js/jquery.svgfilter.min.js',Head::NO_MINIFY);
+    Head::addJS('js/jquery.svganim.min.js',Head::NO_MINIFY);
     Head::addJS('js/interactiveMap.js');
     Head::addJS('js/inqtools-map.js');
 }
