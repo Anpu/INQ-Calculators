@@ -368,8 +368,12 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
                 width: parseInt(_l.attr('width')),
                 height: parseInt(_l.attr('height')),
                 scale: parseScale(_l.attr('scale')),
+                tag: _l.attr('tag') || '',
                 path: dirname(this.options.map)+'/'+_l.attr('path')+'/',
                 pieces: {}
+            }
+            if (_ll.tag) {
+                _ll.tag = '?'+_ll.tag;
             }
             // Parse Pieces
             var pieces = _l.find('piece');
@@ -487,7 +491,9 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
     },
     _getImageForTile: function(x,y) {
         if (this._activeLayer.pieces[x] && this._activeLayer.pieces[x][y]) {
-            return this._activeLayer.path + this._activeLayer.pieces[x][y];
+            return this._activeLayer.path
+                + this._activeLayer.pieces[x][y]
+                + this._activeLayer.tag;
         }
         return this.options.blankImage;
     },
