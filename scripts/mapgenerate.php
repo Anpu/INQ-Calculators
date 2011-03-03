@@ -241,12 +241,12 @@ class Map {
                 } else {
                     mkdir($ipath);
                 }
-                $file = sprintf("%d/%d.jpg",$dst_rect->top,$dst_rect->left);
+                $file = sprintf("%d/%d.png",$dst_rect->top,$dst_rect->left);
                 echo "Building piece ",$file,"\n";
 
                 $img = $this->fetchMapSection($src_rect, $dst_rect);
                 imageinterlace($img, true);
-                imagejpeg($img, $outdir.DIRECTORY_SEPARATOR.$file);
+                imagepng($img, $outdir.DIRECTORY_SEPARATOR.$file);
                 imagedestroy($img);
                 // Write Map XML
                 $piece = $layerXML->addChild('piece');
