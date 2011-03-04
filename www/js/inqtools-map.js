@@ -97,7 +97,7 @@ $(function() {
     function cROMapData(map, list, zoneURL) {
         this._map = $(map);
         this._overlay = this._map.interactiveMap('overlay');
-        this._list = $(list);
+        this._list = $('<ul/>').appendTo(list);
         this._list.qtip({
             prerender: true,
             content: {title:'Info',text:'Info'},

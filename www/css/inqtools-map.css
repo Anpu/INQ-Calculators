@@ -21,7 +21,11 @@
     padding: 0px;
     overflow-x: auto;
 }
-#RO_MapItems li {
+#RO_MapItems ul {
+    margin: 0px;
+    padding: 0px;
+}
+#RO_MapItems ul li {
     list-style: none;
     margin: 0.5ex;
     padding: 0 0.5em;
@@ -30,17 +34,17 @@
     position: relative;
     cursor: url('../images/links.cur'), pointer;
 }
-#RO_MapItems li div.remove {
+#RO_MapItems ul li div.remove {
     position: absolute;
     right: 0px;
     top: 0px;
     bottom: 0px;
     width: 32px;
 }
-#RO_MapItems li div.remove:hover {
+#RO_MapItems ul li div.remove:hover {
     background-color: #555555;
 }
-#RO_MapItems li div.remove > span.ui-icon {
+#RO_MapItems ul li div.remove > span.ui-icon {
     margin: auto;
     position: absolute;
     top: 0px;
@@ -48,21 +52,21 @@
     right: 0px;
     left: 0px;
 }
-#RO_MapItems li span.removeAll {
+#RO_MapItems ul li span.removeAll {
     padding: 0.5ex;
 }
-#RO_MapItems li span.removeAll:hover {
+#RO_MapItems ul li span.removeAll:hover {
     background-color: #555555;
 }
-#RO_MapItems li:hover {
+#RO_MapItems ul li:hover {
     background-color: #222222;
     border-top-color: #EFC325;
 }
-#RO_MapItems li.zone:before {
+#RO_MapItems ul li.zone:before {
     padding-right: 0.5ex;
     content: "Z:";
 }
-#RO_MapItems li.npc:before {
+#RO_MapItems ul li.npc:before {
     padding-right: 0.5ex;
     content: "N:";
 }
