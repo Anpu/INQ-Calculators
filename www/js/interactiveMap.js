@@ -59,9 +59,13 @@ $.extend(OverlayReference.prototype, {
 });
 
 
-function OverlayCustom(drawSVG)
+function OverlayCustom(drawFuncs)
 {
-    this.drawSVG = drawSVG;
+    if ($.isFunction(drawFuncs)) {
+        this.drawSVG = drawFuncs;
+    } else {
+        $.extend(this, drawFuncs);
+    }
 }
 
 // Main overlay Management
@@ -76,6 +80,7 @@ function OverlayContainer(elem) {
     this._toPreDraw = [];
     this._toDraw = [];
     this.svgReady = false;
+    this._svg = false;
     this.drawCalled = false;
     this.element.svg({onLoad:$.proxy(this._loadSVG,this)});
 }
@@ -95,9 +100,21 @@ $.extend(OverlayContainer.prototype, {
             if (this._scale.num != scale.num || this._scale.den != scale.den) {
                 this._scale.num = scale.num;
                 this._scale.den = scale.den;
-                if (this.svgReady) {
+                if (this._svg) {
                     var g = this._svg.getElementById('SVGScale');
                     this._svg.change(g, {transform:'scale('+(this._scale.num/this._scale.den)+')'});
+                } else {
+                    for (var n in this._elems) {
+                        var o = this._elems[n];
+                        var jo = $('#'+o.name);
+                        if (jo.length) {
+                            if (o.data.scale) {
+                                o.data.scale(jo, this.element, scale, o.offset);
+                            }
+                        } else {
+                            this._draw_object(o, null);
+                        }
+                    }
                 }
             }
             return this;
@@ -113,9 +130,11 @@ $.extend(OverlayContainer.prototype, {
             var o = this.element.find('embed');
             if ($.browser.msie && o.length) {
                 o.remove();
+                this.svgReady = true;
+            } else {
+                this.drawCalled = true;
+                return this;
             }
-            this.drawCalled = true;
-            return this;
         }
         var svg = this._svg;
 
@@ -135,36 +154,40 @@ $.extend(OverlayContainer.prototype, {
             this._toDraw = Object.keys(this._elems);
         }
         var o,n;
-        while (this._toPreDraw.length) {
-            n = this._toPreDraw.shift();
-            if (n in this._preElems) {
-                o = this._preElems[n];
-                this._draw_object(o,d);
+        try {
+            while (this._toPreDraw.length) {
+                n = this._toPreDraw.shift();
+                if (n in this._preElems) {
+                    o = this._preElems[n];
+                    this._draw_object(o,d);
+                }
             }
-        }
-        while (this._toDraw.length) {
-            n = this._toDraw.shift();
-            if (n in this._elems) {
-                o = this._elems[n];
-                this._draw_object(o,g);
+        } catch (ex) {}
+        try {
+            while (this._toDraw.length) {
+                n = this._toDraw.shift();
+                if (n in this._elems) {
+                    o = this._elems[n];
+                    this._draw_object(o,g);
+                }
             }
-        }
+        } catch (ex) {}
         return this;
     },
     _draw_object: function(o, svgParent) {
-        if (this.svgReady && o.data.drawSVG) {
-            var g = o.data.drawSVG(this._svg, svgParent, this.nextColor(), o.offset);
+        var g;
+        if (this._svg && o.data.drawSVG) {
+            g = o.data.drawSVG(this._svg, svgParent, this.nextColor(), o.offset);
             this._svg.change(g,{id:o.name});
             for (var k in o.events) {
                 $(g).bind(k, o.events[k]);
             }
-//        } else if (o.data.draw) {
-            // Disable non SVG fallback for now
-//            if (!o.wrapper) {
-//                o.wrapper = $('<div/>').appendTo(this.element);
-//            }
-//            o.wrapper.empty();
-//            o.data.draw(o.wrapper, this._scale, this.nextColor());
+        } else if (o.data.draw) {
+            g = o.data.draw(this.element, this._scale, this.nextColor(), o.offset);
+            $(g).attr('id',o.name);
+            for (var k in o.events) {
+                $(g).bind(k, o.events[k]);
+            }
         } else {
             throw new TypeError("No Draw Routine for object");
         }
@@ -198,7 +221,10 @@ $.extend(OverlayContainer.prototype, {
         return this._svg;
     },
     svgChange: function(e, o) {
-        return this._svg.change(e, o);
+        if (this._svg) {
+            return this._svg.change(e, o);
+        }
+        return false;
     },
     addPolygon: function(name, polygon, offset, events) {
         if (!(polygon instanceof Polygon)) {
@@ -206,8 +232,8 @@ $.extend(OverlayContainer.prototype, {
         }
         return this.addObject(name, 'polygon', polygon, offset, events, true);
     },
-    addCustom: function(name, drawSVG, offset, events) {
-        return this.addObject(name, 'custom', new OverlayCustom(drawSVG), offset, events, true);
+    addCustom: function(name, drawFuncs, offset, events) {
+        return this.addObject(name, 'custom', new OverlayCustom(drawFuncs), offset, events, true);
     },
     addSymbol: function(name, drawSVG) {
         return this.addObject(name, 'symbol', new OverlayCustom(drawSVG), {}, {}, true);
@@ -246,12 +272,14 @@ $.extend(OverlayContainer.prototype, {
             delete this._preElems[name];
         }
         if (name in this._elems) {
-            $('#'+this._elems[name].name).unbind();
+            $('#'+name).unbind();
             delete this._elems[name];
         }
-        if (this.svgReady) {
+        if (this._svg) {
             var e = this._svg.getElementById(name);
             if (e) this._svg.remove(e);
+        } else {
+            $('#'+name).remove();
         }
     },
     objectNames: function(pre) {
@@ -260,10 +288,13 @@ $.extend(OverlayContainer.prototype, {
     clear: function() {
         for (var k in this._elems) {
             $('#'+this._elems[k].name).unbind();
+            if (!this._svg) {
+                $('#'+this._elems[k].name).remove();
+            }
         }
 
         // Clear all objects
-        if (this.svgReady) {
+        if (this._svg) {
             this._svg.clear();
         }
         this._preElems = {};

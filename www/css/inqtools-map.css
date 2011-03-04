@@ -90,3 +90,19 @@
     stroke-width: 5;
     cursor: url('../images/links.cur'), pointer;
 }
+
+#RO_InteractiveMap .overlay span.zone {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    display: block;
+    background-image: url('../images/maplist-zone.png');
+}
+
+#RO_InteractiveMap .overlay span.npc {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    display: block;
+    background-image: url('../images/maplist-npc.png');
+}

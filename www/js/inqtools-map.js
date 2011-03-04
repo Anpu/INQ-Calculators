@@ -120,7 +120,7 @@ $(function() {
         this._list.delegate('li.zone,li.npc','click',$.proxy(this._evtListClick, this));
         this._list.delegate('li.zone,li.npc','hover',$.proxy(this._evtListHover, this));
         this._zoneURL = zoneURL;
-        this._npc = {width:75,height:150,cx:75/2,cy:75/2};
+        this._npc = {width:75,height:150,cx:75/2,cy:75/2,cx2:8,cy2:8};
         this._loading = false;
         this.clear();
     }
@@ -225,6 +225,23 @@ $(function() {
                 ROMapData.highlightNPCInList(ID[2]);
             }
         },
+        _drawIE: function(aParent, aScale, aColor, aOffset) {
+            var o = $('<span/>').appendTo(aParent);
+            o.css({
+                left: aOffset.left * (aScale.num / aScale.den),
+                top: aOffset.top * (aScale.num / aScale.den)
+            });
+            if (aOffset['class']) {
+                o.addClass(aOffset['class']);
+            }
+            return o[0];
+        },
+        _scaleIE: function(aElem, aParent, aScale, aOffset) {
+            aElem.css({
+                left: aOffset.left * (aScale.num / aScale.den),
+                top: aOffset.top * (aScale.num / aScale.den)
+            });
+        },
         zoneSVG:function(zoneID) {
             if (zoneID in this._zones) {
                 return this._zones[zoneID].svg;
@@ -271,7 +288,7 @@ $(function() {
                     cy = z.top + (z.height / 2);
                 this._map.interactiveMap('center', cx, cy, true);
                 var o = $('#romap_zone_'+zoneID);
-                if (o.length) {
+                if (o.length && this._overlay.svg()) {
                     if (!o.data('oldColor')) {
                         o.data('oldColor',o.attr('fill'));
                     }
@@ -293,7 +310,7 @@ $(function() {
                     cy = n.position.z - this._npc.cy;
                 this._map.interactiveMap('center', cx, cy, true);
                 var o = $('#romap_npc_'+npcID);
-                if (o.length) {
+                if (o.length && this._overlay.svg()) {
                     if (!o.data('oldColor')) {
                         o.data('oldColor',o.attr('fill'));
                     }
@@ -329,22 +346,24 @@ $(function() {
                 $('#NoSVGSupport').slideDown();
             }
             this._overlay.clear();
-            this._overlay.addSymbol('romap_npc',function(svg, parent, color) {
-                var s = svg.symbol(parent, 'temp',0,0,100,200,{'class':'item'});
-                svg.circle(s,50,20,20);
-                svg.path(s,'m 79.787032,45.908714 c 0,0 8.54,-1.064'
-                    +' 8.54,8.542 0,9.606 0,58.719996 0,58.719996 0,0'
-                    +' 2.141,8.008 -6.937,8.008 h -5.876 v 78.107'
-                    +' h -51.248 v -77.037 h -6.406 c 0,0 -6.407,2.14'
-                    +' -6.407,-6.406 V 54.450714 c 0,0 0,-8.809 8.81,-8.809'
-                    +' l 59.524,0.267 z');
-                return s;
-            });
-            this._overlay.addSymbol('romap_BLUR',function(svg, parent, color) {
-                var s = svg.filter(parent, 'temp');
-                svg.filters.gaussianBlur(s, '','SourceGraphic',4);
-                return s;
-            });
+            if (svgSup) {
+                this._overlay.addSymbol('romap_npc',function(svg, parent, color) {
+                    var s = svg.symbol(parent, 'temp',0,0,100,200,{'class':'item'});
+                    svg.circle(s,50,20,20);
+                    svg.path(s,'m 79.787032,45.908714 c 0,0 8.54,-1.064'
+                        +' 8.54,8.542 0,9.606 0,58.719996 0,58.719996 0,0'
+                        +' 2.141,8.008 -6.937,8.008 h -5.876 v 78.107'
+                        +' h -51.248 v -77.037 h -6.406 c 0,0 -6.407,2.14'
+                        +' -6.407,-6.406 V 54.450714 c 0,0 0,-8.809 8.81,-8.809'
+                        +' l 59.524,0.267 z');
+                    return s;
+                });
+                this._overlay.addSymbol('romap_BLUR',function(svg, parent, color) {
+                    var s = svg.filter(parent, 'temp');
+                    svg.filters.gaussianBlur(s, '','SourceGraphic',4);
+                    return s;
+                });
+            }
             this._list.find('li:gt(0)').remove();
         },
         add:function(data) {
@@ -392,6 +411,7 @@ $(function() {
                 this.load();
                 return;
             }
+            var svgSup = !!this._overlay.svg();
             // iterate through newly added entities
             for (var i=0; i< zones.length; ++i) {
                 this._list
@@ -399,15 +419,36 @@ $(function() {
                         .attr('zone',zones[i])
                         .text(this._data.zones[zones[i]].name)
                         .append('<div class="remove"><span class="ui-icon ui-icon-closethick"/></div>'));
-                var d = this.zoneSVG(zones[i]);
-                if (d) {
-                    this._overlay.addPath('romap_zone_'+zones[i],d,{
-                        transform:'translate(0,0) scale(1)',
-                        'class':'zone'
-                    },{
-                        'mouseenter mouseleave':this._evtZoneHover,
-                        'click':this._evtOverlayClick
-                    });
+                if (svgSup) {
+                    var d = this.zoneSVG(zones[i]);
+                    if (d) {
+                        this._overlay.addPath('romap_zone_'+zones[i],d,
+                            {
+                                transform:'translate(0,0) scale(1)',
+                                'class':'zone'
+                            },{
+                                'mouseenter mouseleave':this._evtZoneHover,
+                                'click':this._evtOverlayClick
+                            });
+                    }
+                } else {
+                    var z = this.zoneOffset(zones[i]);
+                    var cx = z.left + (z.width / 2),
+                        cy = z.top + (z.height / 2);
+                    this._overlay.addCustom('romap_zone_'+zones[i],
+                        {
+                            draw: this._drawIE,
+                            scale: this._scaleIE
+                        },
+                        {
+                            left: cx,
+                            top: cy,
+                            'class':'zone'
+                        },
+                        {
+                            'mouseenter mouseleave':this._evtZoneHover,
+                            'click':this._evtOverlayClick
+                        });
                 }
             }
         },
@@ -419,18 +460,35 @@ $(function() {
                         .attr('npc',npcs[i])
                         .text(d.name)
                         .append('<div class="remove"><span class="ui-icon ui-icon-closethick"/></div>'));
-                this._overlay.addReference('romap_npc_'+npcs[i],'#romap_npc',{
-                    x: d.position.x - this._npc.cx,
-                    y: d.position.z - this._npc.cy,
-                    width: this._npc.width,
-                    height: this._npc.height,
-                    transform:'translate(0,0) scale(1)',
-                    fill:(d.realm == 'Syrtis' ? '#00ff00' : (d.realm == 'Ignis' ? '#ff0000' : '#0000ff')),
-                    'class':'npc'
-                },{
-                    'mouseenter mouseleave':this._evtNPCHover,
-                    'click':this._evtOverlayClick
-                });
+                var svgSup = !!this._overlay.svg();
+                if (svgSup) {
+                    this._overlay.addReference('romap_npc_'+npcs[i],'#romap_npc',
+                        {
+                            x: d.position.x - this._npc.cx,
+                            y: d.position.z - this._npc.cy,
+                            width: this._npc.width,
+                            height: this._npc.height,
+                            transform:'translate(0,0) scale(1)',
+                            fill:(d.realm == 'Syrtis' ? '#00ff00' : (d.realm == 'Ignis' ? '#ff0000' : '#0000ff')),
+                            'class':'npc'
+                        },{
+                            'mouseenter mouseleave':this._evtNPCHover,
+                            'click':this._evtOverlayClick
+                        });
+                } else {
+                    this._overlay.addCustom('romap_npc_'+npcs[i],
+                        {
+                            draw: this._drawIE,
+                            scale: this._scaleIE
+                        },{
+                            left: d.position.x - this._npc.cx2,
+                            top: d.position.z - this._npc.cy2,
+                            'class':'npc'
+                        },{
+                            'mouseenter mouseleave':this._evtNPCHover,
+                            'click':this._evtOverlayClick
+                        });
+                }
             }
         }
     });
