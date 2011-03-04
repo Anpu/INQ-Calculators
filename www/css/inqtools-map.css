@@ -63,12 +63,12 @@
     border-top-color: #EFC325;
 }
 #RO_MapItems ul li.zone:before {
-    padding-right: 0.5ex;
-    content: "Z:";
+    padding-right: 1ex;
+    content: url('../images/maplist-zone.png');
 }
 #RO_MapItems ul li.npc:before {
-    padding-right: 0.5ex;
-    content: "N:";
+    padding-right: 1ex;
+    content: url('../images/maplist-npc.png');
 }
 #RO_InteractiveMap {
     position: absolute;
