@@ -110,6 +110,10 @@ $.extend(OverlayContainer.prototype, {
     },
     draw: function(force) {
         if (this.svgReady === false) {
+            var o = this.element.find('embed');
+            if ($.browser.msie && o.length) {
+                o.remove();
+            }
             this.drawCalled = true;
             return this;
         }
