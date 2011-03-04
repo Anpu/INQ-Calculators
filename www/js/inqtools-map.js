@@ -324,6 +324,10 @@ $(function() {
         },
         clear: function() {
             this._data = {zones:{},npcs:{}};
+            var svgSup = !!this._overlay.svg();
+            if (!svgSup) {
+                $('#NoSVGSupport').slideDown();
+            }
             this._overlay.clear();
             this._overlay.addSymbol('romap_npc',function(svg, parent, color) {
                 var s = svg.symbol(parent, 'temp',0,0,100,200,{'class':'item'});

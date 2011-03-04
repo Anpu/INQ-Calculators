@@ -422,7 +422,13 @@
             </div>
           </div>
           <div tal:condition="notempty: tools/map" id="map" class="content-full">
-              <h2>Regnum World Map!</h2>
+              <h2>Regnum World Map</h2>
+              <div id="NoSVGSupport" class="ui-helper-hidden">
+                  <div class="ui-state-highlight ui-corner-all" style="padding: 1ex;">
+                      No SVG Support Detected.   Full use of the World Map requires an SVG Capable Browser.
+                      <a onclick="$('#NoSVGSupport').slideUp(function() {$(this).remove()}); return false">[ Dismiss ]</a>
+                  </div>
+              </div>
               <div id="RO_MapWrapper">
                 <div id="RO_InteractiveMap"/>
                 <div id="RO_MapItems"/>
