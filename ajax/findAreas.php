@@ -23,7 +23,7 @@
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 class ajax_findAreas extends AjaxRequest {
-    public static function request($path_args) {
+    public function request($path_args) {
         $tpl = new Template("findAreas.xhtml");
 
         $tpl->limit = $limit = 20;

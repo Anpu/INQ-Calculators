@@ -23,7 +23,7 @@
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 class ajax_suggestZones extends AjaxRequest {
-    public static function request($path_args) {
+    public function request($path_args) {
         $result = RO_Zone::suggest(Util::GetString('term'));
         $ret = array();
         foreach ($result as $val) {

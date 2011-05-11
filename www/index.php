@@ -97,14 +97,15 @@ if (empty($_GET['PATH_INFO'])) {
             if (DEBUG) {
                 $start = microtime(true);
             }
-            if ($config->memcache && $class::$cache) {
+            $ajax = new $class();
+            if ($config->memcache && $ajax->cache) {
                 $key = AjaxRequest::genkey();
                 $data = $memcache->get($key);
             }
             if (empty($data)) {
-                $data = $class::request(array_slice($path_info,2));
+                $data = $ajax->request(array_slice($path_info,2));
 
-                if ($config->memcache && $class::$cache) {
+                if ($config->memcache && $ajax->cache) {
                     $memcache->set($key, $data, $config->memcache->expire);
                 }
             }
@@ -113,7 +114,7 @@ if (empty($_GET['PATH_INFO'])) {
                 FB::log(number_format(($stop - $start) * 1000),'Duration');
             }
             header("Content-Type: application/json; charset=UTF-8");
-            if ($class::$cache && $config->ajaxexpires) {
+            if ($ajax->cache && $config->ajaxexpires) {
                 header("Pragma: public");
                 header("Expires: ".gmdate('D, d M Y H:i:s',time()+$config->ajaxexpires). ' GMT');
             } elseif (DEBUG) {

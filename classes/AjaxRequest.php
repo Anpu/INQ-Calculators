@@ -21,9 +21,9 @@
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 abstract class AjaxRequest {
-    static $cache = true;
+    public $cache = true;
 
-    abstract public static function request($path_args);
+    abstract public function request($path_args);
 
     public static function genkey()
     {

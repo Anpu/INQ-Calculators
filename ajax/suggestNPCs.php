@@ -23,7 +23,7 @@
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 class ajax_suggestNPCs extends AjaxRequest {
-    public static function request($path_args) {
+    public function request($path_args) {
         $result = RO_NPC::suggest(Util::GetString('term'));
         $ret = array();
         foreach ($result as $val) {
