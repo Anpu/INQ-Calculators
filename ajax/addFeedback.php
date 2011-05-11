@@ -23,6 +23,8 @@
  * @author Edward Rudd <urkle at outoforder.cc>
  */
 class ajax_addFeedback extends AjaxRequest {
+	public static $cache = false;
+
     public static function request($path_args) {
         global $config;
 
