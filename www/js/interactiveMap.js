@@ -87,20 +87,20 @@ function OverlayContainer(elem) {
 $.extend(OverlayContainer.prototype, {
     _loadSVG: function(svg, error) {
         if (error) alert(error);
-        svg.root().setAttribute('width','100%');
-        svg.root().setAttribute('height','100%');
         this._svg = svg;
         this.svgReady = true;
         if (this.drawCalled) {
             this.draw();
         }
     },
-    scale: function(scale) {
+    scale: function(scale, scale_width, scale_height) {
         if (scale) {
             if (this._scale.num != scale.num || this._scale.den != scale.den) {
                 this._scale.num = scale.num;
                 this._scale.den = scale.den;
                 if (this._svg) {
+                    this._svg.root().setAttribute('width', scale_width);
+                    this._svg.root().setAttribute('height', scale_height);
                     var g = this._svg.getElementById('SVGScale');
                     this._svg.change(g, {transform:'scale('+(this._scale.num/this._scale.den)+')'});
                 } else {
@@ -450,14 +450,14 @@ $.widget('ooo.interactiveMap', $.ui.mouse, {
         this.checkTiles(p.left, p.top);
         this._elems.overlay.css({width:this._activeLayer.width,height:this._activeLayer.height});
         this.overlay()
-            .scale(this._activeLayer.scale);
+            .scale(this._activeLayer.scale, this._activeLayer.width, this._activeLayer.height);
     },
     /** Overlays */
     overlay: function(cmd) {
         if (!this._overlay) {
             this._overlay = new OverlayContainer(this._elems.overlay);
             if (this._activeLayer) {
-                this._overlay.scale(this._activeLayer.scale);
+                this._overlay.scale(this._activeLayer.scale, this._activeLayer.width, this._activeLayer.height);
             }
         }
         if (cmd) {
